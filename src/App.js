@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react'
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const [credentials, setCredentials] = useState({})
+
+    // contains username and password when submitted
+    function submit() {
+        alert(credentials.username + " is username, and " + credentials.password + " is password")
+    }
+  
+    function updateCredentials(event) {
+        var name = event.target.name;
+        var value = event.target.value;
+        // only update value of credential that is actually updated
+        setCredentials(credentials => ({...credentials, [name]: value}))
+    }
+  
+    return (
+        <>
+        <h3>Log In</h3>
+    
+        {/* TODO: check if methods below are the "safe" way to handle usernames and passwords */}
+        <form onSubmit={submit}>
+            <label>
+                Username:&nbsp; {/* &nbsp; is used to add a space when HTML doesn't consider spaces text */}
+                <input type="text" onChange={updateCredentials} name="username" required />
+            </label>
+            <br/><br/>
+            <label>
+                Password:&nbsp;
+                <input type="password" onChange={updateCredentials} name="password" required />
+            </label>
+            <br/><br/>
+            <input type="submit" value="submit" />
+        </form>
+        </>
+    )
 }
 
-export default App;
+export default App
