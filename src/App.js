@@ -1,40 +1,30 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import LoginPage from './components/LoginPage'
 
+// This function sets up the URL routing for the web application
+// Reference: https://reactrouter.com/en/v6.3.0/getting-started/tutorial
 function App() {
-    const [credentials, setCredentials] = useState({})
+    const [userID, setUserID] = React.useState("")
 
-    // contains username and password when submitted
-    function submit() {
-        alert(credentials.username + " is username, and " + credentials.password + " is password")
+    if(userID === "") {
+        // user is not logged in yet
+        return (
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<LoginPage userID={userID} setUserID={setUserID} />} />
+                    <Route path='register' element={<LoginPage userID={userID} setUserID={setUserID} />} />
+
+                    {/* routes other paths to login page */}
+                    <Route path="*" element={
+                        <Navigate to="/" />
+                    } />
+                </Routes>
+            </BrowserRouter>
+        )
+    } else {
+        // user is logged in and their page should be routed accordingly
     }
-  
-    function updateCredentials(event) {
-        var name = event.target.name;
-        var value = event.target.value;
-        // only update value of credential that is actually updated
-        setCredentials(credentials => ({...credentials, [name]: value}))
-    }
-  
-    return (
-        <>
-        <h3>Log In</h3>
-    
-        {/* TODO: check if methods below are the "safe" way to handle usernames and passwords */}
-        <form onSubmit={submit}>
-            <label>
-                Username:&nbsp; {/* &nbsp; is used to add a space when HTML doesn't consider spaces text */}
-                <input type="text" onChange={updateCredentials} name="username" required />
-            </label>
-            <br/><br/>
-            <label>
-                Password:&nbsp;
-                <input type="password" onChange={updateCredentials} name="password" required />
-            </label>
-            <br/><br/>
-            <input type="submit" value="submit" />
-        </form>
-        </>
-    )
 }
 
 export default App
