@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { Link, Navigate, useNavigate } from 'react-router-dom'
 
 function LoginPage() {
-    const [credentials, setCredentials] = useState({})
+    const [credentials, setCredentials] = React.useState({})
+    const setURL = useNavigate() // useNavigate can't be used in button below, needs to be set to a variable
 
     // contains username and password when submitted
     function submit() {
@@ -31,8 +33,12 @@ function LoginPage() {
                 <input type="password" onChange={updateCredentials} name="password" required />
             </label>
             <br/><br/>
-            <input type="submit" value="submit" />
+            <input type="submit" value="Log In" />
         </form>
+        
+        <br/><br/>
+        New User?&nbsp;
+        <Link to="/register">Click here to register</Link>
         </>
     )
 }
