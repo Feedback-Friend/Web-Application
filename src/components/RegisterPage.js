@@ -3,11 +3,21 @@ import { Link, Navigate, useNavigate } from 'react-router-dom'
 
 function RegisterPage() {
     const [userInfo, setUserInfo] = React.useState({})
-    const setURL = useNavigate() // useNavigate can't be used in button below, needs to be set to a variable
-
+    
     // contains all credentials
-    function submit() {
-        alert(JSON.stringify(userInfo));
+    function submit(e) {
+        e.preventDefault(); //prevents default actions of form from happening (reloads page contents)
+        /*
+         *
+         * This is where we are calling backend component to register user.
+         *
+         */
+        fetch("/registerUser/" + userInfo.firstname + "/" + userInfo.lastname + "/" + userInfo.username + "/" + userInfo.password + "/" + userInfo.email)
+            .then(response => response.json())
+            .then(data => {
+            }).catch(error => {
+                console.log(error);
+            });
     }
   
     function updateUserInfo(event) {
@@ -24,8 +34,13 @@ function RegisterPage() {
         {/* TODO: check if methods below are the "safe" way to handle usernames and passwords */}
         <form onSubmit={submit}>
             <label>
-                Full Name:&nbsp; {/* &nbsp; is used to add a space when HTML doesn't consider spaces text */}
-                <input type="text" onChange={updateUserInfo} name="fullName" required />
+                First Name:&nbsp; {/* &nbsp; is used to add a space when HTML doesn't consider spaces text */}
+                <input type="text" onChange={updateUserInfo} name="firstName" required />
+            </label>
+            <br/><br/>
+            <label>
+                Last Name:&nbsp; {/* &nbsp; is used to add a space when HTML doesn't consider spaces text */}
+                <input type="text" onChange={updateUserInfo} name="lastName" required />
             </label>
             <br/><br/>
             <label>
