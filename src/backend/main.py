@@ -22,8 +22,9 @@ def registerUser(firstName, lastName, userName, passWord, emailAddress):
             return -1
     cursor.execute("INSERT INTO users VALUES("+str(userID)+", "+firstName+", "+lastName+", "+userName+", "+passWord+", "+emailAddress+")")
     userID = userID+1
-    return userID-1
+    return userID - 1
 
+@app.route('/loginUser/<userName>/<passWord>', methods=['GET'])
 def loginUser(userName, passWord):
     db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
     cursor = db.cursor()
