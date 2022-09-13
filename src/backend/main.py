@@ -9,7 +9,11 @@ app = Flask(__name__, static_folder='../../build/', static_url_path='/')
 def root():
     return app.send_static_file('index.html')
 
+userID=0
+
+@app.route('/registerUser/<firstName>/<lastName>/<userName>/<passWord>/<emailAddress>', methods=['GET'])
 def registerUser(firstName, lastName, userName, passWord, emailAddress):
     db = mysql.connect(user="root", password="phu3Tuwe10.Diez", host="localhost", database="test", auth_plugin="mysql_native_password")
     cursor = db.cursor()
-    cursor.execute("INSERT INTO users VALUES("+str(user)+", ""+first+"", ""+last+"", ""+login+"", ""+password+"", ""+email+"")")
+    cursor.execute("INSERT INTO users VALUES("+str(userID)+", "+firstName+", "+last+", "+login+", "+password+", "+email+")")
+    userID = userID+1
