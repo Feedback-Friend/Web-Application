@@ -15,5 +15,5 @@ userID=0
 def registerUser(firstName, lastName, userName, passWord, emailAddress):
     db = mysql.connect(user="root", password="phu3Tuwe10.Diez", host="localhost", database="test", auth_plugin="mysql_native_password")
     cursor = db.cursor()
-    cursor.execute("INSERT INTO users VALUES("+str(userID)+", "+firstName+", "+last+", "+login+", "+password+", "+email+")")
+    cursor.execute("INSERT INTO users VALUES("+str(userID)+", "+firstName+", "+lastName+", "+userName+", "+passWord+", "+emailAddress+")")
     userID = userID+1
