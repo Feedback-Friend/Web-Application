@@ -46,9 +46,8 @@ def registerUser(firstName, lastName, userName, passWord, emailAddress):
     for entry in table:
         if entry[3] == userName or entry[5] == emailAddress:
             return "-1"
-    userID = 3 # TODO: find some way to get user id from db maybe? variable here won't work since it's gone if the server shuts down
+    userID = len(table)==0? 0 : len(table)-1
     cursor.execute("INSERT INTO users VALUES(%s, %s, %s, %s, %s, %s)", (int(userID), firstName, lastName, userName, passWord, emailAddress))
-    userID = userID+1
     return str(userID - 1)
 
 @app.route('/loginUser/<userName>/<passWord>', methods=['GET'])
