@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 
-function LoginPage() {
+function LoginPage(props) {
     const [credentials, setCredentials] = React.useState({})
     const setURL = useNavigate() // useNavigate can't be used in button below, needs to be set to a variable
 
@@ -16,7 +16,12 @@ function LoginPage() {
         fetch("/loginUser/" + credentials.username + "/" + credentials.password)
             .then(response => response.json())
             .then(data => {
-                alert(data.result);
+                if(data.result != -1) {
+                    props.setUserID(data.result);
+                    props.setName(data.name);
+                } else {
+                    alert("Incorrect authentication.");
+                }
             }).catch(error => {
                 console.log(error);
             });

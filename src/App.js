@@ -7,14 +7,15 @@ import RegisterPage from './components/RegisterPage'
 // Reference: https://reactrouter.com/en/v6.3.0/getting-started/tutorial
 function App() {
     const [userID, setUserID] = React.useState("")
+    const [name, setName] = React.useState("")
 
     if(userID === "") {
         // user is not logged in yet
         return (
             <BrowserRouter>
                 <Routes>
-                    <Route path="/" element={<LoginPage userID={userID} setUserID={setUserID} />} />
-                    <Route path='register' element={<RegisterPage userID={userID} setUserID={setUserID} />} />
+                    <Route path="/" element={<LoginPage setUserID={setUserID} setName={setName} />} />
+                    <Route path='register' element={<RegisterPage />} />
 
                     {/* routes other paths to login page */}
                     <Route path="*" element={
@@ -25,6 +26,7 @@ function App() {
         )
     } else {
         // user is logged in and their page should be routed accordingly
+        return <h1>Hello, {name}!</h1>
     }
 }
 

@@ -60,5 +60,5 @@ def loginUser(userName, passWord):
     table = cursor.fetchall()
     for entry in table:
         if entry[3] == userName and entry[4] == passWord:
-            return jsonify({"result": entry[0]})
+            return jsonify({"result": entry[0], "name": entry[1]})
     return jsonify({"result": "-1"})
