@@ -12,7 +12,8 @@ function RegisterPage() {
          * This is where we are calling backend component to register user.
          *
          */
-        fetch("/registerUser/" + userInfo.firstname + "/" + userInfo.lastname + "/" + userInfo.username + "/" + userInfo.password + "/" + userInfo.email)
+        // TODO: CHANGE TO POST
+        fetch("/registerUser/" + userInfo.firstName + "/" + userInfo.lastName + "/" + userInfo.username + "/" + userInfo.password + "/" + userInfo.email)
             .then(response => response.json())
             .then(data => {
             }).catch(error => {

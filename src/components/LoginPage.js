@@ -6,8 +6,20 @@ function LoginPage() {
     const setURL = useNavigate() // useNavigate can't be used in button below, needs to be set to a variable
 
     // contains username and password when submitted
-    function submit() {
-        alert(credentials.username + " is username, and " + credentials.password + " is password")
+    function submit(e) {
+        e.preventDefault(); //prevents default actions of form from happening (reloads page contents)
+        /*
+         *
+         * This is where we are calling backend component to register user.
+         *
+         */
+        fetch("/loginUser/" + credentials.username + "/" + credentials.password)
+            .then(response => response.json())
+            .then(data => {
+                alert(data.result);
+            }).catch(error => {
+                console.log(error);
+            });
     }
   
     function updateCredentials(event) {
