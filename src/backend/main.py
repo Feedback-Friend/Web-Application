@@ -135,14 +135,23 @@ def addChoice(questionID):
     choiceID = len(table)==0? 0 : table[len(table)-1][0]
     cursor.execute("INSERT INTO choices VALUES(%s, %s, %s)", (int(choiceID), int(questionID), ""))
 
-@app.route('/updateChoice/<questionID>/<prompt>', methods=['GET'])
+@app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
 def updateChoice(choiceID, prompt):
     db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
     cursor = db.cursor()
     cursor.execute("UPDATE choices SET prompt = '%s' WHERE choiceID = %s", (int(choiceID), prompt))
 
-@app.route('/deleteChoice/<questionID>', methods=['GET'])
+@app.route('/deleteChoice/<choiceID>', methods=['GET'])
 def deleteChoice(choiceID):
     db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
     cursor = db.cursor()
     cursor.execute("DELETE FROM choices WHERE choiceID = %s", (int(choiceID)))
+
+@app.route('/setResponse/<questionID>/<prompt>', methods=['GET'])
+def setResponse(questionID, prompt):
+    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM choices")
+    table = cursor.fetchall()
+    choiceID = len(table)==0? 0 : table[len(table)-1][0]
+    cursor.execute("INSERT INTO responses VALUES(%s, %s, %s)", (int(responseID), int(questionID), prompt))
