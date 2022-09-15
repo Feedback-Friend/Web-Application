@@ -46,7 +46,7 @@ def registerUser(firstName, lastName, userName, passWord, emailAddress):
     for entry in table:
         if entry[3] == userName or entry[5] == emailAddress:
             return "-1"
-    userID = len(table)==0? 0 : table[len(table)-1][0]
+    userID = len(table)==0? 0 : table[len(table)-1][0]+1
     cursor.execute("INSERT INTO users VALUES(%s, %s, %s, %s, %s, %s)", (int(userID), firstName, lastName, userName, passWord, emailAddress))
     return str(userID - 1)
 
@@ -81,7 +81,7 @@ def addFRQ(surveyID):
     cursor = db.cursor()
     cursor.execute("SELECT * FROM questions")
     table = cursor.fetchall()
-    questionID = len(table)==0? 0 : table[len(table)-1][0]
+    questionID = len(table)==0? 0 : table[len(table)-1][0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), 0, ""))
 
 @app.route('/updateFRQ/<questionID>/<prompt>', methods=['GET'])
@@ -102,7 +102,7 @@ def addMCQ_S(surveyID):
     cursor = db.cursor()
     cursor.execute("SELECT * FROM questions")
     table = cursor.fetchall()
-    questionID = len(table)==0? 0 : table[len(table)-1][0]
+    questionID = len(table)==0? 0 : table[len(table)-1][0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), 1, ""))
 
 @app.route('/addMCQ_M/<surveyID>', methods=['GET'])
@@ -132,7 +132,7 @@ def addChoice(questionID):
     cursor = db.cursor()
     cursor.execute("SELECT * FROM choices")
     table = cursor.fetchall()
-    choiceID = len(table)==0? 0 : table[len(table)-1][0]
+    choiceID = len(table)==0? 0 : table[len(table)-1][0]+1
     cursor.execute("INSERT INTO choices VALUES(%s, %s, %s)", (int(choiceID), int(questionID), ""))
 
 @app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
@@ -153,5 +153,5 @@ def setResponse(questionID, prompt):
     cursor = db.cursor()
     cursor.execute("SELECT * FROM choices")
     table = cursor.fetchall()
-    responseID = len(table)==0? 0 : table[len(table)-1][0]
+    responseID = len(table)==0? 0 : table[len(table)-1][0]+1
     cursor.execute("INSERT INTO responses VALUES(%s, %s, %s)", (int(responseID), int(questionID), prompt))
