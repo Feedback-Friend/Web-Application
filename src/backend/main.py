@@ -153,5 +153,5 @@ def setResponse(questionID, prompt):
     cursor = db.cursor()
     cursor.execute("SELECT * FROM choices")
     table = cursor.fetchall()
-    choiceID = len(table)==0? 0 : table[len(table)-1][0]
+    responseID = len(table)==0? 0 : table[len(table)-1][0]
     cursor.execute("INSERT INTO responses VALUES(%s, %s, %s)", (int(responseID), int(questionID), prompt))
