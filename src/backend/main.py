@@ -139,10 +139,10 @@ def addChoice(questionID):
 def updateChoice(choiceID, prompt):
     db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
     cursor = db.cursor()
-    cursor.execute("UPDATE questions SET prompt = '%s' WHERE choiceID = %s", (int(choiceID), prompt))
+    cursor.execute("UPDATE choices SET prompt = '%s' WHERE choiceID = %s", (int(choiceID), prompt))
 
 @app.route('/deleteChoice/<questionID>', methods=['GET'])
 def deleteChoice(choiceID):
     db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
     cursor = db.cursor()
-    cursor.execute("DELETE FROM questions WHERE choiceID = %s", (int(choiceID)))
+    cursor.execute("DELETE FROM choices WHERE choiceID = %s", (int(choiceID)))
