@@ -62,6 +62,15 @@ def loginUser(userName, passWord):
             return jsonify({"result": entry[0], "name": entry[1]})
     return jsonify({"result": "-1"})
 
+@app.route('/addSurvey/<userID>/<surveyName>', methods=['GET'])
+def addSurvey(userID):
+    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
+    cursor = db.cursor()
+    cursor.execute("SELECT * FROM surveys")
+    table = cursor.fetchall()
+    surveyID = len(table)==0? 0 : table[len(table)-1][0]+1
+    cursor.execute("INSERT INTO surveys VALUES(%s, %s)", (int(userID), int(surveyID), surveyName))
+
 @app.route('/deleteSurvey/<surveyID>', methods=['GET'])
 def deleteSurvey(surveyID):
     db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
