@@ -43,10 +43,12 @@ class SQLHandler:
     """
     def eject_tables(self):
         cursor = self.db_connection.cursor()
-        # cursor.execute("SHOW DATABASES;")
-        #cursor.execute(f"DROP DATABASE {self.credentials.database};")
-        cursor.execute(f"CREATE DATABASE {self.credentials.database};")
-
+        cursor.execute("SHOW TABLES;")
+        tables = cursor.fetchall()
+        tables = [table[0] for table in tables]
+        for table in tables:
+            cursor.execute(f"DROP TABLE {table}")
+        print("all tables successfully removed")
 
     """
     Repopulates an empty database with the SQL schema.
@@ -61,7 +63,7 @@ class SQLHandler:
             raise Exception("The database is not empty")
         else:
             # PROCEED WITH SCHEMA CREATION
-            
+
             # create users table
             cursor.execute("""
                 CREATE TABLE users (
@@ -142,4 +144,4 @@ class SQLHandler:
 
 credentials = SQLConnector("localhost", "feedback_friend", "root", "password", "LOCAL")
 handler = SQLHandler(credentials)
-handler.repopulate_schema()
+handler.eject_tables()
