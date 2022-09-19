@@ -1,70 +1,47 @@
-# Getting Started with Create React App
+# Feedback Friend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Note: HIGHLY recommended to use WSL/MacOS/Linux for running these commands and accessing OCI resources.
 
-## Available Scripts
+## Commands
 
-In the project directory, you can run:
+    npm install
 
-### `npm start`
+npm install is used to install all packages needed to run React. This command is necessary to run when first cloning the repo.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+    ./start.sh
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+    OR
 
-### `npm test`
+    # running npm run build to update frontend
+    npm run build
+    # specifying the flask main file so flask can find it. Does NOT work in powershell
+    export FLASK_APP=src/backend/main.py
+    # running flask run to start backend with updated frontend code
+    python3 -m flask run -p 3000
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The start bash script runs the command to build the React code into static files and start the backend server.
 
-### `npm run build`
+## Connecting to OCI Compute Instance
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+NOTE: this is currently accessing bennett-test1
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+(1) Get the ssh key from the #authentication channel in Discord.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+(2) Connect via SSH using the following command:
 
-### `npm run eject`
+    ssh -i ssh-key-2022-09-13.key opc@150.136.92.200
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+This should give you access to the database. If the SSH key throws an error about permissions, run this command:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+    chmod 600 ssh-key-2022-09-13.key
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+(3) To connect to MySQL using the same user that accesses it in the web application, run the following command:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+    mysql -u test -p
 
-## Learn More
+    password is in #authentication discord channel
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+(4) You should now be connected to the MySQL database in the compute instance.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
