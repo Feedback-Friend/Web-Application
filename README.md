@@ -1,6 +1,6 @@
 # Feedback Friend
 
-Note: HIGHLY recommended to use WSL/MacOS/Linux for running these commands and accessing OCI resources.
+InstNote: HIGHLY recommended to use WSL/MacOS/Linux for running these commands and accessing OCI resources.
 
 ## Commands
 
@@ -21,7 +21,7 @@ npm install is used to install all packages needed to run React. This command is
 
 The start bash script runs the command to build the React code into static files and start the backend server.
 
-## Connecting to OCI Compute Unit
+## Connecting to OCI Compute Instance
 
 NOTE: this is currently accessing bennett-test1
 
@@ -41,7 +41,7 @@ This should give you access to the database. If the SSH key throws an error abou
 
     password is in #authentication discord channel
 
-(4) You should now be connected to the MySQL database in the compute unit.
+(4) You should now be connected to the MySQL database in the compute instance.
 
 
 
