@@ -1,6 +1,6 @@
 # Feedback Friend
 
-InstNote: HIGHLY recommended to use WSL/MacOS/Linux for running these commands and accessing OCI resources.
+Note: HIGHLY recommended to use WSL/MacOS/Linux for running these commands and accessing OCI resources.
 
 ## Commands
 
