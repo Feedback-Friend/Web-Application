@@ -1,10 +1,10 @@
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import Clear from "@mui/icons-material/Clear";
-import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import React from "react";
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Clear from '@mui/icons-material/Clear';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import React from 'react';
 
 function Choice(props) {
   const { questions, setQuestions, index, choiceIndex, empty } = props;

@@ -1,6 +1,6 @@
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import React, { useState } from "react";
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -93,7 +93,7 @@ function Results(props) {
             {question !== "" && (survey.questions[question].type === "FRQ" ? (<List>
               {survey.responses.map((response, index) => {
                 return (
-                  <Box>
+                  <Box key={index}>
                     {index > 0 && <Divider />}
                     <ListItem key={index}>{response[question]}</ListItem>
                   </Box>
