@@ -112,6 +112,7 @@ def addFRQ(surveyID):
     for entry in table:
         questionID = entry[0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), 0, ""))
+    return questionID
 
 @app.route('/updateFRQ/<questionID>/<prompt>', methods=['GET'])
 def updateFRQ(questionID, prompt):
@@ -131,6 +132,7 @@ def addMCQ_S(surveyID):
     for entry in table:
         questionID = entry[0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), 1, ""))
+    return questionID
 
 @app.route('/addMCQ_M/<surveyID>', methods=['GET'])
 def addMCQ_M(surveyID):
@@ -140,6 +142,7 @@ def addMCQ_M(surveyID):
     for entry in table:
         questionID = entry[0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), 2, ""))
+    return questionID
 
 @app.route('/updateMCQ/<questionID>/<prompt>', methods=['GET'])
 def updateMCQ(questionID, prompt):
@@ -168,6 +171,7 @@ def addChoice(questionID):
     for entry in table:
         choiceID = entry[0]+1
     cursor.execute("INSERT INTO choices VALUES(%s, %s, %s)", (int(choiceID), int(questionID), ""))
+    return choiceID
 
 @app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
 def updateChoice(choiceID, prompt):
