@@ -1,3 +1,4 @@
+from random import choices
 from flask import Flask
 from flask.json import jsonify
 import mysql.connector as mysql
@@ -38,11 +39,8 @@ def test():
 # get call to register user to db
 @app.route('/registerUser/<firstName>/<lastName>/<userName>/<passWord>/<emailAddress>', methods=['GET'])
 def registerUser(firstName, lastName, userName, passWord, emailAddress):
-    #db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    #cursor = db.cursor()
-    cursor = engine.connect() # remote connection to oracle db in compute unit bennett-test1
+    cursor = engine.connect()
     table = cursor.execute("SELECT * FROM users")
-    #table = cursor.fetchall()
     userID = 0
     for entry in table:
         if entry[3] == userName or entry[5] == emailAddress:
@@ -53,93 +51,118 @@ def registerUser(firstName, lastName, userName, passWord, emailAddress):
 
 @app.route('/loginUser/<userName>/<passWord>', methods=['GET'])
 def loginUser(userName, passWord):
-    #db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    #cursor = db.cursor()
-    cursor = engine.connect() # remote connection to oracle db in compute unit bennett-test1
+    cursor = engine.connect()
     table = cursor.execute("SELECT * FROM users")
-    #table = cursor.fetchall()
     for entry in table:
         if entry[3] == userName and entry[4] == passWord:
             return jsonify({"result": entry[0], "name": entry[1]})
     return jsonify({"result": "-1"})
 
+@app.route('/getSurveys/<userID>/', methods=['GET'])
+def getSurveys(userID):
+    cursor = engine.connect()
+    table = cursor.execute("SELECT * FROM surveys WHERE user_id='%s'", (str(userID)))
+    surveys = []
+    for entry in table:
+        question = cursor.execute("SELECT * FROM questions WHERE survey_id='%s' LIMIT 1", (str(entry[0]))) #get single question
+        responses = cursor.execute("SELECT * FROM responeses WHERE question_id='%s'", (str(question[0]))) #get responses to question
+        count = 0
+        for row in responses:
+            count = count + 1
+        surveys.append(entry[0]+"_"+entry[3]+"_"+count) #return survey id, name, and responses
+    return surveys
+      
 @app.route('/addSurvey/<userID>/<surveyName>', methods=['GET'])
-def addSurvey(userID):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM surveys")
-    table = cursor.fetchall()
-    surveyID = 0 if len(table)==0 else table[len(table)-1][0]+1
-    cursor.execute("INSERT INTO surveys VALUES(%s, %s)", (int(userID), int(surveyID), surveyName))
+def addSurvey(userID, surveyName):
+    cursor = engine.connect()
+    table = cursor.execute("SELECT * FROM surveys")
+    surveyID = 0
+    for entry in table:
+        if entry[3] == surveyName:
+            return "-1"
+        surveyID = entry[0]+1
+    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s)", (int(userID), int(surveyID), "-1", surveyName))
+    return surveyID
 
 @app.route('/deleteSurvey/<surveyID>', methods=['GET'])
 def deleteSurvey(surveyID):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM questions WHERE surveyID='%s'", (str(surveyID)))
-    table = cursor.fetchall()
+    cursor = engine.connect()
+    table = cursor.execute("SELECT * FROM questions WHERE survey_id='%s'", (str(surveyID)))
     for entry in table:
         if entry[1] == surveyID:
-                cursor.execute("DELETE FROM choices WHERE questionID = %s",(entry[1]))
-                cursor.execute("DELETE FROM responses WHERE questionID = %s",(entry[1]))
-    cursor.execute("DELETE FROM questions WHERE surveyID = %s",(surveyID))
-    cursor.execute("DELETE FROM surveys WHERE surveyID = %s",(surveyID))
+                cursor.execute("DELETE FROM choices WHERE question_id = %s",(entry[1]))
+                cursor.execute("DELETE FROM responses WHERE question_id = %s",(entry[1]))
+    cursor.execute("DELETE FROM questions WHERE survey_id = %s",(surveyID))
+    cursor.execute("DELETE FROM surveys WHERE survey_id = %s",(surveyID))
+
+@app.route('/getQuestions/<surveyID>/', methods=['GET'])
+def getQuestions(surveyID):
+    cursor = engine.connect()
+    table = cursor.execute("SELECT * FROM questions WHERE survey_id='%s'", (str(surveyID)))
+    questions = []
+    for entry in table:
+        questions.append(entry[0]+"_"+entry[3]) #return question id and prompt
+    return questions
 
 @app.route('/addFRQ/<surveyID>', methods=['GET'])
 def addFRQ(surveyID):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM questions")
-    table = cursor.fetchall()
-    questionID = 0 if len(table)==0 else table[len(table)-1][0]+1
+    cursor = engine.connect()
+    table = cursor.execute("SELECT * FROM questions")
+    questionID = 0
+    for entry in table:
+        questionID = entry[0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), 0, ""))
 
 @app.route('/updateFRQ/<questionID>/<prompt>', methods=['GET'])
 def updateFRQ(questionID, prompt):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    cursor.execute("UPDATE questions SET prompt = '%s' WHERE questionID = %s", (int(questionID), prompt))
+    cursor = engine.connect()
+    cursor.execute("UPDATE questions SET prompt = '%s' WHERE question_id = %s", (int(questionID), prompt))
 
 @app.route('/deleteFRQ/<questionID>', methods=['GET'])
 def deleteFRQ(questionID):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    cursor.execute("DELETE FROM questions WHERE questionID = %s", (int(questionID)))
+    cursor = engine.connect()
+    cursor.execute("DELETE FROM questions WHERE question_id = %s", (int(questionID)))
 
 @app.route('/addMCQ_S/<surveyID>', methods=['GET'])
 def addMCQ_S(surveyID):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM questions")
-    table = cursor.fetchall()
-    questionID = 0 if len(table)==0 else table[len(table)-1][0]+1
+    cursor = engine.connect()
+    table = cursor.execute("SELECT * FROM questions")
+    questionID = 0
+    for entry in table:
+        questionID = entry[0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), 1, ""))
 
 @app.route('/addMCQ_M/<surveyID>', methods=['GET'])
 def addMCQ_M(surveyID):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM questions")
-    table = cursor.fetchall()
-    questionID = 0 if len(table)==0 else table[len(table)-1][0]+1
+    cursor = engine.connect()
+    table = cursor.execute("SELECT * FROM questions")
+    questionID = 0
+    for entry in table:
+        questionID = entry[0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), 2, ""))
 
 @app.route('/updateMCQ/<questionID>/<prompt>', methods=['GET'])
 def updateMCQ(questionID, prompt):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    cursor.execute("UPDATE questions SET prompt = '%s' WHERE questionID = %s", (int(questionID), prompt))
+    cursor = engine.connect()
+    cursor.execute("UPDATE questions SET prompt = '%s' WHERE question_id = %s", (int(questionID), prompt))
 
 @app.route('/deleteMCQ/<questionID>', methods=['GET'])
 def deleteMCQ(questionID):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    cursor.execute("DELETE FROM questions WHERE questionID = %s", (int(questionID)))
+    cursor = engine.connect()
+    cursor.execute("DELETE FROM questions WHERE question_id = %s", (int(questionID)))
+
+@app.route('/getChoices/<questionID>/', methods=['GET'])
+def getChoices(questionID):
+    cursor = engine.connect()
+    table = cursor.execute("SELECT * FROM choices WHERE question_id='%s'", (str(questionID)))
+    choices = []
+    for entry in table:
+        choices.append(entry[0]+"_"+entry[2]) #return choice id and answer
+    return choices
 
 @app.route('/addChoice/<questionID>', methods=['GET'])
 def addChoice(questionID):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
+    cursor = engine.connect()
     cursor.execute("SELECT * FROM choices")
     table = cursor.fetchall()
     choiceID = 0 if len(table)==0 else table[len(table)-1][0]+1
@@ -147,20 +170,17 @@ def addChoice(questionID):
 
 @app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
 def updateChoice(choiceID, prompt):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    cursor.execute("UPDATE choices SET prompt = '%s' WHERE choiceID = %s", (int(choiceID), prompt))
+    cursor = engine.connect()
+    cursor.execute("UPDATE choices SET prompt = '%s' WHERE choice_id = %s", (int(choiceID), prompt))
 
 @app.route('/deleteChoice/<choiceID>', methods=['GET'])
 def deleteChoice(choiceID):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    cursor.execute("DELETE FROM choices WHERE choiceID = %s", (int(choiceID)))
+    cursor = engine.connect()
+    cursor.execute("DELETE FROM choices WHERE choice_id = %s", (int(choiceID)))
 
 @app.route('/setResponse/<questionID>/<prompt>', methods=['GET'])
 def setResponse(questionID, prompt):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
+    cursor = engine.connect()
     cursor.execute("SELECT * FROM choices")
     table = cursor.fetchall()
     responseID = 0 if len(table)==0 else table[len(table)-1][0]+1
