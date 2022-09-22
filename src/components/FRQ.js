@@ -1,8 +1,8 @@
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import Clear from "@mui/icons-material/Clear";
-import React from "react";
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Clear from '@mui/icons-material/Clear';
+import React from 'react';
 
 function FRQ(props) {
   const { questions, setQuestions, index, empty } = props;

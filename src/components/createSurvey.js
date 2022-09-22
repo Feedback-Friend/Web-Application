@@ -1,26 +1,20 @@
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import FRQ from "./FRQ";
-import MC from "./MC";
-import MCDialog from "./MCDialog";
-import { Link } from "react-router-dom";
-import Alert from "@mui/material/Alert";
-import Grid from "@mui/material/Grid";
-import Container from "@mui/material/Container";
-import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
-import React, { useState } from "react";
-import Nav from "./nav";
-import PreviewDialog from "./previewDialog";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import FRQ from './FRQ';
+import MC from './MC';
+import MCDialog from './MCDialog';
+import { Link } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
+import Grid from '@mui/material/Grid';
+import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import React, { useState } from 'react';
+import Nav from './nav';
+import PreviewDialog from './previewDialog';
 
 function CreateSurvey(props) {
-  const { surveys, setSurveys } = props;
-
-  // Contains the survey name
-  const [name, setName] = useState('');
-
-  // Contains survey questions
-  const [questions, setQuestions] = useState([]);
+  const { surveys, setSurveys, name, setName, questions, setQuestions } = props;
 
   // On survey submission, determines whether errors should be displayed (if there are any empty fields)
   const [empty, setEmpty] = useState(false);
@@ -115,6 +109,7 @@ function CreateSurvey(props) {
                 label="Survey Name"
                 variant="outlined"
                 onChange={(e) => { setName(e.target.value) }}
+                value={name}
               />
               <Button
                 variant="contained"

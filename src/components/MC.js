@@ -1,11 +1,11 @@
-import Box from "@mui/material/Box";
-import TextField from "@mui/material/TextField";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
-import Clear from "@mui/icons-material/Clear";
-import Button from "@mui/material/Button";
-import Choice from "./choice";
-import React from "react";
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Clear from '@mui/icons-material/Clear';
+import Button from '@mui/material/Button';
+import Choice from './choice';
+import React from 'react';
 
 function MC(props) {
   const { questions, setQuestions, index, empty } = props;

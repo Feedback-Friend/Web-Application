@@ -1,10 +1,11 @@
-import "./App.css";
-import React, { useState } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Home from "./components/home";
-import CreateSurvey from "./components/createSurvey";
-import TakeSurvey from "./components/takeSurvey";
-import Results from "./components/results";
+import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './components/home';
+import CreateSurvey from './components/createSurvey';
+import CreateFromExisting from './components/createFromExisting';
+import TakeSurvey from './components/takeSurvey';
+import Results from './components/results';
 
 function Homepage() {
   /* 
@@ -21,6 +22,12 @@ function Homepage() {
   */
   const [surveyIndex, setSurveyIndex] = useState(0);
 
+  // Contains the survey name
+  const [name, setName] = useState('');
+
+  // Contains survey questions
+  const [questions, setQuestions] = useState([]);
+
   return (
     <Router>
       {/* React Router routes to pages by loading different elements depending on the path */}
@@ -30,14 +37,21 @@ function Homepage() {
           exact
           path="/"
           element={
-            <Home surveys={surveys} setSurveys={setSurveys} setSurveyIndex={setSurveyIndex} />
+            <Home surveys={surveys} setSurveys={setSurveys} setSurveyIndex={setSurveyIndex} setName={setName} setQuestions={setQuestions} />
           }
         />
         {/* CreateSurvey page */}
         <Route
           path="/create"
           element={
-            <CreateSurvey surveys={surveys} setSurveys={setSurveys} />
+            <CreateSurvey surveys={surveys} setSurveys={setSurveys} name={name} setName={setName} questions={questions} setQuestions={setQuestions} />
+          }
+        />
+        {/* CreateFromExisting page */}
+        <Route
+          path="/createFromExisting"
+          element={
+            <CreateFromExisting surveys={surveys} setName={setName} setQuestions={setQuestions} />
           }
         />
         {/* TakeSurvey page */}

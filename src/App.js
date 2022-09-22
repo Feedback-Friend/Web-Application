@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import LoginPage from './components/LoginPage'
-import RegisterPage from './components/RegisterPage'
+import LoginPage from './components/loginPage'
+import RegisterPage from './components/registerPage'
 import Homepage from './Homepage'
 
 // This function sets up the URL routing for the web application
@@ -10,7 +10,7 @@ function App() {
     const [userID, setUserID] = React.useState("")
     const [name, setName] = React.useState("")
 
-    if(userID === "a") {
+    if(userID === "") {
         // user is not logged in yet
         return (
             <BrowserRouter>
