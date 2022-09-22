@@ -1,5 +1,11 @@
 import React from 'react'
-import { Link, Navigate, useNavigate } from 'react-router-dom'
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Container from '@mui/material/Container';
+import { Link, TextField } from '@mui/material';
+import NavLogin from './navLogin';
 
 function RegisterPage() {
     const [userInfo, setUserInfo] = React.useState({})
@@ -30,46 +36,47 @@ function RegisterPage() {
   
     return (
         <>
-        <h3>Register</h3>
-    
-        {/* TODO: check if methods below are the "safe" way to handle usernames and passwords */}
-        <form onSubmit={submit}>
-            <label>
-                First Name:&nbsp; {/* &nbsp; is used to add a space when HTML doesn't consider spaces text */}
-                <input type="text" onChange={updateUserInfo} name="firstName" required />
-            </label>
-            <br/><br/>
-            <label>
-                Last Name:&nbsp; {/* &nbsp; is used to add a space when HTML doesn't consider spaces text */}
-                <input type="text" onChange={updateUserInfo} name="lastName" required />
-            </label>
-            <br/><br/>
-            <label>
-                Email:&nbsp;
-                <input type="text" onChange={updateUserInfo} name="email" required />
-            </label>
-            <br/><br/>
-            <label>
-                Username:&nbsp;
-                <input type="text" onChange={updateUserInfo} name="username" required />
-            </label>
-            <br/><br/>
-            <label>
-                Password:&nbsp;
-                <input type="password" onChange={updateUserInfo} name="password" required />
-            </label>
-            <br/><br/>
-            <label>
-                Retype password:&nbsp;
-                <input type="password" onChange={updateUserInfo} name="retypePassword" required />
-            </label>
-            <br/><br/>
-            <input type="submit" value="Register" />
-        </form>
-        
-        <br/><br/>
-        Already have an account?&nbsp;
-        <Link to="/">Log in</Link>
+        <Box>
+            <NavLogin />
+            <Container sx={{ width: 1 / 2 }} spacing={2}>
+                {/* register area */}
+                <Grid container spacing={2} sx={{ mb: 2 }}>
+                    <Grid item xs={12} textAlign="center" sx={{ mt: 2 }}>
+                        <Typography variant="h5">Register</Typography>
+                    </Grid>
+                    <Grid item xs={12} textAlign="center">
+                        <TextField name="firstName" type="text" label="First Name" variant="outlined" onChange={updateUserInfo} required />
+                    </Grid>
+                    <Grid item xs={12} textAlign="center">
+                        <TextField name="lastName" type="text" label="Last Name" variant="outlined" onChange={updateUserInfo} required />
+                    </Grid>
+                    <Grid item xs={12} textAlign="center">
+                        <TextField name="email" type="text" label="Email" variant="outlined" onChange={updateUserInfo} required />
+                    </Grid>
+                    <Grid item xs={12} textAlign="center">
+                        <TextField name="username" type="text" label="Username" variant="outlined" onChange={updateUserInfo} required />
+                    </Grid>
+                    <Grid item xs={12} textAlign="center">
+                        <TextField name="password" type="password" label="Password" variant="outlined" onChange={updateUserInfo} required />
+                    </Grid>
+                    <Grid item xs={12} textAlign="center">
+                        <TextField name="retypePassword" type="password" label="Retype Password" variant="outlined" onChange={updateUserInfo} required />
+                    </Grid>
+                    <Grid item xs={12} textAlign="center">
+                        <Button variant="contained" onClick={submit}>Submit</Button>
+                    </Grid>
+                </Grid>
+                {/* login reroute text and button */}
+                <Grid container spacing={2} sx={{ mb: 2 }}>
+                    <Grid item xs={12} textAlign="center" sx={{ mt: 2 }}>
+                        <Typography variant="p">
+                            Already have an account?&nbsp;
+                            <Link href="/">Log In</Link>
+                        </Typography>
+                    </Grid>
+                </Grid>
+            </Container>
+        </Box >
         </>
     )
 }
