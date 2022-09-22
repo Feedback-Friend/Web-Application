@@ -43,12 +43,11 @@ def registerUser(firstName, lastName, userName, passWord, emailAddress):
     cursor = engine.connect() # remote connection to oracle db in compute unit bennett-test1
     table = cursor.execute("SELECT * FROM users")
     #table = cursor.fetchall()
-    len = 0
+    userID = 0
     for entry in table:
         if entry[3] == userName or entry[5] == emailAddress:
             return "-1"
-        len = len + 1
-    userID = 0 if len==0 else table[len-1][0]+1
+        userID = entry[0]+1
     cursor.execute("INSERT INTO users VALUES(%s, %s, %s, %s, %s, %s)", (int(userID), firstName, lastName, userName, passWord, emailAddress))
     return str(userID - 1)
 
