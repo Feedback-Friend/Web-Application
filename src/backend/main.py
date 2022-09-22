@@ -11,7 +11,7 @@ app = Flask(__name__, static_folder='../../build/', static_url_path='/')
 tunnel = sshtunnel.SSHTunnelForwarder(
     ('150.136.92.200', 22), 
     ssh_username='opc', 
-    ssh_pkey="~/ssh-key-2022-09-13.key",
+    ssh_pkey="ssh-key-2022-09-13.key",
     remote_bind_address=('localhost', 3306)
 )
 
