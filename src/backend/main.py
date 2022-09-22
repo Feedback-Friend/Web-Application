@@ -11,7 +11,7 @@ app = Flask(__name__, static_folder='../../build/', static_url_path='/')
 tunnel = sshtunnel.SSHTunnelForwarder(
     ('150.136.92.200', 22), 
     ssh_username='opc', 
-    ssh_pkey="~/ssh-key-2022-09-13.key",
+    ssh_pkey="ssh-key-2022-09-13.key",
     remote_bind_address=('localhost', 3306)
 )
 
@@ -38,25 +38,27 @@ def test():
 # get call to register user to db
 @app.route('/registerUser/<firstName>/<lastName>/<userName>/<passWord>/<emailAddress>', methods=['GET'])
 def registerUser(firstName, lastName, userName, passWord, emailAddress):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    # cursor = engine.connect() # remote connection to oracle db in compute unit bennett-test1
-    cursor.execute("SELECT * FROM users")
-    table = cursor.fetchall()
+    #db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
+    #cursor = db.cursor()
+    cursor = engine.connect() # remote connection to oracle db in compute unit bennett-test1
+    table = cursor.execute("SELECT * FROM users")
+    #table = cursor.fetchall()
+    len = 0
     for entry in table:
         if entry[3] == userName or entry[5] == emailAddress:
             return "-1"
-    userID = 0 if len(table)==0 else table[len(table)-1][0]+1
+        len = len + 1
+    userID = 0 if len==0 else table[len-1][0]+1
     cursor.execute("INSERT INTO users VALUES(%s, %s, %s, %s, %s, %s)", (int(userID), firstName, lastName, userName, passWord, emailAddress))
     return str(userID - 1)
 
 @app.route('/loginUser/<userName>/<passWord>', methods=['GET'])
 def loginUser(userName, passWord):
-    db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
-    cursor = db.cursor()
-    # cursor = engine.connect() # remote connection to oracle db in compute unit bennett-test1
-    cursor.execute("SELECT * FROM users")
-    table = cursor.fetchall()
+    #db = mysql.connect(user="root", password="password", host="localhost", database="test", auth_plugin="mysql_native_password")
+    #cursor = db.cursor()
+    cursor = engine.connect() # remote connection to oracle db in compute unit bennett-test1
+    table = cursor.execute("SELECT * FROM users")
+    #table = cursor.fetchall()
     for entry in table:
         if entry[3] == userName and entry[4] == passWord:
             return jsonify({"result": entry[0], "name": entry[1]})
