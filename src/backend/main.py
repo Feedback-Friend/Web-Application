@@ -163,9 +163,10 @@ def getChoices(questionID):
 @app.route('/addChoice/<questionID>', methods=['GET'])
 def addChoice(questionID):
     cursor = engine.connect()
-    cursor.execute("SELECT * FROM choices")
-    table = cursor.fetchall()
-    choiceID = 0 if len(table)==0 else table[len(table)-1][0]+1
+    table = cursor.execute("SELECT * FROM choices")
+    choiceID = 0
+    for entry in table:
+        choiceID = entry[0]+1
     cursor.execute("INSERT INTO choices VALUES(%s, %s, %s)", (int(choiceID), int(questionID), ""))
 
 @app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
@@ -177,11 +178,3 @@ def updateChoice(choiceID, prompt):
 def deleteChoice(choiceID):
     cursor = engine.connect()
     cursor.execute("DELETE FROM choices WHERE choice_id = %s", (int(choiceID)))
-
-@app.route('/setResponse/<questionID>/<prompt>', methods=['GET'])
-def setResponse(questionID, prompt):
-    cursor = engine.connect()
-    cursor.execute("SELECT * FROM choices")
-    table = cursor.fetchall()
-    responseID = 0 if len(table)==0 else table[len(table)-1][0]+1
-    cursor.execute("INSERT INTO responses VALUES(%s, %s, %s)", (int(responseID), int(questionID), prompt))
