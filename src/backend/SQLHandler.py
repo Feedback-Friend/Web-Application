@@ -144,4 +144,4 @@ class SQLHandler:
 
 credentials = SQLConnector("localhost", "feedback_friend", "root", "password", "LOCAL")
 handler = SQLHandler(credentials)
-handler.eject_tables()
+handler.repopulate_schema()
