@@ -80,6 +80,13 @@ function Homepage(props) {
             <Results surveys={surveys} />
           }
         />
+        {/* Profile Page*/}
+        <Route 
+          path="myProfile"
+          element={
+            <myProfile userID={userID}/>
+          }
+        />
       </Routes>
     </Router>
   );

@@ -33,7 +33,7 @@ function Nav() {
                     </Typography>
                     <Box textAlign="right" sx={{ display: { xs: 'none', md: 'flex' } }}>
                         <Button color="inherit" component={Link} to="/">Home</Button>
-                        <Button color="inherit">Profile</Button>
+                        <Button color="inherit" component={Link} to="/myProfile">Profile</Button>
                         <Button color="inherit">Contacts</Button>
                         <Button color="inherit" component={Link} to="/results">Results</Button>
                         <Button color="inherit" variant="outlined">Log out</Button>
@@ -63,7 +63,7 @@ function Nav() {
                             }}
                         >
                             <MenuItem component={Link} to="/" onClick={handleCloseNavMenu}>Home</MenuItem>
-                            <MenuItem onClick={handleCloseNavMenu}>Profile</MenuItem>
+                            <MenuItem onClick={handleCloseNavMenu} component={Link} to="/myProfile" >Profile</MenuItem>
                             <MenuItem onClick={handleCloseNavMenu}>Contacts</MenuItem>
                             <MenuItem component={Link} to="/results" onClick={handleCloseNavMenu}>Results</MenuItem>
                             <Divider />
