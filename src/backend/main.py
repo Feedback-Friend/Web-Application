@@ -70,11 +70,19 @@ def updateLastName(userID, lastName):
 @app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
 def updateEmailAddress(userID, emailAddress):
     cursor = engine.connect()
+    table = cursor.execute("SELECT * FROM users")
+    for entry in table:
+        if entry[5] == emailAddress:
+            return "-1"
     cursor.execute("UPDATE users SET email_address = '%s' WHERE user_id = %s", (int(emailAddress), userID))
 
 @app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
 def updateUserName(userID, userName):
     cursor = engine.connect()
+    table = cursor.execute("SELECT * FROM users")
+    for entry in table:
+        if entry[3] == userName :
+            return "-1"
     cursor.execute("UPDATE users SET user_name = '%s' WHERE user_id = %s", (int(userName), userID))
 
 @app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
