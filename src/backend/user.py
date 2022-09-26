@@ -18,25 +18,50 @@ def loginUser(cursor, userName, passWord):
             return jsonify({"result": entry[0], "name": entry[1]})
     return jsonify({"result": "-1"})
 
+def getFirstName(cursor, userID):
+    user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
+    for entry in user:
+        return entry[1]
+
 def updateFirstName(cursor, userID, firstName):
-    cursor.execute("UPDATE users SET first_name = '%s' WHERE user_id = %s", (int(firstName), userID))
+    cursor.execute("UPDATE users SET first_name = '%s' WHERE user_id = %s", (firstName, int(userID)))
+
+def getLasttName(cursor, userID):
+    user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
+    for entry in user:
+        return entry[2]
 
 def updateLastName(cursor, userID, lastName):
-    cursor.execute("UPDATE users SET last_name = '%s' WHERE user_id = %s", (int(lastName), userID))
+    cursor.execute("UPDATE users SET last_name = '%s' WHERE user_id = %s", (lastName, int(userID)))
 
-def updateEmailAddress(cursor, userID, emailAddress):
-    table = cursor.execute("SELECT * FROM users")
-    for entry in table:
-        if entry[5] == emailAddress:
-            return "-1"
-    cursor.execute("UPDATE users SET email_address = '%s' WHERE user_id = %s", (int(emailAddress), userID))
+def getUserName(cursor, userID):
+    user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
+    for entry in user:
+        return entry[3]
 
 def updateUserName(cursor, userID, userName):
     table = cursor.execute("SELECT * FROM users")
     for entry in table:
         if entry[3] == userName :
             return "-1"
-    cursor.execute("UPDATE users SET user_name = '%s' WHERE user_id = %s", (int(userName), userID))
+    cursor.execute("UPDATE users SET user_name = '%s' WHERE user_id = %s", (userName, int(userID)))
 
+def getPassWord(cursor, userID):
+    user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
+    for entry in user:
+        return entry[4]
+        
 def updatePassWord(cursor, userID, passWord):
-    cursor.execute("UPDATE users SET pass_word = '%s' WHERE user_id = %s", (int(passWord), userID))
+    cursor.execute("UPDATE users SET pass_word = '%s' WHERE user_id = %s", (passWord, int(userID)))
+
+def getEmailAddress(cursor, userID):
+    user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
+    for entry in user:
+        return entry[5]
+
+def updateEmailAddress(cursor, userID, emailAddress):
+    table = cursor.execute("SELECT * FROM users")
+    for entry in table:
+        if entry[5] == emailAddress:
+            return "-1"
+    cursor.execute("UPDATE users SET email_address = '%s' WHERE user_id = %s", (emailAddress, int(userID)))
