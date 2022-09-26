@@ -4,6 +4,8 @@ from flask.json import jsonify
 from sqlalchemy import create_engine
 import sshtunnel
 
+from user import *
+
 # the build files for react go in the specified static folder, which allows flask to access react's frontend
 app = Flask(__name__, static_folder='../../build/', static_url_path='/')
 
@@ -39,57 +41,38 @@ def test():
 @app.route('/registerUser/<firstName>/<lastName>/<userName>/<passWord>/<emailAddress>', methods=['GET'])
 def registerUser(firstName, lastName, userName, passWord, emailAddress):
     cursor = engine.connect()
-    table = cursor.execute("SELECT * FROM users")
-    userID = 0
-    for entry in table:
-        if entry[3] == userName or entry[5] == emailAddress:
-            return "-1"
-        userID = entry[0]+1
-    cursor.execute("INSERT INTO users VALUES(%s, %s, %s, %s, %s, %s)", (int(userID), firstName, lastName, userName, passWord, emailAddress))
-    return str(userID - 1)
+    return registerUser(cursor, firstName, lastName, userName, passWord, emailAddress)
 
 @app.route('/loginUser/<userName>/<passWord>', methods=['GET'])
 def loginUser(userName, passWord):
     cursor = engine.connect()
-    table = cursor.execute("SELECT * FROM users")
-    for entry in table:
-        if entry[3] == userName and entry[4] == passWord:
-            return jsonify({"result": entry[0], "name": entry[1]})
-    return jsonify({"result": "-1"})
+    return loginUser(cursor, userName, passWord):
 
 @app.route('/updateFirstName/<userID>/<firstName>', methods=['GET'])
 def updateFirstName(userID, firstName):
     cursor = engine.connect()
-    cursor.execute("UPDATE users SET first_name = '%s' WHERE user_id = %s", (int(firstName), userID))
+    updateFirstName(cursor, userID, firstName):
 
 @app.route('/updateLastName/<userID>/<lastName>', methods=['GET'])
 def updateLastName(userID, lastName):
     cursor = engine.connect()
-    cursor.execute("UPDATE users SET last_name = '%s' WHERE user_id = %s", (int(lastName), userID))
+    updateLastName(cursor, userID, lastName)
 
 @app.route('/updateEmailAddress/<userID>/<emailAddress>', methods=['GET'])
 def updateEmailAddress(userID, emailAddress):
     cursor = engine.connect()
-    table = cursor.execute("SELECT * FROM users")
-    for entry in table:
-        if entry[5] == emailAddress:
-            return "-1"
-    cursor.execute("UPDATE users SET email_address = '%s' WHERE user_id = %s", (int(emailAddress), userID))
+    updateEmailAddress(cursor, userID, emailAddress)
 
 @app.route('/updateUserName/<userID>/<userName>', methods=['GET'])
 def updateUserName(userID, userName):
     cursor = engine.connect()
-    table = cursor.execute("SELECT * FROM users")
-    for entry in table:
-        if entry[3] == userName :
-            return "-1"
-    cursor.execute("UPDATE users SET user_name = '%s' WHERE user_id = %s", (int(userName), userID))
+    updateUserName(cursor, userID, userName)
 
 @app.route('/updatePassWord/<userID>/<passWord>', methods=['GET'])
 def updatePassWord(userID, passWord):
     cursor = engine.connect()
-    cursor.execute("UPDATE users SET pass_word = '%s' WHERE user_id = %s", (int(passWord), userID))
-    
+    updatePassWord(cursor, userID, passWord)
+
 @app.route('/getSurveys/<userID>', methods=['GET'])
 def getSurveys(userID):
     cursor = engine.connect()
