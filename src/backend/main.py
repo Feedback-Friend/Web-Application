@@ -43,10 +43,10 @@ def registerUser(firstName, lastName, userName, passWord, emailAddress):
     userID = 0
     for entry in table:
         if entry[3] == userName or entry[5] == emailAddress:
-            return jsonify({"result": "-1"})
+            return "-1"
         userID = entry[0]+1
     cursor.execute("INSERT INTO users VALUES(%s, %s, %s, %s, %s, %s)", (int(userID), firstName, lastName, userName, passWord, emailAddress))
-    return jsonify({"result": str(userID - 1)})
+    return str(userID - 1)
 
 @app.route('/loginUser/<userName>/<passWord>', methods=['GET'])
 def loginUser(userName, passWord):
@@ -89,7 +89,7 @@ def updateUserName(userID, userName):
 def updatePassWord(userID, passWord):
     cursor = engine.connect()
     cursor.execute("UPDATE users SET pass_word = '%s' WHERE user_id = %s", (int(passWord), userID))
-
+    
 @app.route('/getSurveys/<userID>', methods=['GET'])
 def getSurveys(userID):
     cursor = engine.connect()
@@ -126,6 +126,7 @@ def deleteSurvey(surveyID):
             cursor.execute("DELETE FROM responses WHERE question_id = %s",(entry[0]))
     cursor.execute("DELETE FROM questions WHERE survey_id = %s",(str(surveyID)))
     cursor.execute("DELETE FROM surveys WHERE survey_id = %s",(str(surveyID)))
+    return jsonify({'result': 1})
 
 @app.route('/getQuestions/<surveyID>', methods=['GET'])
 def getQuestions(surveyID):
@@ -154,7 +155,7 @@ def addFRQ(surveyID):
     for entry in table:
         questionID = entry[0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), 0, ""))
-    return jsonify({'result': questionID})
+    return questionID
 
 @app.route('/updateFRQ/<questionID>/<prompt>', methods=['GET'])
 def updateFRQ(questionID, prompt):
@@ -174,7 +175,7 @@ def addMCQ_S(surveyID):
     for entry in table:
         questionID = entry[0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), 1, ""))
-    return jsonify({'result': questionID})
+    return questionID
 
 @app.route('/addMCQ_M/<surveyID>', methods=['GET'])
 def addMCQ_M(surveyID):
@@ -184,7 +185,7 @@ def addMCQ_M(surveyID):
     for entry in table:
         questionID = entry[0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), 2, ""))
-    return jsonify({'result': questionID})
+    return questionID
 
 @app.route('/updateMCQ/<questionID>/<prompt>', methods=['GET'])
 def updateMCQ(questionID, prompt):
@@ -203,7 +204,7 @@ def getChoices(questionID):
     choices = []
     for entry in table:
         choices.append(entry[2]) #return choice id and answer
-    return jsonify({'result': choices})
+    return choices
 
 @app.route('/addChoice/<questionID>/<prompt>', methods=['POST'])
 def addChoice(questionID, prompt):
