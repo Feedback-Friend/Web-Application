@@ -1,7 +1,8 @@
 import React from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import LoginPage from './components/LoginPage'
-import RegisterPage from './components/RegisterPage'
+import LoginPage from './components/loginPage'
+import RegisterPage from './components/registerPage'
+import Homepage from './Homepage'
 
 // This function sets up the URL routing for the web application
 // Reference: https://reactrouter.com/en/v6.3.0/getting-started/tutorial
@@ -9,7 +10,7 @@ function App() {
     const [userID, setUserID] = React.useState("")
     const [name, setName] = React.useState("")
 
-    if(userID === "") {
+    if (userID === "") {
         // user is not logged in yet
         return (
             <BrowserRouter>
@@ -26,7 +27,9 @@ function App() {
         )
     } else {
         // user is logged in and their page should be routed accordingly
-        return <h1>Hello, {name}!</h1>
+        return (
+            <Homepage userID={userID} />
+        )
     }
 }
 
