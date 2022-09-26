@@ -9,12 +9,18 @@ import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Nav from './nav';
 import PreviewDialog from './previewDialog';
 
 function CreateSurvey(props) {
-  const { surveys, setSurveys, name, setName, questions, setQuestions } = props;
+  const { surveyID, userID, update, setUpdate } = props;
+
+  // Contains survey name
+  const [name, setName] = useState('');
+
+  // Contains survey questions
+  const [questions, setQuestions] = useState([]);
 
   // On survey submission, determines whether errors should be displayed (if there are any empty fields)
   const [empty, setEmpty] = useState(false);
@@ -24,6 +30,37 @@ function CreateSurvey(props) {
 
   // Determines whether the Dialog component for previewing surveys is open or closed
   const [openPreview, setOpenPreview] = useState(false);
+
+
+  // If a survey is created from existing, gets the questions associated with that survey on page load
+  useEffect(() => {
+    if (surveyID !== -1) {
+      getFromExisting();
+    }
+  }, []);
+
+  // Gets the question types, prompts, and choices associated with an existing survey and populates the questions state
+  const getFromExisting = async () => {
+    const requestOptions = {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    const questions = [];
+    let req = await fetch("/getQuestions/" + surveyID, requestOptions)
+      .then(response => { return response.json() });
+    for (let question of req) {
+      req = await fetch("/getChoices/" + question.id)
+        .then(response => { return response.json() });
+      const newQuestion = {
+        type: question.type,
+        prompt: question.prompt,
+        choices: req
+      };
+      questions.push(newQuestion);
+    }
+    setQuestions(questions);
+  };
 
   // Opens the Dialog component for creating MC questions
   const handleOpenMC = () => {
@@ -38,7 +75,7 @@ function CreateSurvey(props) {
   // Adds an FRQ question object to the questions list. Question fields include 'type', 'prompt', and 'choices'.
   const addFRQ = () => {
     const question = {
-      type: "FRQ",
+      type: 0,
       prompt: "",
       choices: [],
     };
@@ -49,10 +86,10 @@ function CreateSurvey(props) {
   // Checks if no questions have been created or if any fields are empty, including survey name, question prompts, and MC choices.
   const isEmpty = questions.some(
     (question) =>
-      question.prompt === "" ||
-      (question.type === "MC" &&
-        question.choices.some((choice) => choice === ""))
-  ) || !name || questions.length === 0;
+      question.prompt.trim() === "" ||
+      (question.type === 1 &&
+        question.choices.some((choice) => choice.trim() === ""))
+  ) || !name.trim() || questions.length === 0;
 
   // On submission, prevents submission and displays errors if any fields are empty. Otherwise, adds the survey to the surveys list.
   const handleSubmit = (e) => {
@@ -60,9 +97,39 @@ function CreateSurvey(props) {
       e.preventDefault();
       setEmpty(true);
     } else {
-      setSurveys([...surveys, { name: name, questions: questions, responses: [] }]);
+      setUpdate({ creating: true, deleting: update.deleting, message: "Creating Survey..." });
+      addSurvey().then(response => setUpdate({ creating: false, deleting: update.deleting, message: update.message }));
     }
   };
+
+  // Adds survey and its related questions and answer choices to the database
+  const addSurvey = async () => {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    let req = await fetch("/addSurvey/" + userID + "/" + name, requestOptions)
+      .then(response => { return response.json() });
+    const surveyID = req.result;
+
+    if (parseInt(surveyID) === -1) {
+      alert("Error: A survey with this name already exists.");
+    } else {
+      // Add questions
+      for (let question of questions) {
+        req = await fetch("/addQuestion/" + surveyID + "/" + question.type + "/" + question.prompt, requestOptions)
+          .then(response => { return response.json() });
+        const questionID = req.result;
+
+        // If a question has choices (i.e. is a MCQ), add them to the database
+        for (let choice in question.choices) {
+          req = await fetch("/addChoice/" + questionID + "/" + question.choices[choice], requestOptions)
+            .then(response => { return response.json() });
+        }
+      }
+    }
+  }
 
   return (
     <Box>
@@ -71,7 +138,7 @@ function CreateSurvey(props) {
         <Grid container spacing={2}>
           <Grid item xs={10}>
             {questions.map((question, index) => {
-              return question.type === "FRQ" ? (
+              return question.type === 0 ? (
                 <FRQ
                   questions={questions}
                   setQuestions={setQuestions}

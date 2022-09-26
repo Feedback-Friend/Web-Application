@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -13,11 +13,20 @@ import Clear from "@mui/icons-material/Clear";
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
+import Snackbar from '@mui/material/Snackbar';
 import { Link } from 'react-router-dom';
 import Nav from './nav';
 
 function Home(props) {
-    const { surveys, setSurveys, setSurveyIndex, setName, setQuestions } = props;
+    const { surveys, getSurveys, setSurveyID, setSurveyIndex, update, setUpdate } = props;
+
+    // Retrieves surveys from the database only after creating and deleting operations are completed
+    useEffect(() => {
+        setSurveyID(-1);
+        if (!update.deleting && !update.creating) {
+            getSurveys();
+        }
+    }, [update]);
 
     // Determines whether the Dialog component for deleting surveys is open or closed
     const [open, setOpen] = useState(false);
@@ -28,27 +37,33 @@ function Home(props) {
     }
 
     // Opens the Dialog component for deleting surveys
-    const handleOpen = () => {
+    const handleOpen = (survey, e) => {
         setOpen(true);
+        setSurveyToDelete(survey);
     }
 
     // Closes the Dialog component for deleting surveys
     const handleClose = () => {
         setOpen(false);
+        setSurveyToDelete('');
     }
 
-    // Deletes the survey at the given index
-    const deleteSurvey = (index) => (e) => {
-        let newArr = [...surveys];
-        newArr.splice(index, 1);
-        setSurveys(newArr);
+    // Contains the name and id of the survey up for deletion
+    const [surveyToDelete, setSurveyToDelete] = useState('');
+
+    // Deletes the survey with the given id
+    const deleteSurvey = async (id, e) => {
         handleClose();
-    }
-
-    // If creating a survey from scratch, resets the name and questions states to empty values
-    const fromScratch = () => {
-        setName('');
-        setQuestions([]);
+        setUpdate({ creating: update.creating, deleting: true, message: "Deleting Survey..." });
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+        };
+        const req = await fetch("/deleteSurvey/" + id, requestOptions)
+            .then(response => {
+                setUpdate({ creating: update.creating, deleting: false, message: update.message });
+                return response.json();
+            });
     }
 
     return (
@@ -59,35 +74,25 @@ function Home(props) {
                     <Grid item xs={12}>
                         <Typography variant="h2" textAlign="center" sx={{ mt: 2 }}>Active surveys: {surveys.length}</Typography>
                     </Grid>
-                    {surveys.map((survey, index) => {
+                    {surveys.map((survey) => {
                         return (
-                            <Grid item xs={6} key={index}>
+                            <Grid item xs={6} key={survey.id}>
                                 <Card>
                                     <CardHeader
                                         action={
-                                            <IconButton onClick={handleOpen}>
+                                            <IconButton onClick={(e) => handleOpen(survey, e)} disabled={update.creating || update.deleting}>
                                                 <Clear />
                                             </IconButton>
                                         }
                                         title={survey.name}
                                     />
                                     <CardContent>
-                                        <Typography variant="h6">{survey.questions.length} Question{survey.questions.length !== 1 && "s"}</Typography>
-                                        <Typography variant="h6">{survey.responses.length} Response{survey.responses.length !== 1 && "s"}</Typography>
+                                        <Typography variant="h6">{survey.count} Response{survey.count !== 1 && "s"}</Typography>
                                     </CardContent>
-                                    <CardActions>
+                                    {/*<CardActions>
                                         <Button component={Link} to="/survey" onClick={handleClick(index)}>Take Survey</Button>
-                                    </CardActions>
+                                    </CardActions>*/}
                                 </Card>
-                                <Dialog open={open} onClose={handleClose}>
-                                    <DialogTitle>
-                                        Are you sure you want to delete {survey.name}?
-                                    </DialogTitle>
-                                    <DialogContent sx={{ textAlign: "center" }}>
-                                        <Button onClick={deleteSurvey(index)}>Yes</Button>
-                                        <Button onClick={handleClose}>No</Button>
-                                    </DialogContent>
-                                </Dialog>
                             </Grid>
                         );
                     })}
@@ -97,13 +102,26 @@ function Home(props) {
                         <Typography variant="h5">Create a new survey...</Typography>
                     </Grid>
                     <Grid item xs={6} textAlign="right">
-                        <Button variant="contained" component={Link} to="create" onClick={fromScratch}>from scratch</Button>
+                        <Button variant="contained" component={Link} to="create">from scratch</Button>
                     </Grid>
                     <Grid item xs={6} textAlign="left">
                         <Button variant="contained" component={Link} to="createFromExisting" disabled={surveys.length === 0}>from existing</Button>
                     </Grid>
                 </Grid>
             </Container>
+            {surveyToDelete && <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>
+                    Are you sure you want to delete {surveyToDelete.name}?
+                </DialogTitle>
+                <DialogContent sx={{ textAlign: "center" }}>
+                    <Button onClick={(e) => deleteSurvey(surveyToDelete.id, e)}>Yes</Button>
+                    <Button onClick={handleClose}>No</Button>
+                </DialogContent>
+            </Dialog>}
+            <Snackbar
+                open={update.creating || update.deleting}
+                message={update.message}
+            />
         </Box >
     );
 }

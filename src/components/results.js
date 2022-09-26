@@ -39,7 +39,7 @@ function Results(props) {
   // If the chosen question is MC, determines the number of responses for each choice and updates the 'counts' state
   const handleQuestion = (e) => {
     setQuestion(e.target.value);
-    if (survey.questions[e.target.value].type === "MC") {
+    if (survey.questions[e.target.value].type === 1) {
       let newArr = [...counts];
       survey.questions[e.target.value].choices.map((choice, index) => {
         newArr[index] = 0;
@@ -90,7 +90,7 @@ function Results(props) {
                 })}
               </Select>
             </FormControl>
-            {question !== "" && (survey.questions[question].type === "FRQ" ? (<List>
+            {question !== "" && (survey.questions[question].type === 0 ? (<List>
               {survey.responses.map((response, index) => {
                 return (
                   <Box key={index}>

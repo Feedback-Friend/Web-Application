@@ -7,13 +7,10 @@ import CreateFromExisting from './components/createFromExisting';
 import TakeSurvey from './components/takeSurvey';
 import Results from './components/results';
 
-function Homepage() {
-  /* 
-  Contains a list of all created survey objects.
-  Each survey object has the fields 'name', 'questions', and 'responses'.
-  'surveys' is a prop of the Home, CreateSurvey, TakeSurvey, and Results pages.
-  'setSurveys' is a prop of the Home (to delete surveys), CreateSurvey (to update 'name' and 'questions') and TakeSurvey (to update 'responses') pages.
-  */
+function Homepage(props) {
+  const { userID } = props;
+
+  //Contains a list of survey names and ids
   const [surveys, setSurveys] = useState([]);
 
   /*
@@ -22,11 +19,26 @@ function Homepage() {
   */
   const [surveyIndex, setSurveyIndex] = useState(0);
 
-  // Contains the survey name
-  const [name, setName] = useState('');
+  // If creating a survey from existing, contains the id of the template survey. Otherwise, contains -1.
+  const [surveyID, setSurveyID] = useState(-1);
 
-  // Contains survey questions
-  const [questions, setQuestions] = useState([]);
+  /* 
+  When surveys are in the process of being created or deleted, this state prevents retrieving surveys from the database until all operations
+  are completed. It also contains a message corresponding to the current operation to be displayed to the user.
+  */
+  const [update, setUpdate] = useState({ creating: false, deleting: false, message: '' });
+
+  // Gets the names, ids, and response counts for every survey the user has created, and sets the survey state
+  const getSurveys = async () => {
+    const requestOptions = {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    const res = await fetch('/getSurveys/' + userID, requestOptions)
+      .then(response => { return response.json() });
+    setSurveys(res);
+  };
 
   return (
     <Router>
@@ -37,21 +49,21 @@ function Homepage() {
           exact
           path="/"
           element={
-            <Home surveys={surveys} setSurveys={setSurveys} setSurveyIndex={setSurveyIndex} setName={setName} setQuestions={setQuestions} />
+            <Home surveys={surveys} getSurveys={getSurveys} setSurveyID={setSurveyID} setSurveyIndex={setSurveyIndex} update={update} setUpdate={setUpdate} />
           }
         />
         {/* CreateSurvey page */}
         <Route
           path="/create"
           element={
-            <CreateSurvey surveys={surveys} setSurveys={setSurveys} name={name} setName={setName} questions={questions} setQuestions={setQuestions} />
+            <CreateSurvey surveyID={surveyID} userID={userID} update={update} setUpdate={setUpdate} />
           }
         />
         {/* CreateFromExisting page */}
         <Route
           path="/createFromExisting"
           element={
-            <CreateFromExisting surveys={surveys} setName={setName} setQuestions={setQuestions} />
+            <CreateFromExisting surveys={surveys} getSurveys={getSurveys} setSurveyID={setSurveyID} update={update} />
           }
         />
         {/* TakeSurvey page */}

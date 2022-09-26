@@ -10,7 +10,7 @@ function App() {
     const [userID, setUserID] = React.useState("")
     const [name, setName] = React.useState("")
 
-    if(userID === "") {
+    if (userID === "") {
         // user is not logged in yet
         return (
             <BrowserRouter>
@@ -28,7 +28,7 @@ function App() {
     } else {
         // user is logged in and their page should be routed accordingly
         return (
-            <Homepage />
+            <Homepage userID={userID} />
         )
     }
 }

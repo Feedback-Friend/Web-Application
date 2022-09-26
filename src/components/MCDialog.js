@@ -63,7 +63,7 @@ function MCDialog(props) {
     }
 
     const question = {
-      type: "MC",
+      type: 1,
       prompt: "",
       choices: choices,
     };

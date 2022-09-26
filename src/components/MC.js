@@ -40,7 +40,6 @@ function MC(props) {
         value={questions[index].prompt}
         placeholder={"Q" + (index + 1)}
         margin="normal"
-        autoFocus
         fullWidth
         InputProps={{
           endAdornment: (

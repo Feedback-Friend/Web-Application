@@ -27,7 +27,7 @@ function PreviewDialog(props) {
         return (
             <ListItem key={index} sx={{ display: "inline-block" }}>
                 <ListItemText primary={primary} />
-                {question.type === "FRQ" ? (
+                {question.type === 0 ? (
                     <TextField
                         margin="normal"
                         fullWidth

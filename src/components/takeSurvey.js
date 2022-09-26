@@ -38,7 +38,7 @@ function TakeSurvey(props) {
   const setResponse = (index) => (e) => {
     let type = surveys[surveyIndex].questions[index].type;
     let newArr = [...responses];
-    newArr[index] = (type === "MC") ? surveys[surveyIndex].questions[index].choices.indexOf(e.target.value) : e.target.value;
+    newArr[index] = (type === 1) ? surveys[surveyIndex].questions[index].choices.indexOf(e.target.value) : e.target.value;
     setResponses(newArr);
   };
 
@@ -50,7 +50,7 @@ function TakeSurvey(props) {
     return (
       <ListItem key={index} sx={{ display: "inline-block" }}>
         <ListItemText primary={primary} />
-        {question.type === "FRQ" ? (
+        {question.type === 0 ? (
           <TextField
             error={unanswered && !responses[index]}
             onChange={setResponse(index)}

@@ -58,51 +58,62 @@ def loginUser(userName, passWord):
             return jsonify({"result": entry[0], "name": entry[1]})
     return jsonify({"result": "-1"})
 
-@app.route('/getSurveys/<userID>/', methods=['GET'])
+@app.route('/getSurveys/<userID>', methods=['GET'])
 def getSurveys(userID):
     cursor = engine.connect()
-    table = cursor.execute("SELECT * FROM surveys WHERE user_id='%s'", (str(userID)))
+    table = cursor.execute("SELECT * FROM surveys WHERE user_id=%s", (str(userID)))
     surveys = []
     for entry in table:
-        question = cursor.execute("SELECT * FROM questions WHERE survey_id='%s' LIMIT 1", (str(entry[0]))) #get single question
-        responses = cursor.execute("SELECT * FROM responeses WHERE question_id='%s'", (str(question[0]))) #get responses to question
         count = 0
-        for row in responses:
-            count = count + 1
-        surveys.append(entry[0]+"_"+entry[3]+"_"+count) #return survey id, name, and responses
-    return surveys
+        questions = cursor.execute("SELECT * FROM questions WHERE survey_id=%s LIMIT 1", (str(entry[0]))) #get single question
+        for question in questions:
+            responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(question[0]))) #get responses to question
+            for row in responses:
+                count = count + 1
+        surveys.append({"id": entry[0], "name": entry[3], "count": count}) #return survey id, name, and responses
+    return jsonify(surveys)
       
-@app.route('/addSurvey/<userID>/<surveyName>', methods=['GET'])
+@app.route('/addSurvey/<userID>/<surveyName>', methods=['POST'])
 def addSurvey(userID, surveyName):
     cursor = engine.connect()
     table = cursor.execute("SELECT * FROM surveys")
     surveyID = 0
     for entry in table:
         if entry[3] == surveyName:
-            return "-1"
+            return jsonify({'result': '-1'})
         surveyID = entry[0]+1
-    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s)", (int(userID), int(surveyID), "-1", surveyName))
-    return surveyID
+    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s)", (int(surveyID), int(userID), "-1", surveyName))
+    return jsonify({'result': surveyID})
 
-@app.route('/deleteSurvey/<surveyID>', methods=['GET'])
+@app.route('/deleteSurvey/<surveyID>', methods=['DELETE'])
 def deleteSurvey(surveyID):
     cursor = engine.connect()
-    table = cursor.execute("SELECT * FROM questions WHERE survey_id='%s'", (str(surveyID)))
+    table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (str(surveyID)))
     for entry in table:
-        if entry[1] == surveyID:
-                cursor.execute("DELETE FROM choices WHERE question_id = %s",(entry[1]))
-                cursor.execute("DELETE FROM responses WHERE question_id = %s",(entry[1]))
-    cursor.execute("DELETE FROM questions WHERE survey_id = %s",(surveyID))
-    cursor.execute("DELETE FROM surveys WHERE survey_id = %s",(surveyID))
+            cursor.execute("DELETE FROM choices WHERE question_id = %s",(entry[0]))
+            cursor.execute("DELETE FROM responses WHERE question_id = %s",(entry[0]))
+    cursor.execute("DELETE FROM questions WHERE survey_id = %s",(str(surveyID)))
+    cursor.execute("DELETE FROM surveys WHERE survey_id = %s",(str(surveyID)))
+    return jsonify({'result': 1})
 
-@app.route('/getQuestions/<surveyID>/', methods=['GET'])
+@app.route('/getQuestions/<surveyID>', methods=['GET'])
 def getQuestions(surveyID):
     cursor = engine.connect()
-    table = cursor.execute("SELECT * FROM questions WHERE survey_id='%s'", (str(surveyID)))
+    table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (str(surveyID)))
     questions = []
     for entry in table:
-        questions.append(entry[0]+"_"+entry[3]) #return question id and prompt
-    return questions
+        questions.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3]}) #return question id and prompt
+    return jsonify(questions)
+
+@app.route('/addQuestion/<surveyID>/<questionType>/<prompt>', methods=['POST'])
+def addQuestion(surveyID, questionType, prompt):
+    cursor = engine.connect()
+    table = cursor.execute("SELECT * FROM questions")
+    questionID = 0
+    for entry in table:
+        questionID = entry[0]+1
+    cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), int(questionType), prompt))
+    return jsonify({'result': questionID})
 
 @app.route('/addFRQ/<surveyID>', methods=['GET'])
 def addFRQ(surveyID):
@@ -154,24 +165,24 @@ def deleteMCQ(questionID):
     cursor = engine.connect()
     cursor.execute("DELETE FROM questions WHERE question_id = %s", (int(questionID)))
 
-@app.route('/getChoices/<questionID>/', methods=['GET'])
+@app.route('/getChoices/<questionID>', methods=['GET'])
 def getChoices(questionID):
     cursor = engine.connect()
-    table = cursor.execute("SELECT * FROM choices WHERE question_id='%s'", (str(questionID)))
+    table = cursor.execute("SELECT * FROM choices WHERE question_id=%s", (str(questionID)))
     choices = []
     for entry in table:
-        choices.append(entry[0]+"_"+entry[2]) #return choice id and answer
+        choices.append(entry[2]) #return choice id and answer
     return choices
 
-@app.route('/addChoice/<questionID>', methods=['GET'])
-def addChoice(questionID):
+@app.route('/addChoice/<questionID>/<prompt>', methods=['POST'])
+def addChoice(questionID, prompt):
     cursor = engine.connect()
     table = cursor.execute("SELECT * FROM choices")
     choiceID = 0
     for entry in table:
         choiceID = entry[0]+1
-    cursor.execute("INSERT INTO choices VALUES(%s, %s, %s)", (int(choiceID), int(questionID), ""))
-    return choiceID
+    cursor.execute("INSERT INTO choices VALUES(%s, %s, %s)", (int(choiceID), int(questionID), prompt))
+    return jsonify({'result': choiceID})
 
 @app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
 def updateChoice(choiceID, prompt):
