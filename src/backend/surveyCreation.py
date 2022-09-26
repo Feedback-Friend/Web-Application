@@ -31,7 +31,6 @@ def deleteSurvey(cursor, surveyID):
             cursor.execute("DELETE FROM responses WHERE question_id = %s",(entry[0]))
     cursor.execute("DELETE FROM questions WHERE survey_id = %s",(str(surveyID)))
     cursor.execute("DELETE FROM surveys WHERE survey_id = %s",(str(surveyID)))
-    return jsonify({'result': 1})
 
 def getQuestions(cursor, surveyID):
     table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (str(surveyID)))
