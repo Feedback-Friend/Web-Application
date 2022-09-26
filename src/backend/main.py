@@ -47,7 +47,7 @@ def registerUser(firstName, lastName, userName, passWord, emailAddress):
 @app.route('/loginUser/<userName>/<passWord>', methods=['GET'])
 def loginUser(userName, passWord):
     cursor = engine.connect()
-    return loginUser(cursor, userName, passWord):
+    return loginUser(cursor, userName, passWord)
 
 @app.route('/getFirstName/<userID>/<firstName>', methods=['GET'])
 def getFirstName(userID, firstName):
