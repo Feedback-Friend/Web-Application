@@ -1,7 +1,6 @@
 from random import choices
 from flask import Flask
 from flask.json import jsonify
-import mysql.connector as mysql
 from sqlalchemy import create_engine
 import sshtunnel
 
@@ -57,6 +56,31 @@ def loginUser(userName, passWord):
         if entry[3] == userName and entry[4] == passWord:
             return jsonify({"result": entry[0], "name": entry[1]})
     return jsonify({"result": "-1"})
+
+@app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
+def updateFirstName(userID, firstName):
+    cursor = engine.connect()
+    cursor.execute("UPDATE users SET first_name = '%s' WHERE user_id = %s", (int(firstName), userID))
+
+@app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
+def updateLastName(userID, lastName):
+    cursor = engine.connect()
+    cursor.execute("UPDATE users SET last_name = '%s' WHERE user_id = %s", (int(lastName), userID))
+
+@app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
+def updateEmailAddress(userID, emailAddress):
+    cursor = engine.connect()
+    cursor.execute("UPDATE users SET email_address = '%s' WHERE user_id = %s", (int(emailAddress), userID))
+
+@app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
+def updateUserName(userID, userName):
+    cursor = engine.connect()
+    cursor.execute("UPDATE users SET user_name = '%s' WHERE user_id = %s", (int(userName), userID))
+
+@app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
+def updatePassWord(userID, passWord):
+    cursor = engine.connect()
+    cursor.execute("UPDATE users SET pass_word = '%s' WHERE user_id = %s", (int(passWord), userID))
 
 @app.route('/getSurveys/<userID>/', methods=['GET'])
 def getSurveys(userID):
@@ -182,3 +206,5 @@ def updateChoice(choiceID, prompt):
 def deleteChoice(choiceID):
     cursor = engine.connect()
     cursor.execute("DELETE FROM choices WHERE choice_id = %s", (int(choiceID)))
+
+  
