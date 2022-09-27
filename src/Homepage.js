@@ -6,7 +6,7 @@ import CreateSurvey from './components/createSurvey';
 import CreateFromExisting from './components/createFromExisting';
 import TakeSurvey from './components/takeSurvey';
 import Results from './components/results';
-
+import ProfilePage from './components/profilePage';
 function Homepage(props) {
   const { userID } = props;
 
@@ -78,6 +78,13 @@ function Homepage(props) {
           path="/results"
           element={
             <Results surveys={surveys} />
+          }
+        />
+        {/* Profile Page*/}
+        <Route 
+          path="myProfile"
+          element={
+            <myProfile userID={userID}/>
           }
         />
       </Routes>
