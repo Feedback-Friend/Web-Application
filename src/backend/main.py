@@ -6,6 +6,7 @@ import sshtunnel
 
 from user import *
 from survey import *
+from contact import *
 
 # the build files for react go in the specified static folder, which allows flask to access react's frontend
 app = Flask(__name__, static_folder='../../build/', static_url_path='/')
