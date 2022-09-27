@@ -1,6 +1,9 @@
 from flask import Flask
 from flask.json import jsonify
 
+from survey import *
+from contact import *
+
 def registerUser(cursor, firstName, lastName, userName, passWord, emailAddress):
     table = cursor.execute("SELECT * FROM users")
     userID = 0
@@ -65,3 +68,11 @@ def updateEmailAddress(cursor, userID, emailAddress):
         if entry[5] == emailAddress:
             return "-1"
     cursor.execute("UPDATE users SET email_address = '%s' WHERE user_id = %s", (emailAddress, int(userID)))
+
+def deleteUser(cursor, userID):
+    table = cursor.execute("SELECT * FROM surveys WHERE user_id = %s", (int(userID)))
+    for entry in table:
+        deleteSurvey(cursor, entry[0])
+    table = cursor.execute("SELECT * FROM contact_lists WHERE contact_list_id = %s", (int(userID)))
+    for entry in table:
+        deleteContactList(cursor, entry[0])

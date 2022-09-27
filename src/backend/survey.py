@@ -24,6 +24,9 @@ def addSurvey(cursor, userID, surveyName):
     cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s)", (int(surveyID), int(userID), "-1", surveyName))
     return jsonify({'result': surveyID})
 
+def UpdateSurveyName(cursor, surveyID, surveyName):
+    cursor.execute("UPDATE surveys SET survey_name = '%s' WHERE survey_id = %s", (surveyName, int(surveyID)))
+
 def deleteSurvey(cursor, surveyID):
     table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (str(surveyID)))
     for entry in table:
