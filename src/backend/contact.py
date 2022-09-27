@@ -46,14 +46,14 @@ def addContact(cursor, contactListID, firstName, lastName, emailAddress):
     cursor.execute("INSERT INTO contact_lists VALUES(%s, %s, %s, %s)", (int(contactID), int(contactID), firstName, lastName, emailAddress))
     return jsonify({'result': contactID})
 
-def updateContactFirstName(cursor, contactID, contactFirstName):
-    cursor.execute("UPDATE contact_lists SET first_name = '%s' WHERE contact_id = %s", (contactFirstName, int(contactID)))
+def updateContactFirstName(cursor, contactID, firstName):
+    cursor.execute("UPDATE contact_lists SET first_name = '%s' WHERE contact_id = %s", (firstName, int(contactID)))
 
-def updateContactLastName(cursor, contactID, contactLastName):
-    cursor.execute("UPDATE contact_lists SET lasst_name = '%s' WHERE contact_id = %s", (contactLastName, int(contactID)))
+def updateContactLastName(cursor, contactID, lastName):
+    cursor.execute("UPDATE contact_lists SET lasst_name = '%s' WHERE contact_id = %s", (lastName, int(contactID)))
 
-def updateContactEmailAddress(cursor, contactID, contactEmailAddress):
-    cursor.execute("UPDATE contact_lists SET email_address = '%s' WHERE contact_id = %s", (contactEmailAddress, int(contactID)))
+def updateContactEmailAddress(cursor, contactID, emailAddress):
+    cursor.execute("UPDATE contact_lists SET email_address = '%s' WHERE contact_id = %s", (emailAddress, int(contactID)))
 
 def deleteContact(cursor, contactID):
     cursor.execute("DELETE FROM contacts WHERE contact_id = %s", (int(contactID)))
