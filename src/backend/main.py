@@ -99,6 +99,11 @@ def updateEmailAddress(userID, emailAddress):
     cursor = engine.connect()
     updateEmailAddress(cursor, userID, emailAddress)
 
+@app.route('/deleteUser/<userID>', methods=['DELETE'])
+def deleteUser(userID):
+    cursor = engine.connect()
+    deleteSurvey(cursor, userID)
+
 @app.route('/getSurveys/<userID>', methods=['GET'])
 def getSurveys(userID):
     cursor = engine.connect()
@@ -108,6 +113,11 @@ def getSurveys(userID):
 def addSurvey(userID, surveyName):
     cursor = engine.connect()
     return addSurvey(cursor, userID, surveyName)
+
+@app.route('/updateSurveyName/<surveyID>/<surveyName>', methods=['GET'])
+def updateSurveyName(surveyID, surveyName):
+    cursor = engine.connect()
+    updateFRQ(cursor, surveyID, surveyName)
 
 @app.route('/deleteSurvey/<surveyID>', methods=['DELETE'])
 def deleteSurvey(surveyID):
@@ -178,3 +188,53 @@ def updateChoice(choiceID, prompt):
 def deleteChoice(choiceID):
     cursor = engine.connect()
     deleteChoice(cursor, choiceID)
+
+@app.route('/getContactLists/<userID>', methods=['GET'])
+def getContactLists(userID):
+    cursor = engine.connect()
+    getContactLists(cursor, userID)
+
+@app.route('/addContactList/<userID>/<contactListName>', methods=['GET'])
+def addContactList(userID, contactListName):
+    cursor = engine.connect()
+    addContactList(cursor, userID, contactListName)
+
+@app.route('/updateContactLists/<contactListID>/<contactListName>', methods=['GET'])
+def updateContactListName(contactListID, contactListName):
+    cursor = engine.connect()
+    updateContactListName(cursor, contactListID, contactListName)
+
+@app.route('/deleteContactLists/<contactListID>', methods=['GET'])
+def deleteContactList(contactListID):
+    cursor = engine.connect()
+    deleteContactList(cursor, contactListID)
+
+@app.route('/getContacts/<contactListID>', methods=['GET'])
+def getContacts(contactListID):
+    cursor = engine.connect()
+    return getContacts(cursor, contactListID)
+
+@app.route('/addContact/<contactListID>/<firstName>/<lastName>/<emailAddress>', methods=['GET'])
+def addContact(contactListID, firstName, lastName, emailAddress):
+    cursor = engine.connect()
+    return addContact(cursor, contactListID, firstName, lastName, emailAddress)
+
+@app.route('/updateContactFirstName/<contactID>/<firstName>', methods=['GET'])
+def updateContactFirstName(contactID, firstName):
+    cursor = engine.connect()
+    updateContactFirstName(cursor, contactID, firstName)
+
+@app.route('/updateContactLastName/<userID>/<lastName>', methods=['GET'])
+def updateContactLastName(contactID, lastName):
+    cursor = engine.connect()
+    updateContactLastName(cursor, contactID, lastName)
+
+@app.route('/updateContactEmailAddress/<contactID>/<emailAddress>', methods=['GET'])
+def updateContactEmailAddress(contactID, emailAddress):
+    cursor = engine.connect()
+    updateContactEmailAddress(cursor, contactID, emailAddress)
+
+@app.route('/deleteContact/<contactID>', methods=['GET'])
+def deleteContact(contactID):
+    cursor = engine.connect()
+    deleteContact(cursor, contactID)
