@@ -108,87 +108,87 @@ def deleteUser(userID):
 @app.route('/getSurveys/<userID>', methods=['GET'])
 def getSurveys(userID):
     cursor = engine.connect()
-    return getSurveys(cursor, userID)
+    return survey.getSurveys(cursor, userID)
       
 @app.route('/addSurvey/<userID>/<surveyName>', methods=['POST'])
 def addSurvey(userID, surveyName):
     cursor = engine.connect()
-    return addSurvey(cursor, userID, surveyName)
+    return survey.addSurvey(cursor, userID, surveyName)
 
 @app.route('/updateSurveyName/<surveyID>/<surveyName>', methods=['GET'])
 def updateSurveyName(surveyID, surveyName):
     cursor = engine.connect()
-    updateFRQ(cursor, surveyID, surveyName)
+    survey.updateFRQ(cursor, surveyID, surveyName)
 
 @app.route('/deleteSurvey/<surveyID>', methods=['DELETE'])
 def deleteSurvey(surveyID):
     cursor = engine.connect()
-    deleteSurvey(cursor, surveyID)
+    survey.deleteSurvey(cursor, surveyID)
 
 @app.route('/getQuestions/<surveyID>', methods=['GET'])
 def getQuestions(surveyID):
     cursor = engine.connect()
-    return getQuestions(cursor, surveyID)
+    return survey.getQuestions(cursor, surveyID)
 
 @app.route('/addQuestion/<surveyID>/<questionType>/<prompt>', methods=['POST'])
 def addQuestion(surveyID, questionType, prompt):
     cursor = engine.connect()
-    return addQuestion(cursor, surveyID, questionType, prompt)
+    return survey.addQuestion(cursor, surveyID, questionType, prompt)
 
 @app.route('/addFRQ/<surveyID>', methods=['GET'])
 def addFRQ(surveyID):
     cursor = engine.connect()
-    return addFRQ(cursor, surveyID)
+    return survey.addFRQ(cursor, surveyID)
 
 @app.route('/updateFRQ/<questionID>/<prompt>', methods=['GET'])
 def updateFRQ(questionID, prompt):
     cursor = engine.connect()
-    updateFRQ(cursor, questionID, prompt)
+    survey.updateFRQ(cursor, questionID, prompt)
 
 @app.route('/deleteFRQ/<questionID>', methods=['GET'])
 def deleteFRQ(questionID):
     cursor = engine.connect()
-    deleteFRQ(cursor, questionID)
+    survey.deleteFRQ(cursor, questionID)
 
 @app.route('/addMCQ_S/<surveyID>', methods=['GET'])
 def addMCQ_S(surveyID):
     cursor = engine.connect()
-    return addMCQ_S(cursor, surveyID)
+    return survey.addMCQ_S(cursor, surveyID)
 
 @app.route('/addMCQ_M/<surveyID>', methods=['GET'])
 def addMCQ_M(surveyID):
     cursor = engine.connect()
-    return addMCQ_M(cursor, surveyID)
+    return survey.addMCQ_M(cursor, surveyID)
 
 @app.route('/updateMCQ/<questionID>/<prompt>', methods=['GET'])
 def updateMCQ(questionID, prompt):
     cursor = engine.connect()
-    cursor.execute("UPDATE questions SET prompt = '%s' WHERE question_id = %s", (int(questionID), prompt))
+    survey.updateMCQ(cursor, questionID, prompt)
 
 @app.route('/deleteMCQ/<questionID>', methods=['GET'])
 def deleteMCQ(questionID):
     cursor = engine.connect()
-    return deleteMCQ(cursor, questionID)
+    return survey.deleteMCQ(cursor, questionID)
 
 @app.route('/getChoices/<questionID>', methods=['GET'])
 def getChoices(questionID):
     cursor = engine.connect()
-    return getChoices(cursor, questionID)
+    return survey.getChoices(cursor, questionID)
 
 @app.route('/addChoice/<questionID>/<prompt>', methods=['POST'])
 def addChoice(questionID, prompt):
     cursor = engine.connect()
-    return addChoice(cursor, questionID, prompt)
+    return survey.addChoice(cursor, questionID, prompt)
 
 @app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
 def updateChoice(choiceID, prompt):
     cursor = engine.connect()
-    updateChoice(cursor, choiceID, prompt)
+    survey.updateChoice(cursor, choiceID, prompt)
 
 @app.route('/deleteChoice/<choiceID>', methods=['GET'])
 def deleteChoice(choiceID):
     cursor = engine.connect()
-    deleteChoice(cursor, choiceID)
+    survey.deleteChoice(cursor, choiceID)
 
 @app.route('/getContactLists/<userID>', methods=['GET'])
 def getContactLists(userID):
