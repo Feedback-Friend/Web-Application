@@ -10,7 +10,7 @@ function App() {
     const [userID, setUserID] = React.useState("")
     const [name, setName] = React.useState("")
 
-    if (userID === "") {
+    if (userID === "" && localStorage.getItem("userID") == null) {
         // user is not logged in yet
         return (
             <BrowserRouter>

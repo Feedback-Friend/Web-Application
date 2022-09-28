@@ -12,7 +12,6 @@ function LoginPage(props) {
 
     // contains username and password when submitted
     function submit(e) {
-        alert("test");
         e.preventDefault(); //prevents default actions of form from happening (reloads page contents)
         /*
          *
@@ -22,9 +21,10 @@ function LoginPage(props) {
         fetch("/loginUser/" + credentials.username + "/" + credentials.password)
             .then(response => response.json())
             .then(data => {
-                if(data.result !== -1) {
+                if(data.result != -1) {
                     props.setUserID(data.result);
                     props.setName(data.name);
+                    localStorage.setItem("userID", data.name);
                 } else {
                     alert("Incorrect authentication.");
                 }
@@ -44,6 +44,8 @@ function LoginPage(props) {
         <>
         <Box>
             <NavLogin />
+            {localStorage.getItem("userID") != null}
+            {localStorage.getItem("userID") !== null}
             <Container sx={{ width: 1 / 2 }} spacing={2}>
                 {/* login area */}
                 <Grid container spacing={2} sx={{ mb: 2 }}>
