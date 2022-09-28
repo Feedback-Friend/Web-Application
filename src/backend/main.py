@@ -50,50 +50,50 @@ def loginUser(userName, passWord):
     cursor = engine.connect()
     return user.loginUser(cursor, userName, passWord)
 
-@app.route('/getFirstName/<userID>/<firstName>', methods=['GET'])
-def getFirstName(userID, firstName):
+@app.route('/getFirstName/<userID>/', methods=['GET'])
+def getFirstName(userID):
     cursor = engine.connect()
-    return user.getFirstName(cursor, userID, firstName)
+    return user.getFirstName(cursor, userID)
 
 @app.route('/updateFirstName/<userID>/<firstName>', methods=['GET'])
 def updateFirstName(userID, firstName):
     cursor = engine.connect()
     user.updateFirstName(cursor, userID, firstName)
 
-@app.route('/getFirstName/<userID>/<firstName>', methods=['GET'])
-def getLastName(userID, firstName):
+@app.route('/getLastName/<userID>', methods=['GET'])
+def getLastName(userID):
     cursor = engine.connect()
-    return user.getLastName(cursor, userID, firstName)
+    return user.getLastName(cursor, userID)
 
 @app.route('/updateLastName/<userID>/<lastName>', methods=['GET'])
 def updateLastName(userID, lastName):
     cursor = engine.connect()
     user.updateLastName(cursor, userID, lastName)
 
-@app.route('/getFirstName/<userID>/<firstName>', methods=['GET'])
-def getUserName(userID, firstName):
+@app.route('/getUserName/<userID>', methods=['GET'])
+def getUserName(userID):
     cursor = engine.connect()
-    return user.getUserName(cursor, userID, firstName)
+    return user.getUserName(cursor, userID)
 
 @app.route('/updateUserName/<userID>/<userName>', methods=['GET'])
 def updateUserName(userID, userName):
     cursor = engine.connect()
     user.updateUserName(cursor, userID, userName)
 
-@app.route('/getFirstName/<userID>/<firstName>', methods=['GET'])
-def getPassWord(userID, firstName):
+@app.route('/getPassword/<userID>', methods=['GET'])
+def getPassWord(userID):
     cursor = engine.connect()
-    return user.getPassWord(cursor, userID, firstName)
+    return user.getPassWord(cursor, userID)
 
 @app.route('/updatePassWord/<userID>/<passWord>', methods=['GET'])
 def updatePassWord(userID, passWord):
     cursor = engine.connect()
     user.updatePassWord(cursor, userID, passWord)
 
-@app.route('/getFirstName/<userID>/<firstName>', methods=['GET'])
-def getEmailAddress(userID, firstName):
+@app.route('/getEmailAddress/<userID>', methods=['GET'])
+def getEmailAddress(userID):
     cursor = engine.connect()
-    return user.getEmailAddress(cursor, userID, firstName)
+    return user.getEmailAddress(cursor, userID)
     
 @app.route('/updateEmailAddress/<userID>/<emailAddress>', methods=['GET'])
 def updateEmailAddress(userID, emailAddress):
