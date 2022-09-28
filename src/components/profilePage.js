@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import Grid from '@mui/material/Grid';
+import Item from '@mui/material/ListItem';
+
 // import Profile from 'Home';
 // This turns buttons into links
 import { Link } from 'react-router-dom';
@@ -13,7 +16,7 @@ function ProfilePage(props){
     const [password, setPassword] = useState("")
     const [email, setEmail] = useState("")
 
-    firstName.setUsername
+    // firstName.setUsername
     
     useEffect(() => {
         // res = fetch()
