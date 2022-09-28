@@ -90,7 +90,7 @@ def getChoices(cursor, questionID):
     table = cursor.execute("SELECT * FROM choices WHERE question_id=%s", (str(questionID)))
     choices = []
     for entry in table:
-        choices.append(entry[2]) #return choice id and answer
+        choices.append({"id": entry[0], "choice": entry[2]}) #return choice id and answer
     return choices
 
 def addChoice(cursor, questionID, prompt):
@@ -106,3 +106,15 @@ def updateChoice(cursor, choiceID, prompt):
 
 def deleteChoice(cursor, choiceID):
     cursor.execute("DELETE FROM choices WHERE choice_id = %s", (int(choiceID)))
+
+def getQuestionAndChoices(cursor, surveyID):
+    table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (str(surveyID)))
+    questions = []
+    for entry in table:
+        row = []
+        row.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3]}) #return question id and prompt
+        choices = cursor.execute("SELECT * FROM choices WHERE question_id=%s",(str(entry[0])))
+        for choice in choices:
+            row.append({"id": choice[0], "choice": choice[2]}) #return choice id and answer
+        questions.append(row)
+    return jsonify(questions)
