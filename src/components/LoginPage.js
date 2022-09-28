@@ -23,8 +23,7 @@ function LoginPage(props) {
             .then(data => {
                 if(data.result != -1) {
                     props.setUserID(data.result);
-                    props.setName(data.name);
-                    localStorage.setItem("userID", data.name);
+                    localStorage.setItem("userID", data.result);
                 } else {
                     alert("Incorrect authentication.");
                 }

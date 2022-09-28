@@ -11,9 +11,11 @@ import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
 import { Link } from 'react-router-dom';
 import logo from './logo.svg';
+import { ContextUserID } from '../App';
 
 function Nav() {
     const [anchorElNav, setAnchorElNav] = useState(null);
+    const [userID, setUserID] = React.useContext(ContextUserID); //gets userID from state in App.js
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
@@ -22,6 +24,11 @@ function Nav() {
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
+
+    const logOut = () => {
+        setUserID(null);
+        localStorage.removeItem("userID");
+    }
 
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -36,7 +43,7 @@ function Nav() {
                         <Button color="inherit" component={Link} to="/myProfile">Profile</Button>
                         <Button color="inherit">Contacts</Button>
                         <Button color="inherit" component={Link} to="/results">Results</Button>
-                        <Button color="inherit" variant="outlined">Log out</Button>
+                        <Button color="inherit" variant="outlined" onClick={logOut}>Log out</Button>
                     </Box>
                     <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
@@ -67,7 +74,7 @@ function Nav() {
                             <MenuItem onClick={handleCloseNavMenu}>Contacts</MenuItem>
                             <MenuItem component={Link} to="/results" onClick={handleCloseNavMenu}>Results</MenuItem>
                             <Divider />
-                            <MenuItem onClick={handleCloseNavMenu}>Log out</MenuItem>
+                            <MenuItem onClick={logOut}>Log out</MenuItem>
                         </Menu>
                     </Box>
                 </Toolbar>
