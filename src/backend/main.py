@@ -4,9 +4,9 @@ from flask.json import jsonify
 from sqlalchemy import create_engine
 import sshtunnel
 
-from user import *
-from survey import *
-from contact import *
+import user as user
+import survey as survey
+import contact as contact
 
 # the build files for react go in the specified static folder, which allows flask to access react's frontend
 app = Flask(__name__, static_folder='../../build/', static_url_path='/')
@@ -43,67 +43,67 @@ def test():
 @app.route('/registerUser/<firstName>/<lastName>/<userName>/<passWord>/<emailAddress>', methods=['GET'])
 def registerUser(firstName, lastName, userName, passWord, emailAddress):
     cursor = engine.connect()
-    return registerUser(cursor, firstName, lastName, userName, passWord, emailAddress)
+    return user.registerUser(cursor, firstName, lastName, userName, passWord, emailAddress)
 
 @app.route('/loginUser/<userName>/<passWord>', methods=['GET'])
 def loginUser(userName, passWord):
     cursor = engine.connect()
-    return loginUser(cursor, userName, passWord)
+    return user.loginUser(cursor, userName, passWord)
 
 @app.route('/getFirstName/<userID>/<firstName>', methods=['GET'])
 def getFirstName(userID, firstName):
     cursor = engine.connect()
-    return getFirstName(cursor, userID, firstName)
+    return user.getFirstName(cursor, userID, firstName)
 
 @app.route('/updateFirstName/<userID>/<firstName>', methods=['GET'])
 def updateFirstName(userID, firstName):
     cursor = engine.connect()
-    updateFirstName(cursor, userID, firstName)
+    user.updateFirstName(cursor, userID, firstName)
 
 @app.route('/getFirstName/<userID>/<firstName>', methods=['GET'])
 def getLastName(userID, firstName):
     cursor = engine.connect()
-    return getLastName(cursor, userID, firstName)
+    return user.getLastName(cursor, userID, firstName)
 
 @app.route('/updateLastName/<userID>/<lastName>', methods=['GET'])
 def updateLastName(userID, lastName):
     cursor = engine.connect()
-    updateLastName(cursor, userID, lastName)
+    user.updateLastName(cursor, userID, lastName)
 
 @app.route('/getFirstName/<userID>/<firstName>', methods=['GET'])
 def getUserName(userID, firstName):
     cursor = engine.connect()
-    return getUserName(cursor, userID, firstName)
+    return user.getUserName(cursor, userID, firstName)
 
 @app.route('/updateUserName/<userID>/<userName>', methods=['GET'])
 def updateUserName(userID, userName):
     cursor = engine.connect()
-    updateUserName(cursor, userID, userName)
+    user.updateUserName(cursor, userID, userName)
 
 @app.route('/getFirstName/<userID>/<firstName>', methods=['GET'])
 def getPassWord(userID, firstName):
     cursor = engine.connect()
-    return getPassWord(cursor, userID, firstName)
+    return user.getPassWord(cursor, userID, firstName)
 
 @app.route('/updatePassWord/<userID>/<passWord>', methods=['GET'])
 def updatePassWord(userID, passWord):
     cursor = engine.connect()
-    updatePassWord(cursor, userID, passWord)
+    user.updatePassWord(cursor, userID, passWord)
 
 @app.route('/getFirstName/<userID>/<firstName>', methods=['GET'])
 def getEmailAddress(userID, firstName):
     cursor = engine.connect()
-    return getEmailAddress(cursor, userID, firstName)
+    return user.getEmailAddress(cursor, userID, firstName)
     
 @app.route('/updateEmailAddress/<userID>/<emailAddress>', methods=['GET'])
 def updateEmailAddress(userID, emailAddress):
     cursor = engine.connect()
-    updateEmailAddress(cursor, userID, emailAddress)
+    user.updateEmailAddress(cursor, userID, emailAddress)
 
 @app.route('/deleteUser/<userID>', methods=['DELETE'])
 def deleteUser(userID):
     cursor = engine.connect()
-    deleteSurvey(cursor, userID)
+    user.deleteSurvey(cursor, userID)
 
 @app.route('/getSurveys/<userID>', methods=['GET'])
 def getSurveys(userID):
