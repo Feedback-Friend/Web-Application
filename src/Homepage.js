@@ -6,7 +6,7 @@ import CreateSurvey from './components/createSurvey';
 import CreateFromExisting from './components/createFromExisting';
 import TakeSurvey from './components/takeSurvey';
 import Results from './components/results';
-import ProfilePage from './components/profilePage';
+import RowAndColumnSpacing from './components/profilePage';
 function Homepage(props) {
   const { userID } = props;
 
@@ -84,7 +84,7 @@ function Homepage(props) {
         <Route 
           path="myProfile"
           element={
-            <myProfile userID={userID}/>
+            <RowAndColumnSpacing userID={userID}/>
           }
         />
       </Routes>
