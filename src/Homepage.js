@@ -1,10 +1,11 @@
 import './App.css';
-import React, { useState, useMemo } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { HashRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/home';
 import CreateSurvey from './components/createSurvey';
 import CreateFromExisting from './components/createFromExisting';
 import TakeSurvey from './components/takeSurvey';
+import EndPage from './components/endPage';
 import Results from './components/results';
 import RowAndColumnSpacing from './components/profilePage';
 function Homepage(props) {
@@ -34,16 +35,8 @@ function Homepage(props) {
     setSurveys(res);
   };
 
-  /*const useQuery = () => {
-    const { search } = useLocation();
-
-    return useMemo(() => new URLSearchParams(search), [search]);
-  }
-
-  let query = useQuery();*/
-
   return (
-    <Router>
+    <HashRouter>
       {/* React Router routes to pages by loading different elements depending on the path */}
       <Routes>
         {/* Home page */}
@@ -70,9 +63,16 @@ function Homepage(props) {
         />
         {/* TakeSurvey page */}
         <Route
-          path="/survey"
+          path="/survey/:id"
           element={
-            <TakeSurvey survey={survey} />
+            <TakeSurvey />
+          }
+        />
+        {/* End page */}
+        <Route
+          path="endPage"
+          element={
+            <EndPage />
           }
         />
         {/* Results page */}
@@ -90,7 +90,7 @@ function Homepage(props) {
           }
         />
       </Routes>
-    </Router>
+    </HashRouter>
   );
 }
 

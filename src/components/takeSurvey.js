@@ -10,10 +10,13 @@ import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
+import EndPage from './endPage';
 
-function TakeSurvey(props) {
-  const { survey } = props;
+function TakeSurvey() {
+  let { id } = useParams();
+
+  const [survey, setSurvey] = useState({ id: -1, name: "" });
 
   const [questions, setQuestions] = useState([]);
 
@@ -22,7 +25,7 @@ function TakeSurvey(props) {
 
   useEffect(() => {
     getQuestions();
-  }, []);
+  }, [id]);
 
   const getQuestions = async () => {
     const requestOptions = {
@@ -30,10 +33,16 @@ function TakeSurvey(props) {
       headers: { 'Content-Type': 'application/json' },
     };
 
-    let questions = await fetch("/getQuestionsAndChoices/" + survey.id, requestOptions)
+    /* TODO: get survey name from id, if survey doesn't exist show error message, else get questions and choices */
+    let questions = await fetch("/getQuestionsAndChoices/" + id, requestOptions)
       .then(response => { return response.json(); });
-    setQuestions(questions);
-    console.log(questions);
+    if (questions.length === 0) {
+      setSurvey({ id: -1, name: "Sorry, the survey you're trying to access doesn't exist" });
+      setQuestions([]);
+    } else {
+      setSurvey({ id: id, name: "survey" });
+      setQuestions(questions);
+    }
   }
 
   // On submission, prevents submission and displays an error if any questions are left unanswered. Otherwise, adds the list of responses to the survey just taken in the 'surveys' state.
@@ -43,7 +52,7 @@ function TakeSurvey(props) {
       e.preventDefault();
       setUnanswered(unanswered);
     } else {
-      /* TODO: fetch */
+      /* TODO: post responses */
     }
   };
 
@@ -52,7 +61,6 @@ function TakeSurvey(props) {
     let newArr = [...questions];
     newArr[index].response = e.target.value;
     setQuestions(newArr);
-    console.log(newArr);
   };
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -97,15 +105,15 @@ function TakeSurvey(props) {
     <List sx={{ width: 1 / 2, mx: "auto" }}>
       <Typography variant="h3" textAlign="center">{survey.name}</Typography>
       {prompts}
-      <Button
+      {survey.id !== -1 && <Button
         variant="contained"
         component={Link}
-        to="/results"
+        to="/endPage"
         onClick={handleSubmit}
         sx={{ ml: 2 }}
       >
         Submit
-      </Button>
+      </Button>}
     </List>
   );
 }

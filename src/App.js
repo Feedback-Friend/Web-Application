@@ -1,8 +1,10 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { HashRouter, Routes, Route, Navigate } from 'react-router-dom'
 import LoginPage from './components/loginPage'
 import RegisterPage from './components/registerPage'
 import Homepage from './Homepage'
+import TakeSurvey from './components/takeSurvey'
+import EndPage from './components/endPage'
 
 
 // allow userID to be "global" to make it easy to log out or access mysql info at any point
@@ -17,17 +19,30 @@ function App() {
     if (userID === null) {
         // user is not logged in yet
         return (
-            <BrowserRouter>
+            <HashRouter>
                 <Routes>
                     <Route path="/" element={<LoginPage setUserID={setUserID} />} />
                     <Route path='register' element={<RegisterPage />} />
+                    {/* TakeSurvey page */}
+                    <Route
+                        path="/survey/:id"
+                        element={
+                            <TakeSurvey />
+                        }
+                    />
+                    <Route
+                        path="endPage"
+                        element={
+                            <EndPage />
+                        }
+                    />
 
                     {/* routes other paths to login page */}
                     <Route path="*" element={
                         <Navigate to="/" />
                     } />
                 </Routes>
-            </BrowserRouter>
+            </HashRouter>
         )
     } else {
         // user is logged in and their page should be routed accordingly
