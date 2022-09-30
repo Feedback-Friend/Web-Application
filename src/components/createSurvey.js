@@ -14,7 +14,7 @@ import Nav from './nav';
 import PreviewDialog from './previewDialog';
 
 function CreateSurvey(props) {
-  const { surveyID, userID, update, setUpdate } = props;
+  const { survey, userID, update, setUpdate } = props;
 
   // Contains survey name
   const [name, setName] = useState('');
@@ -34,7 +34,7 @@ function CreateSurvey(props) {
 
   // If a survey is created from existing, gets the questions associated with that survey on page load
   useEffect(() => {
-    if (surveyID !== -1) {
+    if (survey.id !== -1) {
       getFromExisting();
     }
   }, []);
@@ -46,19 +46,8 @@ function CreateSurvey(props) {
       headers: { 'Content-Type': 'application/json' },
     };
 
-    const questions = [];
-    let req = await fetch("/getQuestions/" + surveyID, requestOptions)
+    let questions = await fetch("/getQuestionsAndChoices/" + survey.id, requestOptions)
       .then(response => { return response.json() });
-    for (let question of req) {
-      req = await fetch("/getChoices/" + question.id)
-        .then(response => { return response.json() });
-      const newQuestion = {
-        type: question.type,
-        prompt: question.prompt,
-        choices: req
-      };
-      questions.push(newQuestion);
-    }
     setQuestions(questions);
   };
 
@@ -88,7 +77,7 @@ function CreateSurvey(props) {
     (question) =>
       question.prompt.trim() === "" ||
       (question.type === 1 &&
-        question.choices.some((choice) => choice.trim() === ""))
+        question.choices.some((choice) => choice.choice.trim() === ""))
   ) || !name.trim() || questions.length === 0;
 
   // On submission, prevents submission and displays errors if any fields are empty. Otherwise, adds the survey to the surveys list.
@@ -97,36 +86,40 @@ function CreateSurvey(props) {
       e.preventDefault();
       setEmpty(true);
     } else {
-      setUpdate({ creating: true, deleting: update.deleting, message: "Creating Survey..." });
-      addSurvey().then(response => setUpdate({ creating: false, deleting: update.deleting, message: update.message }));
+      setUpdate({ creating: true, deleting: false, message: "Creating Survey...", open: true });
+      addSurvey().then(response => {
+        setUpdate({ creating: false, deleting: false, message: "Survey '" + name + "' created", open: true });
+        const timer = setTimeout(() => {
+          setUpdate({ creating: update.creating, deleting: false, message: "", open: false });
+        }, 3000);
+        return () => clearTimeout(timer);
+      });
     }
   };
 
   // Adds survey and its related questions and answer choices to the database
   const addSurvey = async () => {
+    const timeCreated = new Date().getTime();
+
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     };
 
-    let req = await fetch("/addSurvey/" + userID + "/" + name, requestOptions)
+    let req = await fetch("/addSurvey/" + userID + "/" + name + "/" + timeCreated, requestOptions)
       .then(response => { return response.json() });
     const surveyID = req.result;
 
-    if (parseInt(surveyID) === -1) {
-      alert("Error: A survey with this name already exists.");
-    } else {
-      // Add questions
-      for (let question of questions) {
-        req = await fetch("/addQuestion/" + surveyID + "/" + question.type + "/" + question.prompt, requestOptions)
-          .then(response => { return response.json() });
-        const questionID = req.result;
+    // Add questions
+    for (let question of questions) {
+      req = await fetch("/addQuestion/" + surveyID + "/" + question.type + "/" + question.prompt, requestOptions)
+        .then(response => { return response.json() });
+      const questionID = req.result;
 
-        // If a question has choices (i.e. is a MCQ), add them to the database
-        for (let choice in question.choices) {
-          req = await fetch("/addChoice/" + questionID + "/" + question.choices[choice], requestOptions)
-            .then(response => { return response.json() });
-        }
+      // If a question has choices (i.e. is a MCQ), add them to the database
+      for (let choice of question.choices) {
+        req = await fetch("/addChoice/" + questionID + "/" + choice.choice, requestOptions)
+          .then(response => { return response.json() });
       }
     }
   }
@@ -154,7 +147,7 @@ function CreateSurvey(props) {
                   empty={
                     empty &&
                     (!question.prompt ||
-                      question.choices.some((choice) => choice === ""))
+                      question.choices.some((choice) => choice.choice === ""))
                   }
                   key={index}
                 />

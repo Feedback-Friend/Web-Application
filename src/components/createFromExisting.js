@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import Nav from './nav'
 
 function CreateFromExisting(props) {
-    const { surveys, getSurveys, setSurveyID, update } = props;
+    const { surveys, getSurveys, setSurvey, update } = props;
 
     // The index of the selected list item
     const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -20,12 +20,12 @@ function CreateFromExisting(props) {
     // When a list item is selected, set its index and the id of the selected survey
     const handleListItemClick = (e, survey, index) => {
         setSelectedIndex(index);
-        setSurveyID(survey.id);
+        setSurvey(survey);
     }
 
     // Retrieves surveys from the database only after creating and deleting operations are completed
     useEffect(() => {
-        setSurveyID(-1);
+        setSurvey({ id: -1 });
         if (!update.creating && !update.deleting) {
             getSurveys();
         }
@@ -46,7 +46,7 @@ function CreateFromExisting(props) {
                                     onClick={(e) => handleListItemClick(e, survey, index)}
                                 >
                                     <ListItemText primary={survey.name} />
-                                    <ListItemText primary="9/18/2022" sx={{ textAlign: "right" }} />
+                                    <ListItemText primary={new Date(survey.time).toLocaleString()} sx={{ textAlign: "right" }} />
                                 </ListItemButton>
                                 <Divider />
                             </Box>
@@ -56,7 +56,7 @@ function CreateFromExisting(props) {
                 <Button variant="contained" component={Link} to="../create" disabled={selectedIndex === -1}>Create</Button>
             </Container>
             <Snackbar
-                open={update.creating || update.deleting}
+                open={update.open}
                 message={update.message}
             />
         </Box>

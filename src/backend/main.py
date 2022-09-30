@@ -110,10 +110,10 @@ def getSurveys(userID):
     cursor = engine.connect()
     return survey.getSurveys(cursor, userID)
       
-@app.route('/addSurvey/<userID>/<surveyName>', methods=['POST'])
-def addSurvey(userID, surveyName):
+@app.route('/addSurvey/<userID>/<surveyName>/<timeCreated>', methods=['POST'])
+def addSurvey(userID, surveyName, timeCreated):
     cursor = engine.connect()
-    return survey.addSurvey(cursor, userID, surveyName)
+    return survey.addSurvey(cursor, userID, surveyName, timeCreated)
 
 @app.route('/updateSurveyName/<surveyID>/<surveyName>', methods=['GET'])
 def updateSurveyName(surveyID, surveyName):
@@ -123,7 +123,7 @@ def updateSurveyName(surveyID, surveyName):
 @app.route('/deleteSurvey/<surveyID>', methods=['DELETE'])
 def deleteSurvey(surveyID):
     cursor = engine.connect()
-    survey.deleteSurvey(cursor, surveyID)
+    return survey.deleteSurvey(cursor, surveyID)
 
 @app.route('/getQuestions/<surveyID>', methods=['GET'])
 def getQuestions(surveyID):
@@ -239,3 +239,8 @@ def updateContactEmailAddress(contactID, emailAddress):
 def deleteContact(contactID):
     cursor = engine.connect()
     contact.deleteContact(cursor, contactID)
+
+@app.route('/getQuestionsAndChoices/<surveyID>', methods=['GET'])
+def getQuestionsAndChoices(surveyID):
+    cursor = engine.connect()
+    return survey.getQuestionsAndChoices(cursor, surveyID)

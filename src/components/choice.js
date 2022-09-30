@@ -12,7 +12,7 @@ function Choice(props) {
   // Updates the choice at the given index on change
   const updateChoice = (choiceIndex) => (e) => {
     let newArr = [...questions];
-    newArr[index].choices[choiceIndex] = e.target.value;
+    newArr[index].choices[choiceIndex].choice = e.target.value;
     setQuestions(newArr);
   };
 
@@ -37,7 +37,7 @@ function Choice(props) {
       <TextField
         key={choiceIndex}
         error={empty}
-        value={questions[index].choices[choiceIndex]}
+        value={questions[index].choices[choiceIndex].choice}
         placeholder={alphabet.charAt(choiceIndex)}
         onChange={updateChoice(choiceIndex)}
         margin="normal"

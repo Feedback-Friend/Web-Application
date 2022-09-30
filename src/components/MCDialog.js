@@ -38,24 +38,24 @@ function MCDialog(props) {
     let choices;
     switch (choice) {
       case "":
-        choices = ["", ""];
+        choices = [{ choice: "" }, { choice: "" }];
         break;
       case "Y/N":
-        choices = ["Yes", "No"];
+        choices = [{ choice: "Yes" }, { choice: "No" }];
         break;
       case "T/F":
-        choices = ["True", "False"];
+        choices = [{ choice: "True" }, { choice: "False" }];
         break;
       case "A/D":
-        choices = ["Agree", "Disagree"];
+        choices = [{ choice: "Agree" }, { choice: "Disagree" }];
         break;
       case "SA/A/NAND/D/SD":
         choices = [
-          "Strongly Agree",
-          "Agree",
-          "Neither Agree nor Disagree",
-          "Disagree",
-          "Strongly Disagree",
+          { choice: "Strongly Agree" },
+          { choice: "Agree" },
+          { choice: "Neither Agree Nor Disagree" },
+          { choice: "Disagree" },
+          { choice: "Strongly Disagree" },
         ];
         break;
       default:

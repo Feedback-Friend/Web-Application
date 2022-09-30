@@ -1,6 +1,6 @@
 import './App.css';
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { useState, useMemo } from 'react';
+import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import Home from './components/home';
 import CreateSurvey from './components/createSurvey';
 import CreateFromExisting from './components/createFromExisting';
@@ -13,14 +13,8 @@ function Homepage(props) {
   //Contains a list of survey names and ids
   const [surveys, setSurveys] = useState([]);
 
-  /*
-  Contains the index of the survey to be taken in the survey list.
-  The index is set on the Home page when a 'take survey' button is pressed and passed to the TakeSurvey component.
-  */
-  const [surveyIndex, setSurveyIndex] = useState(0);
-
-  // If creating a survey from existing, contains the id of the template survey. Otherwise, contains -1.
-  const [surveyID, setSurveyID] = useState(-1);
+  // If creating a survey from existing, contains the name and id of the template survey. Otherwise, contains -1.
+  const [survey, setSurvey] = useState({ name: "", id: -1 });
 
   /* 
   When surveys are in the process of being created or deleted, this state prevents retrieving surveys from the database until all operations
@@ -40,6 +34,14 @@ function Homepage(props) {
     setSurveys(res);
   };
 
+  /*const useQuery = () => {
+    const { search } = useLocation();
+
+    return useMemo(() => new URLSearchParams(search), [search]);
+  }
+
+  let query = useQuery();*/
+
   return (
     <Router>
       {/* React Router routes to pages by loading different elements depending on the path */}
@@ -49,28 +51,28 @@ function Homepage(props) {
           exact
           path="/"
           element={
-            <Home surveys={surveys} getSurveys={getSurveys} setSurveyID={setSurveyID} setSurveyIndex={setSurveyIndex} update={update} setUpdate={setUpdate} />
+            <Home surveys={surveys} getSurveys={getSurveys} setSurvey={setSurvey} update={update} setUpdate={setUpdate} />
           }
         />
         {/* CreateSurvey page */}
         <Route
           path="/create"
           element={
-            <CreateSurvey surveyID={surveyID} userID={userID} update={update} setUpdate={setUpdate} />
+            <CreateSurvey survey={survey} userID={userID} update={update} setUpdate={setUpdate} />
           }
         />
         {/* CreateFromExisting page */}
         <Route
           path="/createFromExisting"
           element={
-            <CreateFromExisting surveys={surveys} getSurveys={getSurveys} setSurveyID={setSurveyID} update={update} />
+            <CreateFromExisting surveys={surveys} getSurveys={getSurveys} setSurvey={setSurvey} update={update} />
           }
         />
         {/* TakeSurvey page */}
         <Route
           path="/survey"
           element={
-            <TakeSurvey surveys={surveys} setSurveys={setSurveys} surveyIndex={surveyIndex} />
+            <TakeSurvey survey={survey} />
           }
         />
         {/* Results page */}
@@ -81,10 +83,10 @@ function Homepage(props) {
           }
         />
         {/* Profile Page*/}
-        <Route 
+        <Route
           path="myProfile"
           element={
-            <RowAndColumnSpacing userID={userID}/>
+            <RowAndColumnSpacing userID={userID} />
           }
         />
       </Routes>

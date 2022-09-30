@@ -27,7 +27,7 @@ function MC(props) {
   // Adds a choice to the MC question
   const addChoice = () => {
     let newArr = [...questions];
-    newArr[index].choices.push("");
+    newArr[index].choices.push({ choice: "" });
     setQuestions(newArr);
   };
 
@@ -58,7 +58,7 @@ function MC(props) {
             setQuestions={setQuestions}
             index={index}
             choiceIndex={choiceIndex}
-            empty={empty && choice === ""}
+            empty={empty && choice.choice === ""}
             key={choiceIndex}
           />
         );

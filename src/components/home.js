@@ -18,11 +18,11 @@ import { Link } from 'react-router-dom';
 import Nav from './nav';
 
 function Home(props) {
-    const { surveys, getSurveys, setSurveyID, setSurveyIndex, update, setUpdate } = props;
+    const { surveys, getSurveys, setSurvey, update, setUpdate } = props;
 
     // Retrieves surveys from the database only after creating and deleting operations are completed
     useEffect(() => {
-        setSurveyID(-1);
+        setSurvey({ id: -1 });
         if (!update.deleting && !update.creating) {
             getSurveys();
         }
@@ -31,9 +31,9 @@ function Home(props) {
     // Determines whether the Dialog component for deleting surveys is open or closed
     const [open, setOpen] = useState(false);
 
-    // When a 'take survey' button is clicked, set the index of the corresponding survey
-    const handleClick = (index) => {
-        setSurveyIndex(index);
+    // When a 'take survey' button is clicked, set the name and id of the corresponding survey
+    const handleClick = (survey, e) => {
+        setSurvey(survey);
     }
 
     // Opens the Dialog component for deleting surveys
@@ -54,15 +54,18 @@ function Home(props) {
     // Deletes the survey with the given id
     const deleteSurvey = async (id, e) => {
         handleClose();
-        setUpdate({ creating: update.creating, deleting: true, message: "Deleting Survey..." });
+        setUpdate({ creating: false, deleting: true, message: "Deleting Survey...", open: true });
         const requestOptions = {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
         };
         const req = await fetch("/deleteSurvey/" + id, requestOptions)
             .then(response => {
-                setUpdate({ creating: update.creating, deleting: false, message: update.message });
-                return response.json();
+                setUpdate({ creating: false, deleting: false, message: "Survey '" + surveyToDelete.name + "' deleted", open: true });
+                const timer = setTimeout(() => {
+                    setUpdate({ creating: false, deleting: false, message: "", open: false });
+                }, 3000);
+                return () => clearTimeout(timer);
             });
     }
 
@@ -85,13 +88,14 @@ function Home(props) {
                                             </IconButton>
                                         }
                                         title={survey.name}
+                                        subheader={new Date(survey.time).toLocaleString()}
                                     />
                                     <CardContent>
                                         <Typography variant="h6">{survey.count} Response{survey.count !== 1 && "s"}</Typography>
                                     </CardContent>
-                                    {/*<CardActions>
-                                        <Button component={Link} to="/survey" onClick={handleClick(index)}>Take Survey</Button>
-                                    </CardActions>*/}
+                                    <CardActions>
+                                        <Button component={Link} to="/survey" onClick={(e) => handleClick(survey, e)}>Take Survey</Button>
+                                    </CardActions>
                                 </Card>
                             </Grid>
                         );
@@ -119,7 +123,7 @@ function Home(props) {
                 </DialogContent>
             </Dialog>}
             <Snackbar
-                open={update.creating || update.deleting}
+                open={update.open}
                 message={update.message}
             />
         </Box >

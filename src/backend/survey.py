@@ -11,17 +11,15 @@ def getSurveys(cursor, userID):
             responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(question[0]))) #get responses to question
             for response in responses:
                 count = count + 1
-        surveys.append({"id": entry[0], "name": entry[3], "count": count}) #return survey id, name, and responses
+        surveys.append({"id": entry[0], "name": entry[3], "count": count, "time": entry[4]}) #return survey id, name, and responses
     return jsonify(surveys)
       
-def addSurvey(cursor, userID, surveyName):
+def addSurvey(cursor, userID, surveyName, timeCreated):
     table = cursor.execute("SELECT * FROM surveys")
     surveyID = 0
     for entry in table:
-        if entry[3] == surveyName:
-            return jsonify({'result': '-1'})
         surveyID = entry[0]+1
-    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s)", (int(surveyID), int(userID), "-1", surveyName))
+    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s, %s)", (int(surveyID), int(userID), "-1", surveyName, timeCreated))
     return jsonify({'result': surveyID})
 
 def UpdateSurveyName(cursor, surveyID, surveyName):
@@ -34,6 +32,7 @@ def deleteSurvey(cursor, surveyID):
             cursor.execute("DELETE FROM responses WHERE question_id = %s",(entry[0]))
     cursor.execute("DELETE FROM questions WHERE survey_id = %s",(str(surveyID)))
     cursor.execute("DELETE FROM surveys WHERE survey_id = %s",(str(surveyID)))
+    return jsonify({'result': 0})
 
 def getQuestions(cursor, surveyID):
     table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (str(surveyID)))
@@ -107,14 +106,13 @@ def updateChoice(cursor, choiceID, prompt):
 def deleteChoice(cursor, choiceID):
     cursor.execute("DELETE FROM choices WHERE choice_id = %s", (int(choiceID)))
 
-def getQuestionAndChoices(cursor, surveyID):
+def getQuestionsAndChoices(cursor, surveyID):
     table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (str(surveyID)))
     questions = []
     for entry in table:
-        row = []
-        row.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3]}) #return question id and prompt
+        choices_ary = []
         choices = cursor.execute("SELECT * FROM choices WHERE question_id=%s",(str(entry[0])))
         for choice in choices:
-            row.append({"id": choice[0], "choice": choice[2]}) #return choice id and answer
-        questions.append(row)
+            choices_ary.append({"id": choice[0], "choice": choice[2]}) #return choice id and answer
+        questions.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3], 'choices': choices_ary})
     return jsonify(questions)
