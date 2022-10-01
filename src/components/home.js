@@ -94,7 +94,7 @@ function Home(props) {
                                         <Typography variant="h6">{survey.count} Response{survey.count !== 1 && "s"}</Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button component={Link} to="/survey" onClick={(e) => handleClick(survey, e)}>Take Survey</Button>
+                                        <Button>Stop</Button>
                                     </CardActions>
                                 </Card>
                             </Grid>
