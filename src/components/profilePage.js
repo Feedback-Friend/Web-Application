@@ -16,29 +16,79 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary
 }));
 
-function FormRow() {
+function FormNameRow() {
+  return (
+    <React.Fragment>
+
+      {/* Row Type */}
+      <Grid item xs={2}>
+        <Item>Name: </Item>
+      </Grid>
+
+      {/* Current First Name */}
+      <Grid item xs={2}>
+        <TextField 
+          required type="text" disabled
+          label={"First Name"}
+        />
+      </Grid>
+      {/* Current Last Name */}
+      <Grid item xs={2}>
+        <TextField 
+          required type="text" disabled
+          label={"Last Name"}
+        />
+      </Grid>
+
+      {/* Field to Edit First Name */}
+      <Grid item xs={2}>
+        <TextField 
+          required type="text" 
+          label={"Change First Name"}
+          placeholder={"Enter if applicable"}
+          />
+      </Grid>
+      {/* Field to Edit Last Name */}
+      <Grid item xs={2}>
+        <TextField 
+          required type="text" 
+          label={"Change Last Name"}
+          placeholder={"Enter if applicable"}
+          />
+      </Grid>
+
+      {/* Button to change first name to name in Field */}
+      <Grid item xs={2}>
+        <Button variant="contained">Change</Button>
+      </Grid>
+
+    </React.Fragment>
+  );
+}
+
+function FormUsernameRow() {
   return (
     <React.Fragment>
 
       {/* Row Type */}
       <Grid item xs={3}>
-        <Item>First Name: </Item>
+        <Item>Username: </Item>
       </Grid>
 
-      {/* Current First Name */}
+      {/* Current Username */}
       <Grid item xs={3}>
         <TextField 
           required type="text" disabled
-          label={"Your First Name"}
+          label={"Username"}
         />
       </Grid>
 
-      {/* Field to Edit First Name */}
+      {/* Field to Edit Username */}
       <Grid item xs={3}>
         <TextField 
           required type="text" 
-          label={"NewFirstNameTextField"}
-          placeholder={"Your New First Name"}
+          label={"Change Username"}
+          placeholder={"Enter if applicable"}
           />
       </Grid>
 
@@ -51,20 +101,126 @@ function FormRow() {
   );
 }
 
+function FormEmailRow() {
+  return (
+    <React.Fragment>
+
+      {/* Row Type */}
+      <Grid item xs={3}>
+        <Item>Email: </Item>
+      </Grid>
+
+      {/* Current First Name */}
+      <Grid item xs={3}>
+        <TextField 
+          required type="text" disabled
+          label={"Email"}
+        />
+      </Grid>
+
+      {/* Field to Edit First Name */}
+      <Grid item xs={3}>
+        <TextField 
+          required type="text" 
+          label={"Change Email"}
+          placeholder={"Enter if applicable"}
+          />
+      </Grid>
+
+      {/* Button to change email to text in Field */}
+      <Grid item xs={3}>
+        <Button variant="contained">Change</Button>
+      </Grid>
+
+    </React.Fragment>
+  );
+}
+
+// function FormFirstNameRow() {
+//   return (
+//     <React.Fragment>
+
+//       {/* Row Type */}
+//       <Grid item xs={3}>
+//         <Item>First Name: </Item>
+//       </Grid>
+
+//       {/* Current First Name */}
+//       <Grid item xs={3}>
+//         <TextField 
+//           required type="text" disabled
+//           label={"Your First Name"}
+//         />
+//       </Grid>
+
+//       {/* Field to Edit First Name */}
+//       <Grid item xs={3}>
+//         <TextField 
+//           required type="text" 
+//           label={"NewFirstNameTextField"}
+//           placeholder={"Your New First Name"}
+//           />
+//       </Grid>
+
+//       {/* Button to change first name to name in Field */}
+//       <Grid item xs={3}>
+//         <Button variant="contained">Change</Button>
+//       </Grid>
+
+//     </React.Fragment>
+//   );
+// }
+
+// function FormFirstNameRow() {
+//   return (
+//     <React.Fragment>
+
+//       {/* Row Type */}
+//       <Grid item xs={3}>
+//         <Item>First Name: </Item>
+//       </Grid>
+
+//       {/* Current First Name */}
+//       <Grid item xs={3}>
+//         <TextField 
+//           required type="text" disabled
+//           label={"Your First Name"}
+//         />
+//       </Grid>
+
+//       {/* Field to Edit First Name */}
+//       <Grid item xs={3}>
+//         <TextField 
+//           required type="text" 
+//           label={"NewFirstNameTextField"}
+//           placeholder={"Your New First Name"}
+//           />
+//       </Grid>
+
+//       {/* Button to change first name to name in Field */}
+//       <Grid item xs={3}>
+//         <Button variant="contained">Change</Button>
+//       </Grid>
+
+//     </React.Fragment>
+//   );
+// }
+
 export default function NestedGrid() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={1}>
         <Grid container item spacing={3}>
-          <FormRow />
+          <FormNameRow />
         </Grid>
         <Grid container item spacing={3}>
-          <FormRow />
+          <FormUsernameRow />
         </Grid>
         <Grid container item spacing={3}>
-          <FormRow />
+          <FormEmailRow />
         </Grid>
       </Grid>
     </Box>
   );
 }
+
