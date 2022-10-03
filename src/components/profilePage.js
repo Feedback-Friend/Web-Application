@@ -6,7 +6,6 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 
-// import { Button } from 'react'
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -57,7 +56,7 @@ function FormNameRow() {
           />
       </Grid>
 
-      {/* Button to change first name to name in Field */}
+      {/* Button to change first name to name from fields */}
       <Grid item xs={2}>
         <Button variant="contained">Change</Button>
       </Grid>
@@ -92,7 +91,7 @@ function FormUsernameRow() {
           />
       </Grid>
 
-      {/* Button to change first name to name in Field */}
+      {/* Button to change first name to name from field */}
       <Grid item xs={3}>
         <Button variant="contained">Change</Button>
       </Grid>
@@ -110,7 +109,7 @@ function FormEmailRow() {
         <Item>Email: </Item>
       </Grid>
 
-      {/* Current First Name */}
+      {/* Current Email */}
       <Grid item xs={3}>
         <TextField 
           required type="text" disabled
@@ -118,7 +117,7 @@ function FormEmailRow() {
         />
       </Grid>
 
-      {/* Field to Edit First Name */}
+      {/* Field to Edit Email */}
       <Grid item xs={3}>
         <TextField 
           required type="text" 
@@ -127,7 +126,7 @@ function FormEmailRow() {
           />
       </Grid>
 
-      {/* Button to change email to text in Field */}
+      {/* Button to change email to email from field */}
       <Grid item xs={3}>
         <Button variant="contained">Change</Button>
       </Grid>
@@ -135,76 +134,6 @@ function FormEmailRow() {
     </React.Fragment>
   );
 }
-
-// function FormFirstNameRow() {
-//   return (
-//     <React.Fragment>
-
-//       {/* Row Type */}
-//       <Grid item xs={3}>
-//         <Item>First Name: </Item>
-//       </Grid>
-
-//       {/* Current First Name */}
-//       <Grid item xs={3}>
-//         <TextField 
-//           required type="text" disabled
-//           label={"Your First Name"}
-//         />
-//       </Grid>
-
-//       {/* Field to Edit First Name */}
-//       <Grid item xs={3}>
-//         <TextField 
-//           required type="text" 
-//           label={"NewFirstNameTextField"}
-//           placeholder={"Your New First Name"}
-//           />
-//       </Grid>
-
-//       {/* Button to change first name to name in Field */}
-//       <Grid item xs={3}>
-//         <Button variant="contained">Change</Button>
-//       </Grid>
-
-//     </React.Fragment>
-//   );
-// }
-
-// function FormFirstNameRow() {
-//   return (
-//     <React.Fragment>
-
-//       {/* Row Type */}
-//       <Grid item xs={3}>
-//         <Item>First Name: </Item>
-//       </Grid>
-
-//       {/* Current First Name */}
-//       <Grid item xs={3}>
-//         <TextField 
-//           required type="text" disabled
-//           label={"Your First Name"}
-//         />
-//       </Grid>
-
-//       {/* Field to Edit First Name */}
-//       <Grid item xs={3}>
-//         <TextField 
-//           required type="text" 
-//           label={"NewFirstNameTextField"}
-//           placeholder={"Your New First Name"}
-//           />
-//       </Grid>
-
-//       {/* Button to change first name to name in Field */}
-//       <Grid item xs={3}>
-//         <Button variant="contained">Change</Button>
-//       </Grid>
-
-//     </React.Fragment>
-//   );
-// }
 
 export default function NestedGrid() {
   return (
