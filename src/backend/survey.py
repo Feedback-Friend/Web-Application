@@ -13,6 +13,20 @@ def getSurveys(cursor, userID):
                 count = count + 1
         surveys.append({"id": entry[0], "name": entry[3], "count": count, "time": entry[4]}) #return survey id, name, and responses
     return jsonify(surveys)
+
+def getSurveyResults(cursor, userID):
+    table = cursor.execute("SELECT * FROM surveys WHERE user_id=%s", (str(userID)))
+    surveys = []
+    response_list = []
+    for entry in table:
+        count = 0
+        questions = cursor.execute("SELECT * FROM questions WHERE survey_id=%s LIMIT 1", (str(entry[0]))) #get single question
+        for question in questions:
+            responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(question[0]))) #get responses to question
+            for response in responses:
+                response_list.append(response)    
+        surveys.append({"id": entry[0], "name": entry[3], "response_list": [dict(row) for row in response_list], "time": entry[4]}) #return survey id, name, and responses
+    return jsonify(surveys)
       
 def addSurvey(cursor, userID, surveyName, timeCreated):
     table = cursor.execute("SELECT * FROM surveys")

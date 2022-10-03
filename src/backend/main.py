@@ -244,3 +244,8 @@ def deleteContact(contactID):
 def getQuestionsAndChoices(surveyID):
     cursor = engine.connect()
     return survey.getQuestionsAndChoices(cursor, surveyID)
+
+@app.route('/getSurveyResults/<userID>', methods=['GET'])
+def getSurveyResults(userID):
+    cursor = engine.connect()
+    return survey.getSurveyResults(cursor, userID)
