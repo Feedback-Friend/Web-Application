@@ -1,32 +1,68 @@
-import * as React from 'react';
-import { styled } from '@mui/material/styles';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
+import * as React from "react";
+import { styled } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+
+// import { Button } from 'react'
 
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
-  textAlign: 'center',
-  color: theme.palette.text.secondary,
+  textAlign: "center",
+  color: theme.palette.text.secondary
 }));
 
-export default function RowAndColumnSpacing() {
+function FormRow() {
   return (
-    <Box sx={{ width: '100%' }}>
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-        <Grid item xs={6}>
-          <Item>1</Item>
+    <React.Fragment>
+
+      {/* Row Type */}
+      <Grid item xs={3}>
+        <Item>First Name: </Item>
+      </Grid>
+
+      {/* Current First Name */}
+      <Grid item xs={3}>
+        <TextField 
+          required type="text" disabled
+          label={"Your First Name"}
+        />
+      </Grid>
+
+      {/* Field to Edit First Name */}
+      <Grid item xs={3}>
+        <TextField 
+          required type="text" 
+          label={"NewFirstNameTextField"}
+          placeholder={"Your New First Name"}
+          />
+      </Grid>
+
+      {/* Button to change first name to name in Field */}
+      <Grid item xs={3}>
+        <Button variant="contained">Change</Button>
+      </Grid>
+
+    </React.Fragment>
+  );
+}
+
+export default function NestedGrid() {
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <Grid container spacing={1}>
+        <Grid container item spacing={3}>
+          <FormRow />
         </Grid>
-        <Grid item xs={6}>
-          <Item>2</Item>
+        <Grid container item spacing={3}>
+          <FormRow />
         </Grid>
-        <Grid item xs={6}>
-          <Item>3</Item>
-        </Grid>
-        <Grid item xs={6}>
-          <Item>4</Item>
+        <Grid container item spacing={3}>
+          <FormRow />
         </Grid>
       </Grid>
     </Box>
