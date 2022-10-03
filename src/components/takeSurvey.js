@@ -53,6 +53,10 @@ function TakeSurvey() {
       setUnanswered(unanswered);
     } else {
       /* TODO: post responses */
+      for (const question of questions) {
+        console.log(question.id);
+        console.log(question.response);
+      }
     }
   };
 

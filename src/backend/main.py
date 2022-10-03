@@ -4,9 +4,9 @@ from flask.json import jsonify
 from sqlalchemy import create_engine
 import sshtunnel
 
-import user as user
-import survey as survey
-import contact as contact
+import users as user
+import surveys as survey
+import contacts as contact
 
 # the build files for react go in the specified static folder, which allows flask to access react's frontend
 app = Flask(__name__, static_folder='../../build/', static_url_path='/')
