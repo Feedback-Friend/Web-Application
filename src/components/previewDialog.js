@@ -38,10 +38,10 @@ function PreviewDialog(props) {
                             {question.choices.map((choice, index) => {
                                 return (
                                     <FormControlLabel
-                                        key={index}
-                                        value={question.choices[index]}
+                                        key={choice.id}
+                                        value={choice.choice}
                                         control={<Radio />}
-                                        label={alphabet.charAt(index) + ". " + question.choices[index]}
+                                        label={alphabet.charAt(index) + ". " + choice.choice}
                                     />
                                 );
                             })}
