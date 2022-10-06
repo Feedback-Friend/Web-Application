@@ -1,4 +1,4 @@
-from ..src.backend.utility import decode, encode
+from utility import decode, encode
 import random
 
 alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
