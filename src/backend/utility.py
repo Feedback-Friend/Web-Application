@@ -11,7 +11,6 @@ from sqlalchemy import create_engine
 # tunnel.start()
 
 # engine = create_engine('mysql+mysqldb://test:rY!&pa4PsDAq@127.0.0.1:%s/db' % tunnel.local_bind_port)
-engine = create_engine('mysql+mysqldb://root:password@localhost:3306/feedback_friend')
 
 """
 Repopulates an empty database with the SQL schema.
@@ -110,7 +109,7 @@ def repopulate_schema(engine):
 Deletes all tables in the database the SQLHandler is connected to
 void method, does not return anything
 """
-def eject_tables(engine):
+def eject_schema(engine):
     cursor = engine.connect()
     result = cursor.execute("SHOW TABLES;")
     tables = result.fetchall()
@@ -119,4 +118,23 @@ def eject_tables(engine):
         cursor.execute(f"DROP TABLE {table};")
     print("all tables successfully removed")
 
-eject_tables(engine)
+
+def encode(unencrypted_info):
+    # encoder adds 1 to the ascii value of each character
+    encoded = ""
+    for char in unencrypted_info:
+        encoded += chr(ord(char) + 1)
+    return encoded
+
+
+def decode(encrypted_info):
+    decoded = ""
+    for char in encrypted_info:
+        decoded += chr(ord(char) - 1)
+    return decoded
+
+
+engine = create_engine('mysql+mysqldb://root:password@localhost:3306/feedback_friend')
+
+eject_schema(engine)
+# repopulate_schema(engine)
