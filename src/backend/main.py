@@ -3,13 +3,17 @@ from flask import Flask
 from flask.json import jsonify
 from sqlalchemy import create_engine
 import sshtunnel
+import os
 
-import users as user
-import surveys as survey
-import contacts as contact
+import src.backend.users as user
+import src.backend.surveys as survey
+import src.backend.contacts as contact
 
 # the build files for react go in the specified static folder, which allows flask to access react's frontend
 app = Flask(__name__, static_folder='../../build/', static_url_path='/')
+
+# directory defaults to /, need to change it to see pkey
+os.chdir('/var/www/html/WebApplication/')
 
 # connecting to oracle cloud compute unit for database
 tunnel = sshtunnel.SSHTunnelForwarder(
