@@ -10,7 +10,7 @@ function Choice(props) {
   const { questions, setQuestions, index, choiceIndex, empty, showMessage, hideMessage } = props;
 
   // Updates the choice at the given index on change
-  const updateChoice = async (choiceIndex, e) => {
+  const updateChoice = (choiceIndex, e) => {
     let newArr = [...questions];
     newArr[index].choices[choiceIndex].choice = e.target.value;
     setQuestions(newArr);
@@ -22,14 +22,14 @@ function Choice(props) {
 
     showMessage("Autosaving...");
 
-    await fetch("/updateChoice/" + questions[index].choices[choiceIndex].id + "/" + e.target.value, requestOptions)
+    const func = async () => await fetch("/updateChoice/" + questions[index].choices[choiceIndex].id + "/" + e.target.value, requestOptions)
       .then(response => { return response.json() });
 
-    hideMessage("Saved");
+    hideMessage("Saved", func, "updateChoice" + questions[index].choices[choiceIndex].id);
   };
 
   // Deletes the choice at the given index from its MC question
-  const deleteChoice = async (choiceIndex) => {
+  const deleteChoice = (choiceIndex) => {
     const requestOptions = {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -37,14 +37,14 @@ function Choice(props) {
 
     showMessage("Autosaving...");
 
-    await fetch("/deleteChoice/" + questions[index].choices[choiceIndex].id, requestOptions)
+    const func = async () => await fetch("/deleteChoice/" + questions[index].choices[choiceIndex].id, requestOptions)
       .then(response => { return response.json() });
 
     let newArr = [...questions];
     newArr[index].choices.splice(choiceIndex, 1);
     setQuestions(newArr);
 
-    hideMessage("Saved");
+    hideMessage("Saved", func, "deleteChoice" + questions[index].choices[choiceIndex].id);
   };
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

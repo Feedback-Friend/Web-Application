@@ -32,20 +32,26 @@ function CreateSurvey(props) {
   const [openPreview, setOpenPreview] = useState(false);
 
   // Gets the question types, prompts, and choices associated with an existing survey and populates the questions state
-  const getFromExisting = useCallback(async () => {
+  const getFromExisting = useCallback(() => {
     const requestOptions = {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     };
 
-    let questions = await fetch("/getQuestionsAndChoices/" + surveyTemplate.id, requestOptions)
-      .then(response => { return response.json() });
+    showMessage("Getting questions...");
 
-    setQuestions(questions);
-  }, [surveyTemplate.id]);
+    const func = async () => {
+      let questions = await fetch("/getQuestionsAndChoices/" + surveyTemplate.id, requestOptions)
+        .then(response => { return response.json() });
+
+      setQuestions(questions);
+    }
+
+    hideMessage("Got questions", func, "getQuestionsAndChoices");
+  }, [surveyTemplate.id, showMessage, hideMessage]);
 
   // Adds survey to the database
-  const addSurvey = useCallback(async () => {
+  const addSurvey = useCallback(() => {
     const timeCreated = new Date().getTime();
 
     const requestOptions = {
@@ -55,15 +61,18 @@ function CreateSurvey(props) {
 
     showMessage("Autosaving...");
 
-    let req = await fetch("/addSurvey/" + userID + "/" + timeCreated + "/" + surveyTemplate.name, requestOptions)
-      .then(response => { return response.json() });
+    let func = async () => {
+      let req = await fetch("/addSurvey/" + userID + "/" + timeCreated + "/" + surveyTemplate.name, requestOptions)
+        .then(response => { return response.json() });
 
-    setSurvey({ name: surveyTemplate.name, id: req.result });
-    hideMessage("Saved");
+      setSurvey({ name: surveyTemplate.name, id: req.result });
+    }
+
+    hideMessage("Saved", func, "addSurvey");
   }, [surveyTemplate.name, hideMessage, showMessage, userID]);
 
   // Creates a survey from an existing one
-  const createFromExisting = useCallback(async () => {
+  const createFromExisting = useCallback(() => {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -71,23 +80,26 @@ function CreateSurvey(props) {
 
     showMessage("Creating Survey...");
 
-    // Add questions
-    for (let question of questions) {
-      let req = await fetch("/addQuestion/" + survey.id + "/" + question.type + "/" + question.prompt, requestOptions)
-        .then(response => { return response.json() });
-      const questionID = req.result;
-      question.id = questionID;
-
-      // If a question has choices (i.e. is a MCQ), add them to the database
-      for (let choice in question.choices) {
-        req = await fetch("/addChoice/" + questionID + "/" + question.choices[choice].choice, requestOptions)
+    let func = async () => {
+      // Add questions
+      for (let question of questions) {
+        let req = await fetch("/addQuestion/" + survey.id + "/" + question.type + "/" + question.prompt, requestOptions)
           .then(response => { return response.json() });
-        question.choices[choice].id = req.result;
+        const questionID = req.result;
+        question.id = questionID;
+
+        // If a question has choices (i.e. is a MCQ), add them to the database
+        for (let choice in question.choices) {
+          req = await fetch("/addChoice/" + questionID + "/" + question.choices[choice].choice, requestOptions)
+            .then(response => { return response.json() });
+          question.choices[choice].id = req.result;
+        }
       }
+
+      setFromExisting(false);
     }
 
-    hideMessage("Survey '" + survey.name + "' created");
-    setFromExisting(false);
+    hideMessage("Survey '" + survey.name + "' created", func, "createFromExisting");
   }, [hideMessage, showMessage, survey, questions, setFromExisting]);
 
   // Set to true upon creation of new survey/retrieval of existing survey questions from database to prevent infinite loop on rerender
@@ -104,17 +116,17 @@ function CreateSurvey(props) {
       if (surveyTemplate.id !== -1) {
         getFromExisting();
       }
-      hasUpdatedStates.current = true;
+      hasUpdatedStates.current = true
     }
 
     // Only calls createFromExisting if the boolean 'fromExisting' is true and there are questions to add
-    if (questions.length !== 0 && fromExisting) {
+    if (survey.id !== surveyTemplate.id && questions.length !== 0 && fromExisting) {
       createFromExisting();
     }
-  }, [surveyTemplate.id, fromExisting, getFromExisting, addSurvey, createFromExisting, questions]);
+  }, [survey.id, surveyTemplate.id, fromExisting, getFromExisting, addSurvey, createFromExisting, questions]);
 
   // Updates the survey name in both the survey state and the database
-  const updateSurveyName = async (e) => {
+  const updateSurveyName = (e) => {
     setSurvey({ name: e.target.value, id: survey.id });
 
     const requestOptions = {
@@ -124,16 +136,14 @@ function CreateSurvey(props) {
 
     showMessage("Autosaving...");
 
-    await fetch("/updateSurveyName/" + survey.id + "/" + e.target.value, requestOptions)
-      .then(response => {
-        hideMessage("Saved");
-        return response.json()
-      });
+    let func = async () => await fetch("/updateSurveyName/" + survey.id + "/" + e.target.value, requestOptions)
+      .then(response => { return response.json() });
 
+    hideMessage("Saved", func, "updateName");
   }
 
   // Adds an FRQ question object to the questions state and the database
-  const addFRQ = async () => {
+  const addFRQ = () => {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -141,18 +151,21 @@ function CreateSurvey(props) {
 
     showMessage("Autosaving...");
 
-    let req = await fetch("/addFRQ/" + survey.id, requestOptions)
-      .then(response => { return response.json() });
+    let func = async () => {
+      let req = await fetch("/addFRQ/" + survey.id, requestOptions)
+        .then(response => { return response.json() });
 
-    const question = {
-      id: req.result,
-      type: 0,
-      prompt: "",
-      choices: [],
-    };
+      const question = {
+        id: req.result,
+        type: 0,
+        prompt: "",
+        choices: [],
+      };
 
-    setQuestions([...questions, question]);
-    hideMessage("Saved");
+      setQuestions([...questions, question]);
+    }
+
+    hideMessage("Saved", func, "addFRQ");
   };
 
   // Checks if no questions have been created or if any fields are empty, including survey name, question prompts, and MC choices.
@@ -170,9 +183,12 @@ function CreateSurvey(props) {
       setEmpty(true);
     } else {
       /* TODO: set survey from draft to active */
+      const func = async () => {
+
+      };
 
       showMessage("Publishing survey...");
-      hideMessage("Survey '" + survey.name + "' published");
+      hideMessage("Survey '" + survey.name + "' published", func, "publishSurvey");
     }
   };
 

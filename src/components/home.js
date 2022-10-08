@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
@@ -26,12 +26,18 @@ function Home(props) {
     // Contains the name and id of the survey up for deletion
     const [surveyToDelete, setSurveyToDelete] = useState('');
 
+    // Determines if the latest surveys have been retrieved from the database
+    const gottenSurveys = useRef(false);
+
     // Retrieves surveys from the database only after creating and deleting operations are completed
     useEffect(() => {
-        setSurvey({ name: "", id: -1 });
-        setFromExisting(false);
-        if (!update.updating) {
-            getSurveys();
+        if (!gottenSurveys.current) {
+            setSurvey({ name: "", id: -1 });
+            setFromExisting(false);
+            if (!update.updating) {
+                getSurveys();
+                gottenSurveys.current = true;
+            }
         }
     }, [setSurvey, setFromExisting, update.updating, getSurveys]);
 
@@ -42,7 +48,7 @@ function Home(props) {
     }
 
     // Deletes the survey with the given id
-    const deleteSurvey = async (id) => {
+    const deleteSurvey = (id) => {
         setOpenDelete(false); // Close the Dialog
         showMessage("Deleting Survey...");
 
@@ -51,12 +57,13 @@ function Home(props) {
             headers: { 'Content-Type': 'application/json' },
         };
 
-        await fetch("/deleteSurvey/" + id, requestOptions)
-            .then(response => {
-                // Change message after deletion, but keep snackbar open for another 3 seconds
-                const name = surveyToDelete.name || "Untitled Survey";
-                hideMessage("Survey '" + name + "' deleted", 3);
-            });
+        gottenSurveys.current = false;
+
+        const func = async () => await fetch("/deleteSurvey/" + id, requestOptions)
+            .then(response => { return response.json(); });
+
+        const name = surveyToDelete.name || "Untitled Survey";
+        hideMessage("Survey '" + name + "' deleted", func, "deleteSurvey" + id);
     }
 
     return (
@@ -73,7 +80,7 @@ function Home(props) {
                                 <Card>
                                     <CardHeader
                                         action={
-                                            <IconButton onClick={() => handleOpen(survey)}>
+                                            <IconButton onClick={() => handleOpen(survey)} disabled={update.updating}>
                                                 <Clear />
                                             </IconButton>
                                         }

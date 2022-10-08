@@ -87,7 +87,7 @@ function MCDialog(props) {
   Based on the string passed (empty string for creating from scratch, suggestion string for creating from suggestion),
   creates a new MC question with the proper list of choices and adds it to the questions list.
   */
-  const addMC = async (suggestion) => {
+  const addMC = (suggestion) => {
     let choices;
     switch (suggestion) {
       case "":
@@ -123,26 +123,29 @@ function MCDialog(props) {
     setOpen(false);
     showMessage("Autosaving...");
 
-    // Add multiple choice question to database
-    let req = await fetch("/addMCQ/" + surveyID, requestOptions)
-      .then(response => { return response.json() });
-    const questionID = req.result;
-    for (let choice of choices) {
-      // Add choice to database
-      req = await fetch("/addChoice/" + questionID + "/" + choice.choice, requestOptions)
+    const func = async () => {
+      // Add multiple choice question to database
+      let req = await fetch("/addMCQ/" + surveyID, requestOptions)
         .then(response => { return response.json() });
-      choice.id = req.result;
+      const questionID = req.result;
+      for (let choice of choices) {
+        // Add choice to database
+        req = await fetch("/addChoice/" + questionID + "/" + choice.choice, requestOptions)
+          .then(response => { return response.json() });
+        choice.id = req.result;
+      }
+
+      const question = {
+        id: questionID,
+        type: 1,
+        prompt: "",
+        choices: choices,
+      };
+
+      setQuestions([...questions, question]);
     }
 
-    const question = {
-      id: questionID,
-      type: 1,
-      prompt: "",
-      choices: choices,
-    };
-
-    setQuestions([...questions, question]);
-    hideMessage("Saved");
+    hideMessage("Saved", func, "addMC");
   };
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

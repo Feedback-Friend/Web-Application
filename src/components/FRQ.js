@@ -8,7 +8,7 @@ function FRQ(props) {
   const { questions, setQuestions, index, empty, showMessage, hideMessage } = props;
 
   // Updates the FRQ prompt on change
-  const updateFRQ = async (index, e) => {
+  const updateFRQ = (index, e) => {
     let newArr = [...questions];
     newArr[index].prompt = e.target.value;
     setQuestions(newArr);
@@ -20,14 +20,14 @@ function FRQ(props) {
 
     showMessage("Autosaving...");
 
-    await fetch("/updateFRQ/" + questions[index].id + "/" + e.target.value, requestOptions)
+    const func = async () => await fetch("/updateFRQ/" + questions[index].id + "/" + e.target.value, requestOptions)
       .then(response => { return response.json() });
 
-    hideMessage("Saved");
+    hideMessage("Saved", func, "updateFRQ" + questions[index].id);
   };
 
   // Deletes the FRQ from the questions list and database
-  const deleteFRQ = async (index) => {
+  const deleteFRQ = (index) => {
     const requestOptions = {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -35,14 +35,14 @@ function FRQ(props) {
 
     showMessage("Autosaving...");
 
-    await fetch("/deleteFRQ/" + questions[index].id, requestOptions)
+    const func = async () => await fetch("/deleteFRQ/" + questions[index].id, requestOptions)
       .then(response => { return response.json() });
 
     let newArr = [...questions];
     newArr.splice(index, 1);
     setQuestions(newArr);
 
-    hideMessage("Saved");
+    hideMessage("Saved", func, "deleteFRQ" + questions[index].id);
   };
 
   return (

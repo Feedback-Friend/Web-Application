@@ -26,6 +26,7 @@ function Homepage(props) {
 
   // Contains the timer for hiding the update message
   const timerRef = useRef(null);
+  const idRef = useRef(null);
 
   // Shows the update message
   const showMessage = useCallback((message) => {
@@ -33,13 +34,14 @@ function Homepage(props) {
   }, []);
 
   // Hides the update message after one second
-  const hideMessage = useCallback((message) => {
-    if (timerRef.current) {
+  const hideMessage = useCallback((message, func, id) => {
+    if (timerRef.current && idRef.current === id) {
       clearTimeout(timerRef.current);
     }
 
-    timerRef.current = setTimeout(() => {
-      setUpdate({ updating: false, message: message });
+    idRef.current = id;
+    timerRef.current = setTimeout(async () => {
+      await func().then(response => { setUpdate({ updating: false, message: message }) });
     }, 1000);
     return () => clearTimeout(timerRef.current);
   }, []);
@@ -48,16 +50,22 @@ function Homepage(props) {
   const [fromExisting, setFromExisting] = useState(false);
 
   // Gets the names, ids, time created, and response counts for every survey the user has created, and sets the survey state
-  const getSurveys = useCallback(async () => {
+  const getSurveys = useCallback(() => {
     const requestOptions = {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     };
 
-    const res = await fetch('/getSurveys/' + userID, requestOptions)
-      .then(response => { return response.json() });
-    setSurveys(res);
-  }, [userID]);
+    showMessage("Getting surveys...");
+
+    const func = async () => {
+      let res = await fetch('/getSurveys/' + userID, requestOptions)
+        .then(response => { return response.json() });
+      setSurveys(res);
+    };
+
+    hideMessage("Got surveys", func, "getSurveys");
+  }, [userID, showMessage, hideMessage]);
 
   return (
     <HashRouter>

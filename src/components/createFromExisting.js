@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import List from '@mui/material/List';
@@ -24,11 +24,17 @@ function CreateFromExisting(props) {
         setSurvey({ id: survey.id, name: name });
     }
 
+    // Determines whether the latest surveys have been retrieved from the database
+    const gottenSurveys = useRef(false);
+
     // Retrieves surveys from the database only after creating and deleting operations are completed
     useEffect(() => {
-        setSurvey({ id: -1 });
-        if (!update.updating) {
-            getSurveys();
+        if (!gottenSurveys.current) {
+            setSurvey({ id: -1 });
+            if (!update.updating) {
+                getSurveys();
+                gottenSurveys.current = true;
+            }
         }
     }, [update.updating, setSurvey, getSurveys]);
 

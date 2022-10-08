@@ -11,7 +11,7 @@ function MC(props) {
   const { questions, setQuestions, index, empty, showMessage, hideMessage } = props;
 
   // Updates the prompt of the MC question on change
-  const updateMC = async (index, e) => {
+  const updateMC = (index, e) => {
     let newArr = [...questions];
     newArr[index].prompt = e.target.value;
     setQuestions(newArr);
@@ -23,14 +23,14 @@ function MC(props) {
 
     showMessage("Autosaving...");
 
-    await fetch("/updateMCQ/" + questions[index].id + "/" + e.target.value, requestOptions)
+    const func = async () => await fetch("/updateMCQ/" + questions[index].id + "/" + e.target.value, requestOptions)
       .then(response => { return response.json() });
 
-    hideMessage("Saved");
+    hideMessage("Saved", func, "updateMC" + questions[index].id);
   };
 
   // Deletes the MC question from the questions list and database
-  const deleteMC = async (index) => {
+  const deleteMC = (index) => {
     const requestOptions = {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
@@ -38,18 +38,18 @@ function MC(props) {
 
     showMessage("Autosaving...");
 
-    await fetch("/deleteMCQ/" + questions[index].id, requestOptions)
+    const func = async () => await fetch("/deleteMCQ/" + questions[index].id, requestOptions)
       .then(response => { return response.json() });
 
     let newArr = [...questions];
     newArr.splice(index, 1);
     setQuestions(newArr);
 
-    hideMessage("Saved");
+    hideMessage("Saved", func, "deleteMCQ" + questions[index].id);
   };
 
   // Adds a choice to the MC question
-  const addChoice = async () => {
+  const addChoice = () => {
     const requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -57,14 +57,16 @@ function MC(props) {
 
     showMessage("Autosaving...");
 
-    let req = await fetch("/addChoice/" + questions[index].id + "/", requestOptions)
-      .then(response => { return response.json() });
+    const func = async () => {
+      let req = await fetch("/addChoice/" + questions[index].id + "/", requestOptions)
+        .then(response => { return response.json() });
 
-    let newArr = [...questions];
-    newArr[index].choices.push({ choice: "", id: req.result });
-    setQuestions(newArr);
+      let newArr = [...questions];
+      newArr[index].choices.push({ choice: "", id: req.result });
+      setQuestions(newArr);
+    }
 
-    hideMessage("Saved");
+    hideMessage("Saved", func, "addChoice" + questions[index].id);
   };
 
   return (
