@@ -14,11 +14,6 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 function PreviewDialog(props) {
     const { open, setOpen, questions, name } = props;
 
-    // Closes the preview Dialog
-    const handleClose = () => {
-        setOpen(false);
-    };
-
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     // Generates the list of prompts and form fields for FRQ and MC questions
@@ -38,7 +33,7 @@ function PreviewDialog(props) {
                             {question.choices.map((choice, index) => {
                                 return (
                                     <FormControlLabel
-                                        key={choice.id}
+                                        key={index}
                                         value={choice.choice}
                                         control={<Radio />}
                                         label={alphabet.charAt(index) + ". " + choice.choice}
@@ -53,16 +48,14 @@ function PreviewDialog(props) {
     });
 
     return (
-        <div>
-            <Dialog open={open} onClose={handleClose}>
-                <DialogTitle>{name}</DialogTitle>
-                <DialogContent>
-                    <List sx={{ mx: "auto" }}>
-                        {prompts}
-                    </List>
-                </DialogContent>
-            </Dialog>
-        </div>
+        <Dialog open={open} onClose={() => setOpen(false)} fullWidth>
+            <DialogTitle textAlign="center">{name}</DialogTitle>
+            <DialogContent>
+                <List sx={{ mx: "auto" }}>
+                    {prompts}
+                </List>
+            </DialogContent>
+        </Dialog>
     );
 }
 

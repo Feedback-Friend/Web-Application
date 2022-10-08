@@ -9,41 +9,46 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import EndPage from './endPage';
 
 function TakeSurvey() {
   let { id } = useParams();
 
+  // Contains the name and id of the survey to be taken
   const [survey, setSurvey] = useState({ id: -1, name: "" });
 
+  // Contains a list of questions for the survey to be taken
   const [questions, setQuestions] = useState([]);
 
   // Determines whether to display an error on submission if any of the questions are left unanswered
   const [unanswered, setUnanswered] = useState(false);
 
-  useEffect(() => {
-    getQuestions();
-  }, [id]);
-
-  const getQuestions = async () => {
+  // Gets the survey name and questions from the database. If the survey doesn't exist, displays an error message instead of questions.
+  const getSurvey = useCallback(async () => {
     const requestOptions = {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     };
 
-    /* TODO: get survey name from id, if survey doesn't exist show error message, else get questions and choices */
-    let questions = await fetch("/getQuestionsAndChoices/" + id, requestOptions)
+    let name = await fetch("/getSurveyName/" + id, requestOptions)
       .then(response => { return response.json(); });
-    if (questions.length === 0) {
+    if (!name) {
       setSurvey({ id: -1, name: "Sorry, the survey you're trying to access doesn't exist" });
       setQuestions([]);
     } else {
-      setSurvey({ id: id, name: "survey" });
+      let questions = await fetch("/getQuestionsAndChoices/" + id, requestOptions)
+        .then(response => { return response.json(); });
       setQuestions(questions);
+
+      setSurvey({ id: id, name: name });
     }
-  }
+  }, [id, setSurvey, setQuestions]);
+
+  // Retrieves the survey questions on component mount and whenever the id parameter changes
+  useEffect(() => {
+    getSurvey();
+  }, [id, getSurvey]);
 
   // On submission, prevents submission and displays an error if any questions are left unanswered. Otherwise, adds the list of responses to the survey just taken in the 'surveys' state.
   const handleSubmit = (e) => {

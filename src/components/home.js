@@ -18,54 +18,44 @@ import { Link } from 'react-router-dom';
 import Nav from './nav';
 
 function Home(props) {
-    const { surveys, getSurveys, setSurvey, update, setUpdate } = props;
-
-    // Retrieves surveys from the database only after creating and deleting operations are completed
-    useEffect(() => {
-        setSurvey({ id: -1 });
-        if (!update.deleting && !update.creating) {
-            getSurveys();
-        }
-    }, [update]);
+    const { surveys, getSurveys, setSurvey, update, showMessage, hideMessage, setFromExisting } = props;
 
     // Determines whether the Dialog component for deleting surveys is open or closed
-    const [open, setOpen] = useState(false);
-
-    // When a 'take survey' button is clicked, set the name and id of the corresponding survey
-    const handleClick = (survey, e) => {
-        setSurvey(survey);
-    }
-
-    // Opens the Dialog component for deleting surveys
-    const handleOpen = (survey, e) => {
-        setOpen(true);
-        setSurveyToDelete(survey);
-    }
-
-    // Closes the Dialog component for deleting surveys
-    const handleClose = () => {
-        setOpen(false);
-        setSurveyToDelete('');
-    }
+    const [openDelete, setOpenDelete] = useState(false);
 
     // Contains the name and id of the survey up for deletion
     const [surveyToDelete, setSurveyToDelete] = useState('');
 
+    // Retrieves surveys from the database only after creating and deleting operations are completed
+    useEffect(() => {
+        setSurvey({ name: "", id: -1 });
+        setFromExisting(false);
+        if (!update.updating) {
+            getSurveys();
+        }
+    }, [setSurvey, setFromExisting, update.updating, getSurveys]);
+
+    // Opens the Dialog component for deleting surveys
+    const handleOpen = (survey) => {
+        setOpenDelete(true);
+        setSurveyToDelete(survey);
+    }
+
     // Deletes the survey with the given id
-    const deleteSurvey = async (id, e) => {
-        handleClose();
-        setUpdate({ creating: false, deleting: true, message: "Deleting Survey...", open: true });
+    const deleteSurvey = async (id) => {
+        setOpenDelete(false); // Close the Dialog
+        showMessage("Deleting Survey...");
+
         const requestOptions = {
             method: 'DELETE',
             headers: { 'Content-Type': 'application/json' },
         };
-        const req = await fetch("/deleteSurvey/" + id, requestOptions)
+
+        await fetch("/deleteSurvey/" + id, requestOptions)
             .then(response => {
-                setUpdate({ creating: false, deleting: false, message: "Survey '" + surveyToDelete.name + "' deleted", open: true });
-                const timer = setTimeout(() => {
-                    setUpdate({ creating: false, deleting: false, message: "", open: false });
-                }, 3000);
-                return () => clearTimeout(timer);
+                // Change message after deletion, but keep snackbar open for another 3 seconds
+                const name = surveyToDelete.name || "Untitled Survey";
+                hideMessage("Survey '" + name + "' deleted", 3);
             });
     }
 
@@ -75,7 +65,7 @@ function Home(props) {
             <Container sx={{ width: 1 / 2 }} spacing={2}>
                 <Grid container spacing={2}>
                     <Grid item xs={12}>
-                        <Typography variant="h2" textAlign="center" sx={{ mt: 2 }}>Active surveys: {surveys.length}</Typography>
+                        <Typography variant="h2" textAlign="center" sx={{ mt: 2 }}>Welcome back! You have {surveys.length} active survey{surveys.length !== 1 && "s"}.</Typography>
                     </Grid>
                     {surveys.map((survey) => {
                         return (
@@ -83,18 +73,18 @@ function Home(props) {
                                 <Card>
                                     <CardHeader
                                         action={
-                                            <IconButton onClick={(e) => handleOpen(survey, e)} disabled={update.creating || update.deleting}>
+                                            <IconButton onClick={() => handleOpen(survey)}>
                                                 <Clear />
                                             </IconButton>
                                         }
-                                        title={survey.name}
+                                        title={survey.name || "Untitled Survey"}
                                         subheader={new Date(survey.time).toLocaleString()}
                                     />
                                     <CardContent>
                                         <Typography variant="h6">{survey.count} Response{survey.count !== 1 && "s"}</Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button>Stop</Button>
+                                        <Button component={Link} to="create" onClick={(e) => setSurvey({ name: survey.name, id: survey.id })}>Edit</Button>
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -113,17 +103,17 @@ function Home(props) {
                     </Grid>
                 </Grid>
             </Container>
-            {surveyToDelete && <Dialog open={open} onClose={handleClose}>
+            <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
                 <DialogTitle>
-                    Are you sure you want to delete {surveyToDelete.name}?
+                    Are you sure you want to delete {surveyToDelete.name || "Untitled Survey"}?
                 </DialogTitle>
                 <DialogContent sx={{ textAlign: "center" }}>
-                    <Button onClick={(e) => deleteSurvey(surveyToDelete.id, e)}>Yes</Button>
-                    <Button onClick={handleClose}>No</Button>
+                    <Button onClick={() => deleteSurvey(surveyToDelete.id)}>Yes</Button>
+                    <Button onClick={() => setOpenDelete(false)}>No</Button>
                 </DialogContent>
-            </Dialog>}
+            </Dialog>
             <Snackbar
-                open={update.open}
+                open={update.updating}
                 message={update.message}
             />
         </Box >

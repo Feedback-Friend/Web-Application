@@ -12,24 +12,25 @@ import { Link } from 'react-router-dom';
 import Nav from './nav'
 
 function CreateFromExisting(props) {
-    const { surveys, getSurveys, setSurvey, update } = props;
+    const { surveys, getSurveys, setSurvey, update, setFromExisting } = props;
 
     // The index of the selected list item
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
     // When a list item is selected, set its index and the id of the selected survey
-    const handleListItemClick = (e, survey, index) => {
+    const handleListItemClick = (survey, index) => {
         setSelectedIndex(index);
-        setSurvey(survey);
+        const name = "Copy of " + (survey.name || "Untitled Survey");
+        setSurvey({ id: survey.id, name: name });
     }
 
     // Retrieves surveys from the database only after creating and deleting operations are completed
     useEffect(() => {
         setSurvey({ id: -1 });
-        if (!update.creating && !update.deleting) {
+        if (!update.updating) {
             getSurveys();
         }
-    }, [update]);
+    }, [update.updating, setSurvey, getSurveys]);
 
     return (
         <Box>
@@ -43,9 +44,9 @@ function CreateFromExisting(props) {
                                 <ListItemButton
                                     key={survey.id}
                                     selected={selectedIndex === index}
-                                    onClick={(e) => handleListItemClick(e, survey, index)}
+                                    onClick={() => handleListItemClick(survey, index)}
                                 >
-                                    <ListItemText primary={survey.name} />
+                                    <ListItemText primary={survey.name || "Untitled Survey"} />
                                     <ListItemText primary={new Date(survey.time).toLocaleString()} sx={{ textAlign: "right" }} />
                                 </ListItemButton>
                                 <Divider />
@@ -53,10 +54,10 @@ function CreateFromExisting(props) {
                         );
                     })}
                 </List>
-                <Button variant="contained" component={Link} to="../create" disabled={selectedIndex === -1}>Create</Button>
+                <Button variant="contained" component={Link} to="../create" onClick={() => setFromExisting(true)} disabled={selectedIndex === -1}>Create</Button>
             </Container>
             <Snackbar
-                open={update.open}
+                open={update.updating}
                 message={update.message}
             />
         </Box>
