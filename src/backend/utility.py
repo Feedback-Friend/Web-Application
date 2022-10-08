@@ -119,6 +119,11 @@ def eject_schema(engine):
     print("all tables successfully removed")
 
 
+def flush_schema(engine):
+    eject_schema(engine)
+    repopulate_schema(engine)
+
+
 def encode(unencrypted_info):
     # encoder adds 1 to the ascii value of each character
     encoded = ""
@@ -136,5 +141,5 @@ def decode(encrypted_info):
 
 engine = create_engine('mysql+mysqldb://root:password@localhost:3306/feedback_friend')
 
-eject_schema(engine)
-# repopulate_schema(engine)
+# eject_schema(engine)
+flush_schema(engine)
