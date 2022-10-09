@@ -5,27 +5,51 @@ import Clear from '@mui/icons-material/Clear';
 import React from 'react';
 
 function FRQ(props) {
-  const { questions, setQuestions, index, empty } = props;
+  const { questions, setQuestions, index, empty, showMessage, hideMessage } = props;
 
   // Updates the FRQ prompt on change
-  const updateFRQ = (index) => (e) => {
+  const updateFRQ = (index, e) => {
     let newArr = [...questions];
     newArr[index].prompt = e.target.value;
     setQuestions(newArr);
+
+    const requestOptions = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    showMessage("Autosaving...");
+
+    const func = async () => await fetch("/updateFRQ/" + questions[index].id + "/" + e.target.value, requestOptions)
+      .then(response => { return response.json() });
+
+    hideMessage("Saved", func, "updateFRQ" + questions[index].id);
   };
 
-  // Deletes the FRQ from the questions list
-  const deleteFRQ = (index) => (e) => {
+  // Deletes the FRQ from the questions list and database
+  const deleteFRQ = (index) => {
+    const requestOptions = {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    showMessage("Autosaving...");
+
+    const func = async () => await fetch("/deleteFRQ/" + questions[index].id, requestOptions)
+      .then(response => { return response.json() });
+
     let newArr = [...questions];
     newArr.splice(index, 1);
     setQuestions(newArr);
+
+    hideMessage("Saved", func, "deleteFRQ" + questions[index].id);
   };
 
   return (
     <TextField
       key={index}
       error={empty}
-      onChange={updateFRQ(index)}
+      onChange={(e) => updateFRQ(index, e)}
       value={questions[index].prompt}
       placeholder={"Q" + (index + 1)}
       margin="normal"
@@ -33,11 +57,12 @@ function FRQ(props) {
       InputProps={{
         endAdornment: (
           <InputAdornment position="end">
-            <IconButton onClick={deleteFRQ(index)} edge="end">
+            <IconButton onClick={() => deleteFRQ(index)} edge="end">
               <Clear />
             </IconButton>
           </InputAdornment>
         ),
+        maxLength: 500
       }}
     />
   );
