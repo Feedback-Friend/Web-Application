@@ -85,9 +85,3 @@ def deleteUser(cursor, userID):
     table = cursor.execute("SELECT * FROM contact_lists WHERE contact_list_id = %s", (int(userID)))
     for entry in table:
         deleteContactList(cursor, entry[0])
-
-    # then, delete all contacts associated with the user
-    #TODO
-
-    # then, delete the user itself from the users table
-    #TODO

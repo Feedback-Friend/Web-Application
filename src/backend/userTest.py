@@ -71,9 +71,12 @@ def updateEmailAddress(cursor, userID, emailAddress):
     cursor.execute("UPDATE users SET email_address = %s WHERE user_id = %s", (emailAddress, int(userID)))
 
 def deleteUser(cursor, userID):
-    table = cursor.execute("SELECT * FROM surveys WHERE user_id = %s", (int(userID)))
-    for entry in table:
+    survey_table = cursor.execute("SELECT * FROM surveys WHERE user_id = %s", (int(userID)))
+    for entry in survey_table:
         deleteSurvey(cursor, entry[0])
-    table = cursor.execute("SELECT * FROM contact_lists WHERE contact_list_id = %s", (int(userID)))
-    for entry in table:
+    CL_table = cursor.execute("SELECT * FROM contact_lists WHERE contact_list_id = %s", (int(userID)))
+    for entry in CL_table:
         deleteContactList(cursor, entry[0])
+    
+    # delete user from users table
+    cursor.execute("DELETE FROM users WHERE user_id = %s", (int(userID)))
