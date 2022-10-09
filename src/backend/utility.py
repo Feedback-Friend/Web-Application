@@ -14,8 +14,10 @@ from sqlalchemy import create_engine
 
 """
 Repopulates an empty database with the SQL schema.
+No data is put into the database other than the schema
+
+engine (SQL alchemy engine): the SQL alchemy engine pointing to the SQL database
 void method, does not return anything
-no data is put into the database other than the schema
 """
 def repopulate_schema(engine):
     cursor = engine.connect()
@@ -106,6 +108,8 @@ def repopulate_schema(engine):
 
 """
 Deletes all tables in the database the SQLHandler is connected to
+
+engine (SQL alchemy engine): the SQL alchemy engine pointing to the SQL database
 void method, does not return anything
 """
 def eject_schema(engine):
@@ -118,6 +122,11 @@ def eject_schema(engine):
     print("all tables successfully removed")
 
 
+"""
+Resets the database to a blank slate schema using a combination of the schema deletion and schema creation. Void method, does not return anything
+
+engine (SQL alchemy engine): the SQL alchemy engine pointing to the SQL database
+"""
 def flush_schema(engine):
     eject_schema(engine)
     repopulate_schema(engine)
@@ -160,7 +169,7 @@ contains special characters or not
 password (String): the password whose strength needs to be checked
 length (int): the length of a password of sufficient length
 
-returns:
+returns (int):
 0 -> password is not long enough and does not contain a special character
 1 -> exactly one of (password is long enough, password contains a special character)
 2 -> password is long enough and password contains a special character
