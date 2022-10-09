@@ -10,8 +10,9 @@ import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Divider from '@mui/material/Divider';
 import Nav from './nav';
-import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
+// import { BarChart, Bar, XAxis, YAxis, Tooltip } from 'recharts';
 import { DataGrid } from '@mui/x-data-grid';
+import BarChart from "react-bar-chart";
 
 function Results(props) {
   const { surveys } = props;
@@ -38,7 +39,7 @@ function Results(props) {
     )
   });
 
-    console.log("hi")
+    console.log("hidafgsg")
     console.log('survey', survey)
     console.log('survyes', surveys)
 
@@ -47,11 +48,11 @@ function Results(props) {
           const response = await fetch('/getSurveyResults/' + 4)
           const survey_info = await response.json()
           setFRQ(survey_info)
-          const questionsresponse = await fetch('/getQuestions/' + 1)
+          const questionsresponse = await fetch('/getQuestions/' + 2)
           const questions_info = await questionsresponse.json()
           setQuestionNames(questions_info)
-          console.log('questions_info', questionNames)
-          console.log('questions_info', questions_info)
+          console.log('questions_info1', questionNames)
+          console.log('questions_info2', questions_info)
           console.log(survey_info)
           console.log('frq', frq)
       }
@@ -75,30 +76,57 @@ function Results(props) {
   };
 
   const columns = [
-    { field: 'prompt', headerName: 'prompt', width: 150 },
     { field: 'result', headerName: 'result', width: 150 },
   ];
 
-  function createDataFRQ(id, prompt, result) {
-    return {id, prompt, result};
+  function createData(id, result) {
+    return {id, result};
   }
   function parseJSONFRQ(projects){
     console.log('projects', projects)
     const rows = []
-    for (let i=0; i < Object.keys(projects).length; i++){ //not correct length
-      console.log('projects[i]', projects[i]['response_list'].length)
-      console.log('questionString', questionNames)
-      let questionString = questionNames[i]['prompt']
-      console.log('questionString', questionString)
-      for (let i = 0; i < 1; i++){
-        console.log('projects[response]', projects[i]['response_list'][i]['reply'])
-        rows.push(createDataFRQ(i, questionString, projects[i]['response_list'][i]['reply']));
+    console.log("projects.length", projects['response_list'].length)
+   for (let j = 0; j < projects['response_list'].length; j++){
+        console.log('projects[response]', projects['response_list'][j]['reply'])
+        rows.push(createData(j, projects['response_list'][j]['reply']));
       }
-    }
     console.log("rows", rows)
     return rows; 
   }  
 
+  function createDataMC(text, value) {
+    return {text, value};
+  }
+
+  function parseJSONMC(projects){
+    console.log('projects', projects)
+    const rows = []
+    var dict = {};
+    console.log("projects.length", projects['response_list'].length)
+   for (let j = 0; j < projects['response_list'].length; j++){
+        console.log('projects[response]', projects['response_list'][j]['reply'])
+        if (dict[projects['response_list'][j]['reply']] !== undefined){
+            console.log("dict[projects['response_list'][j]['reply']]", projects['response_list'][j]['reply'])
+            let count = dict[projects['response_list'][j]['reply']] + 1
+            dict[projects['response_list'][j]['reply']] = count
+        }else{
+          dict[projects['response_list'][j]['reply']] = 1
+          console.log("dict[projects['1", projects['response_list'][j]['reply'])
+        }
+        
+      }
+      for (const [key, value] of Object.entries(dict)) {
+        rows.push(createDataMC(key, value))
+      }
+
+    return rows; 
+  }  
+
+  
+  const margin = { top: 20, right: 20, bottom: 30, left: 40 };
+
+
+  console.log("questionNamesfrq", questionNames)
   return (
     <Box>
       <Nav />
@@ -122,62 +150,42 @@ function Results(props) {
               </Select>
             </FormControl>
           </Grid>
-          <Grid item xs={8}>
-          <div style={{ height: 400, width: '100%', float: 'left' }}>
-              <DataGrid
-                rows={parseJSONFRQ(frq)}
-                columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}   
-              />
+          {survey.name && <Grid item xs={8}>
+            {frq.map((question, index) => {
+              return(
+              <div style={{ paddingTop: '20px', paddingBottom: '20px'}}>
+                <div style={{ paddingTop: '20px'}}>
+                  <p>{questionNames[index].prompt}</p>
+                </div>
+                <div style={{ paddingTop: '20px', paddingBottom: '20px'}}>
+                {questionNames[index].type < 1 &&
+                  <div style={{ paddingTop: '20px', height: 400, width: '100%', float: 'left' }}>
+                  {console.log('sdfasdf', question)}
+                    <DataGrid
+                      rows={parseJSONFRQ(question)}
+                      columns={columns}
+                      pageSize={5}
+                      rowsPerPageOptions={[5]}   
+                    />
+                    </div>}
+                    {questionNames[index].type > 0 &&
+                    <div style={{ paddingTop: '20px', height: 400, width: '100%', float: 'left'}}>
+                      <BarChart
+                        ylabel="Quantity"
+                        width={500}
+                        height={500}
+                        margin={margin}
+                        data={parseJSONMC(question)}
+                        style={{ color: "blue" }}
+                      />
+                    <br></br>
+                    </div>}
+                  </div>
               </div>
-          </Grid>
-          {/* {survey && <Grid item xs={8}> */}
-            {/* <FormControl fullWidth>
-              <InputLabel>Question</InputLabel>
-              <Select
-                label="Question"
-                onChange={handleQuestion}
-                defaultValue=""
-              >
-                {survey.questions.map((question, index) => {
-                  return (
-                    <MenuItem key={index} value={index}>{question.prompt}</MenuItem>
-                  );
-                })}
-              </Select>
-            </FormControl> */}
-            {/* {question !== "" && (survey.questions[question].type === 0 ? (<List>
-              {survey.responses.map((response, index) => {
-                return (
-                  <Box key={index}>
-                    {index > 0 && <Divider />}
-                    <ListItem key={index}>{response[question]}</ListItem>
-                  </Box>
-                );
-              })}
-            </List>) :
-              (<Box sx={{ my: 2 }}>
-                <BarChart
-                  width={500}
-                  height={300}
-                  data={data}
-                >
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#1976d2" />
-                </BarChart>
-                <List sx={{ border: "solid 1px black" }}>
-                  {survey.questions[question].choices.map((choice, index) => {
-                    return (
-                      <ListItem key={index}>{alphabet.charAt(index) + ": " + choice}</ListItem>
-                    );
-                  })}
-                </List>
-              </Box>)
-            )} */}
-          {/* </Grid>} */}
+              );
+            })
+            }
+          </Grid>}
         </Grid>
       </Container>
     </Box>
