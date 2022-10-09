@@ -3,15 +3,12 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
-import TextField from '@mui/material/TextField';
 import React from 'react';
 import Nav from './nav';
-import { Table, TableContainer, Typography } from '@mui/material';
 import contacts from './contacts.json';
 
 function Contacts(props) {
-
-  const [contactInfo, setContactInfo] = React.useState(contacts[0].contacts);
+  const [contactInfo, setContactInfo] = React.useState([]);
 
 
   function populateContactInfo(e) {
@@ -24,22 +21,19 @@ function Contacts(props) {
       <Container>
         <Grid container spacing={2}>
             <Grid item xs={3}>
-                {/* <Grid container spacing={2}> */}
-                    {/* <Grid item xs={4} textAlign="center" sx={{ mt: 2 }}> */}
-                    <Grid textAlign="center" sx={{ mt: 2 }}>
-                    <Button variant="contained">Add Contact List</Button>
-                    </Grid>
-                    {/* </Grid> */}
-                {/* </Grid> */}
-
-                <Stack sx={{ border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2, maxHeight: 200, overflow: 'auto'}}>
-                    {/* {contacts[0].name} */}
-                    {contacts.map((contact, index) => {
-                        return(<Button onClick={populateContactInfo} id={index} variant="outlined" sx={{ my: 0.5 }}>{contact.name}</Button>);
-                    })}
-                </Stack>
-
+              <Grid textAlign="center" sx={{ mt: 2 }}>
+                <Button variant="contained">Add Contact List</Button>
+              </Grid>
+              <Stack sx={{ border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2, maxHeight: 200, overflow: 'auto'}}>
+                  {contacts.map((contact, index) => {
+                      return(<Button onClick={populateContactInfo} id={index} variant="outlined" sx={{ my: 0.5 }}>{contact.name}</Button>);
+                  })}
+              </Stack>
             </Grid>
+            
+            {
+            //if contactInfo is not populated yet, then do not show contact information
+            (contactInfo.length != 0) &&
             <Grid item xs={7}>
                 <Stack sx={{ border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2 }}>
                     {contactInfo.map((contact, index) => {
@@ -47,6 +41,7 @@ function Contacts(props) {
                     })}
                 </Stack>
             </Grid>
+            }
         </Grid>
       </Container>
     </Box>
