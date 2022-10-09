@@ -57,7 +57,6 @@ def repopulate_schema(engine):
         first_name VARCHAR(30),
         last_name VARCHAR(20),
         email_address VARCHAR(50),
-        user_id INT,
         PRIMARY KEY (contact_id)
         );
         """)
