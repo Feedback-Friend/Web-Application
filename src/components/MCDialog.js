@@ -8,35 +8,88 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
+import Box from '@mui/material/Box';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
+import InputAdornment from '@mui/material/InputAdornment';
+import IconButton from '@mui/material/IconButton';
+import Clear from '@mui/icons-material/Clear';
 import React, { useState } from 'react';
 
 function MCDialog(props) {
-  const { open, setOpen, questions, setQuestions } = props;
+  const { open, setOpen, questions, setQuestions, surveyID, showMessage, hideMessage } = props;
 
   // If creating MC from suggestion, contains string corresponding to the chosen suggestion
-  const [choice, setChoice] = useState("");
+  const [suggestion, setSuggestion] = useState("");
 
-  // 
-  const [error, setError] = useState(false);
+  // Determines whether the form to add a new suggestion should be displayed
+  const [openAddSuggestion, setOpenAddSuggestion] = useState(false);
 
-  // Closes the Dialog component
-  const handleClose = () => {
-    setOpen(false);
-  };
+  // Contains the name for the new suggestion
+  const [suggestionName, setSuggestionName] = useState("");
 
-  // Removes the error message and updates the choice state with the chosen suggestion
+  // Contains the choices for the new suggestion
+  const [suggestionChoices, setSuggestionChoices] = useState(["", ""]);
+
+  // On submitting an added suggestion, shows an error if any of the forms for creating a new suggestion are empty
+  const [empty, setEmpty] = useState(false);
+
+  // On attempting to create from suggestion, shows an error if a suggestion hasn't been selected from the Select component
+  const [noSelection, setNoSelection] = useState(false);
+
+  // Removes the error message and sets the name of the chosen suggestion
   const handleChange = (e) => {
-    setError(false);
-    setChoice(e.target.value);
+    setNoSelection(false);
+    setSuggestion(e.target.value);
   };
+
+  // Adds a choice to the suggestionChoices state
+  const addChoice = () => {
+    let newArr = [...suggestionChoices];
+    newArr.push("");
+    setSuggestionChoices(newArr);
+  };
+
+  // Updates the choice at the given index on change
+  const updateChoice = (index) => (e) => {
+    let newArr = [...suggestionChoices];
+    newArr[index] = e.target.value;
+    setSuggestionChoices(newArr);
+  };
+
+  // Deletes the choice at the given index from the suggestionChoices state
+  const deleteChoice = (index) => (e) => {
+    let newArr = [...suggestionChoices];
+    newArr.splice(index, 1);
+    setSuggestionChoices(newArr);
+  };
+
+  /*
+  When the add suggestion button is clicked, displays the form for adding suggestions if it is not yet displayed. Otherwise, adds the suggestion to the database,
+  or displays an error message if any part of the form isn't filled out.
+  */
+  const addSuggestion = (e) => {
+    if (!openAddSuggestion) {
+      setOpenAddSuggestion(true);
+    } else {
+      if (!suggestionName.trim() || suggestionChoices.some((choice) => choice.trim() === "")) {
+        setEmpty(true);
+      } else {
+        /* TODO: Add suggestion to database */
+        console.log(suggestionName);
+        console.log(suggestionChoices);
+        setOpenAddSuggestion(false);
+      }
+    }
+  }
 
   /*
   Based on the string passed (empty string for creating from scratch, suggestion string for creating from suggestion),
   creates a new MC question with the proper list of choices and adds it to the questions list.
   */
-  const addMC = (choice) => {
+  const addMC = (suggestion) => {
     let choices;
-    switch (choice) {
+    switch (suggestion) {
       case "":
         choices = [{ choice: "" }, { choice: "" }];
         break;
@@ -62,30 +115,49 @@ function MCDialog(props) {
         break;
     }
 
-    const question = {
-      type: 1,
-      prompt: "",
-      choices: choices,
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
     };
 
-    setQuestions([...questions, question]);
     setOpen(false);
+    showMessage("Autosaving...");
+
+    const func = async () => {
+      // Add multiple choice question to database
+      let req = await fetch("/addMCQ/" + surveyID, requestOptions)
+        .then(response => { return response.json() });
+      const questionID = req.result;
+      for (let choice of choices) {
+        // Add choice to database
+        req = await fetch("/addChoice/" + questionID + "/" + choice.choice, requestOptions)
+          .then(response => { return response.json() });
+        choice.id = req.result;
+      }
+
+      const question = {
+        id: questionID,
+        type: 1,
+        prompt: "",
+        choices: choices,
+      };
+
+      setQuestions([...questions, question]);
+    }
+
+    hideMessage("Saved", func, "addMC");
   };
 
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={() => setOpen(false)}>
       <DialogTitle>Multiple Choice Question</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Create a multiple choice question from scratch or choose from common
-          answer choices.
+          Create a multiple choice question from scratch or choose from a list of suggestions.
         </DialogContentText>
-        <Stack
-          direction="column"
-          alignItems="stretch"
-          justifyContent="center"
-          sx={{ m: 2 }}
-        >
+        <Stack sx={{ m: 2 }}>
           <Button
             variant="contained"
             onClick={() => {
@@ -95,11 +167,11 @@ function MCDialog(props) {
             From Scratch
           </Button>
           <FormControl sx={{ mt: 4 }}>
-            <InputLabel>Choices</InputLabel>
+            <InputLabel>Suggestions</InputLabel>
             <Select
-              error={error}
-              value={choice}
-              label="Choices"
+              error={noSelection}
+              value={suggestion}
+              label="Suggestions"
               onChange={handleChange}
             >
               <MenuItem value="Y/N">Yes/No</MenuItem>
@@ -113,17 +185,69 @@ function MCDialog(props) {
             <Button
               variant="contained"
               onClick={() => {
-                if (!choice) {
-                  setError(true);
+                if (!suggestion) {
+                  setNoSelection(true);
                   return;
                 }
-                addMC(choice);
+                addMC(suggestion);
               }}
               sx={{ mt: 1 }}
             >
               From Suggestion
             </Button>
           </FormControl>
+          {openAddSuggestion &&
+            <Box>
+              <TextField
+                value={suggestionName}
+                placeholder="Suggestion Name"
+                onChange={(e) => setSuggestionName(e.target.value)}
+                error={empty && !suggestionName}
+                fullWidth
+                sx={{ mt: 4 }}
+                inputProps={{ maxLength: 50 }}
+              />
+              {suggestionChoices.map((choice, index) => {
+                return (
+                  <Box
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                    }}
+                    key={index}
+                  >
+                    <RadioButtonUncheckedIcon sx={{ mr: 1 }} />
+                    <TextField
+                      value={choice}
+                      placeholder={alphabet.charAt(index)}
+                      onChange={updateChoice(index)}
+                      error={empty && !choice}
+                      margin="normal"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              disabled={suggestionChoices.length === 2}
+                              onClick={deleteChoice(index)}
+                              edge="end"
+                            >
+                              <Clear />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                        maxLength: 500
+                      }}
+                    />
+                  </Box>
+                );
+              })}
+              <Button variant="contained" onClick={addChoice} sx={{ mt: 1 }} disabled={suggestionChoices.length === 26}>
+                Add Choice
+              </Button>
+            </Box>
+          }
+          <Button variant="contained" onClick={addSuggestion} sx={{ mt: 4 }}>Add suggestion</Button>
         </Stack>
       </DialogContent>
     </Dialog>

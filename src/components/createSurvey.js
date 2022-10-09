@@ -9,18 +9,18 @@ import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
-import React, { useState, useEffect } from 'react';
+import Snackbar from '@mui/material/Snackbar';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Nav from './nav';
 import PreviewDialog from './previewDialog';
 
 function CreateSurvey(props) {
-  const { survey, userID, update, setUpdate } = props;
-
-  // Contains survey name
-  const [name, setName] = useState('');
+  const { surveyTemplate, userID, update, showMessage, hideMessage, fromExisting, setFromExisting } = props;
 
   // Contains survey questions
   const [questions, setQuestions] = useState([]);
+
+  const [survey, setSurvey] = useState({ name: surveyTemplate.name, id: surveyTemplate.id });
 
   // On survey submission, determines whether errors should be displayed (if there are any empty fields)
   const [empty, setEmpty] = useState(false);
@@ -31,45 +31,141 @@ function CreateSurvey(props) {
   // Determines whether the Dialog component for previewing surveys is open or closed
   const [openPreview, setOpenPreview] = useState(false);
 
-
-  // If a survey is created from existing, gets the questions associated with that survey on page load
-  useEffect(() => {
-    if (survey.id !== -1) {
-      getFromExisting();
-    }
-  }, []);
-
   // Gets the question types, prompts, and choices associated with an existing survey and populates the questions state
-  const getFromExisting = async () => {
+  const getFromExisting = useCallback(() => {
     const requestOptions = {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
     };
 
-    let questions = await fetch("/getQuestionsAndChoices/" + survey.id, requestOptions)
-      .then(response => { return response.json() });
-    setQuestions(questions);
-  };
+    showMessage("Getting questions...");
 
-  // Opens the Dialog component for creating MC questions
-  const handleOpenMC = () => {
-    setOpenMC(true);
-  };
+    const func = async () => {
+      let questions = await fetch("/getQuestionsAndChoices/" + surveyTemplate.id, requestOptions)
+        .then(response => { return response.json() });
 
-  // Opens the Dialog component for previewing surveys
-  const handleOpenPreview = () => {
-    setOpenPreview(true);
-  };
+      setQuestions(questions);
+    }
 
-  // Adds an FRQ question object to the questions list. Question fields include 'type', 'prompt', and 'choices'.
-  const addFRQ = () => {
-    const question = {
-      type: 0,
-      prompt: "",
-      choices: [],
+    hideMessage("Got questions", func, "getQuestionsAndChoices");
+  }, [surveyTemplate.id, showMessage, hideMessage]);
+
+  // Adds survey to the database
+  const addSurvey = useCallback(() => {
+    const timeCreated = new Date().getTime();
+
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
     };
 
-    setQuestions([...questions, question]);
+    showMessage("Autosaving...");
+
+    let func = async () => {
+      let req = await fetch("/addSurvey/" + userID + "/" + timeCreated + "/" + surveyTemplate.name, requestOptions)
+        .then(response => { return response.json() });
+
+      setSurvey({ name: surveyTemplate.name, id: req.result });
+    }
+
+    hideMessage("Saved", func, "addSurvey");
+  }, [surveyTemplate.name, hideMessage, showMessage, userID]);
+
+  // Creates a survey from an existing one
+  const createFromExisting = useCallback(() => {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    showMessage("Creating Survey...");
+
+    let func = async () => {
+      // Add questions
+      for (let question of questions) {
+        let req = await fetch("/addQuestion/" + survey.id + "/" + question.type + "/" + question.prompt, requestOptions)
+          .then(response => { return response.json() });
+        const questionID = req.result;
+        question.id = questionID;
+
+        // If a question has choices (i.e. is a MCQ), add them to the database
+        for (let choice in question.choices) {
+          req = await fetch("/addChoice/" + questionID + "/" + question.choices[choice].choice, requestOptions)
+            .then(response => { return response.json() });
+          question.choices[choice].id = req.result;
+        }
+      }
+
+      setFromExisting(false);
+    }
+
+    hideMessage("Survey '" + survey.name + "' created", func, "createFromExisting");
+  }, [hideMessage, showMessage, survey, questions, setFromExisting]);
+
+  // Set to true upon creation of new survey/retrieval of existing survey questions from database to prevent infinite loop on rerender
+  const hasUpdatedStates = useRef(false);
+
+  // Creates new surveys (from scratch or from existing) and gets questions from existing surveys (creation from existing or editing draft)
+  useEffect(() => {
+    if (!hasUpdatedStates.current) {
+      // Add a new survey
+      if (surveyTemplate.id === -1 || fromExisting) {
+        addSurvey();
+      }
+      // Get existing survey questions
+      if (surveyTemplate.id !== -1) {
+        getFromExisting();
+      }
+      hasUpdatedStates.current = true
+    }
+
+    // Only calls createFromExisting if the boolean 'fromExisting' is true and there are questions to add
+    if (survey.id !== surveyTemplate.id && questions.length !== 0 && fromExisting) {
+      createFromExisting();
+    }
+  }, [survey.id, surveyTemplate.id, fromExisting, getFromExisting, addSurvey, createFromExisting, questions]);
+
+  // Updates the survey name in both the survey state and the database
+  const updateSurveyName = (e) => {
+    setSurvey({ name: e.target.value, id: survey.id });
+
+    const requestOptions = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    showMessage("Autosaving...");
+
+    let func = async () => await fetch("/updateSurveyName/" + survey.id + "/" + e.target.value, requestOptions)
+      .then(response => { return response.json() });
+
+    hideMessage("Saved", func, "updateName");
+  }
+
+  // Adds an FRQ question object to the questions state and the database
+  const addFRQ = () => {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    showMessage("Autosaving...");
+
+    let func = async () => {
+      let req = await fetch("/addFRQ/" + survey.id, requestOptions)
+        .then(response => { return response.json() });
+
+      const question = {
+        id: req.result,
+        type: 0,
+        prompt: "",
+        choices: [],
+      };
+
+      setQuestions([...questions, question]);
+    }
+
+    hideMessage("Saved", func, "addFRQ");
   };
 
   // Checks if no questions have been created or if any fields are empty, including survey name, question prompts, and MC choices.
@@ -78,7 +174,7 @@ function CreateSurvey(props) {
       question.prompt.trim() === "" ||
       (question.type === 1 &&
         question.choices.some((choice) => choice.choice.trim() === ""))
-  ) || !name.trim() || questions.length === 0;
+  ) || !survey.name.trim() || questions.length === 0;
 
   // On submission, prevents submission and displays errors if any fields are empty. Otherwise, adds the survey to the surveys list.
   const handleSubmit = (e) => {
@@ -86,43 +182,15 @@ function CreateSurvey(props) {
       e.preventDefault();
       setEmpty(true);
     } else {
-      setUpdate({ creating: true, deleting: false, message: "Creating Survey...", open: true });
-      addSurvey().then(response => {
-        setUpdate({ creating: false, deleting: false, message: "Survey '" + name + "' created", open: true });
-        const timer = setTimeout(() => {
-          setUpdate({ creating: update.creating, deleting: false, message: "", open: false });
-        }, 3000);
-        return () => clearTimeout(timer);
-      });
+      /* TODO: set survey from draft to active */
+      const func = async () => {
+
+      };
+
+      showMessage("Publishing survey...");
+      hideMessage("Survey '" + survey.name + "' published", func, "publishSurvey");
     }
   };
-
-  // Adds survey and its related questions and answer choices to the database
-  const addSurvey = async () => {
-    const timeCreated = new Date().getTime();
-
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-    };
-
-    let req = await fetch("/addSurvey/" + userID + "/" + name + "/" + timeCreated, requestOptions)
-      .then(response => { return response.json() });
-    const surveyID = req.result;
-
-    // Add questions
-    for (let question of questions) {
-      req = await fetch("/addQuestion/" + surveyID + "/" + question.type + "/" + question.prompt, requestOptions)
-        .then(response => { return response.json() });
-      const questionID = req.result;
-
-      // If a question has choices (i.e. is a MCQ), add them to the database
-      for (let choice of question.choices) {
-        req = await fetch("/addChoice/" + questionID + "/" + choice.choice, requestOptions)
-          .then(response => { return response.json() });
-      }
-    }
-  }
 
   return (
     <Box>
@@ -137,6 +205,8 @@ function CreateSurvey(props) {
                   setQuestions={setQuestions}
                   index={index}
                   empty={empty && !question.prompt}
+                  showMessage={showMessage}
+                  hideMessage={hideMessage}
                   key={index}
                 />
               ) : (
@@ -149,6 +219,8 @@ function CreateSurvey(props) {
                     (!question.prompt ||
                       question.choices.some((choice) => choice.choice === ""))
                   }
+                  showMessage={showMessage}
+                  hideMessage={hideMessage}
                   key={index}
                 />
               );
@@ -165,11 +237,12 @@ function CreateSurvey(props) {
             <Stack sx={{ border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2 }}>
               <TextField
                 autoFocus
-                error={!name && empty}
+                error={!survey.name && empty}
                 label="Survey Name"
                 variant="outlined"
-                onChange={(e) => { setName(e.target.value) }}
-                value={name}
+                onChange={updateSurveyName}
+                value={survey.name}
+                inputProps={{ maxLength: 50 }}
               />
               <Button
                 variant="contained"
@@ -179,14 +252,14 @@ function CreateSurvey(props) {
               </Button>
               <Button
                 variant="contained"
-                onClick={handleOpenMC} sx={{ mb: 2 }}
+                onClick={() => setOpenMC(true)} sx={{ mb: 2 }}
               >
                 + MC
               </Button>
               <Button
                 variant="contained"
                 disabled={isEmpty}
-                onClick={handleOpenPreview} sx={{ mb: 2 }}
+                onClick={() => setOpenPreview(true)} sx={{ mb: 2 }}
               >
                 Preview
               </Button>
@@ -207,12 +280,19 @@ function CreateSurvey(props) {
           setOpen={setOpenMC}
           questions={questions}
           setQuestions={setQuestions}
+          surveyID={survey.id}
+          showMessage={showMessage}
+          hideMessage={hideMessage}
         />
         <PreviewDialog
           open={openPreview}
           setOpen={setOpenPreview}
           questions={questions}
-          name={name}
+          name={survey.name}
+        />
+        <Snackbar
+          open={update.updating}
+          message={update.message}
         />
       </Container>
     </Box>

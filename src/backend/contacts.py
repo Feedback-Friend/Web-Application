@@ -19,7 +19,7 @@ def addContactList(cursor, userID, contactListName):
         if entry[3] == contactListName:
             return jsonify({'result': '-1'})
         contactListID = entry[0]+1
-    cursor.execute("INSERT INTO contact_lists VALUES(%s, %s, %s, %s)", (int(contactListID), int(userID), contactListName))
+    cursor.execute("INSERT INTO contact_lists VALUES(%s, %s, %s)", (int(contactListID), int(userID), contactListName))
     return jsonify({'result': contactListID})
 
 def updateContactListName(cursor, contactListID, contactListName):
@@ -43,7 +43,7 @@ def addContact(cursor, contactListID, firstName, lastName, emailAddress):
         if entry[4] == emailAddress:
             return jsonify({'result': '-1'})
         contactID = entry[0]+1
-    cursor.execute("INSERT INTO contact_lists VALUES(%s, %s, %s, %s)", (int(contactID), int(contactID), firstName, lastName, emailAddress))
+    cursor.execute("INSERT INTO contact_lists VALUES(%s, %s, %s, %s, %s)", (int(contactID), int(contactListID), firstName, lastName, emailAddress))
     return jsonify({'result': contactID})
 
 def updateContactFirstName(cursor, contactID, firstName):

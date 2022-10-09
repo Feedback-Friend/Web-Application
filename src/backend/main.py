@@ -3,13 +3,17 @@ from flask import Flask
 from flask.json import jsonify
 from sqlalchemy import create_engine
 import sshtunnel
+import os
 
-import user as user
-import survey as survey
-import contact as contact
+import src.backend.users as user
+import src.backend.surveys as survey
+import src.backend.contacts as contact
 
 # the build files for react go in the specified static folder, which allows flask to access react's frontend
 app = Flask(__name__, static_folder='../../build/', static_url_path='/')
+
+# directory defaults to /, need to change it to see pkey
+os.chdir('/var/www/html/WebApplication/')
 
 # connecting to oracle cloud compute unit for database
 tunnel = sshtunnel.SSHTunnelForwarder(
@@ -109,16 +113,23 @@ def deleteUser(userID):
 def getSurveys(userID):
     cursor = engine.connect()
     return survey.getSurveys(cursor, userID)
-      
-@app.route('/addSurvey/<userID>/<surveyName>/<timeCreated>', methods=['POST'])
-def addSurvey(userID, surveyName, timeCreated):
+    
+@app.route('/addSurvey/<userID>/<timeCreated>/', defaults={'name': ''}, methods=['POST'])
+@app.route('/addSurvey/<userID>/<timeCreated>/<name>', methods=['POST'])
+def addSurvey(userID, timeCreated, name):
     cursor = engine.connect()
-    return survey.addSurvey(cursor, userID, surveyName, timeCreated)
+    return survey.addSurvey(cursor, userID, timeCreated, name)
 
-@app.route('/updateSurveyName/<surveyID>/<surveyName>', methods=['GET'])
+@app.route('/getSurveyName/<surveyID>', methods=['GET'])
+def getSurveyName(surveyID):
+    cursor = engine.connect()
+    return survey.getSurveyName(cursor, surveyID)
+
+@app.route('/updateSurveyName/<surveyID>/', defaults={'surveyName': ''}, methods=['PUT'])
+@app.route('/updateSurveyName/<surveyID>/<surveyName>', methods=['PUT'])
 def updateSurveyName(surveyID, surveyName):
     cursor = engine.connect()
-    survey.updateFRQ(cursor, surveyID, surveyName)
+    return survey.updateSurveyName(cursor, surveyID, surveyName)
 
 @app.route('/deleteSurvey/<surveyID>', methods=['DELETE'])
 def deleteSurvey(surveyID):
@@ -130,42 +141,45 @@ def getQuestions(surveyID):
     cursor = engine.connect()
     return survey.getQuestions(cursor, surveyID)
 
+@app.route('/addQuestion/<surveyID>/<questionType>/', defaults={'prompt': ''}, methods=['POST'])
 @app.route('/addQuestion/<surveyID>/<questionType>/<prompt>', methods=['POST'])
 def addQuestion(surveyID, questionType, prompt):
     cursor = engine.connect()
     return survey.addQuestion(cursor, surveyID, questionType, prompt)
 
-@app.route('/addFRQ/<surveyID>', methods=['GET'])
+@app.route('/addFRQ/<surveyID>', methods=['POST'])
 def addFRQ(surveyID):
     cursor = engine.connect()
     return survey.addFRQ(cursor, surveyID)
 
-@app.route('/updateFRQ/<questionID>/<prompt>', methods=['GET'])
+@app.route('/updateFRQ/<questionID>/', defaults={'prompt': ''}, methods=['PUT'])
+@app.route('/updateFRQ/<questionID>/<prompt>', methods=['PUT'])
 def updateFRQ(questionID, prompt):
     cursor = engine.connect()
-    survey.updateFRQ(cursor, questionID, prompt)
+    return survey.updateFRQ(cursor, questionID, prompt)
 
-@app.route('/deleteFRQ/<questionID>', methods=['GET'])
+@app.route('/deleteFRQ/<questionID>', methods=['DELETE'])
 def deleteFRQ(questionID):
     cursor = engine.connect()
-    survey.deleteFRQ(cursor, questionID)
+    return survey.deleteFRQ(cursor, questionID)
 
-@app.route('/addMCQ_S/<surveyID>', methods=['GET'])
-def addMCQ_S(surveyID):
+@app.route('/addMCQ/<surveyID>', methods=['POST'])
+def addMCQ(surveyID):
     cursor = engine.connect()
-    return survey.addMCQ_S(cursor, surveyID)
+    return survey.addMCQ(cursor, surveyID)
 
 @app.route('/addMCQ_M/<surveyID>', methods=['GET'])
 def addMCQ_M(surveyID):
     cursor = engine.connect()
     return survey.addMCQ_M(cursor, surveyID)
 
-@app.route('/updateMCQ/<questionID>/<prompt>', methods=['GET'])
+@app.route('/updateMCQ/<questionID>/', defaults={'prompt': ''}, methods=['PUT'])
+@app.route('/updateMCQ/<questionID>/<prompt>', methods=['PUT'])
 def updateMCQ(questionID, prompt):
     cursor = engine.connect()
-    survey.updateMCQ(cursor, questionID, prompt)
+    return survey.updateMCQ(cursor, questionID, prompt)
 
-@app.route('/deleteMCQ/<questionID>', methods=['GET'])
+@app.route('/deleteMCQ/<questionID>', methods=['DELETE'])
 def deleteMCQ(questionID):
     cursor = engine.connect()
     return survey.deleteMCQ(cursor, questionID)
@@ -175,20 +189,22 @@ def getChoices(questionID):
     cursor = engine.connect()
     return survey.getChoices(cursor, questionID)
 
-@app.route('/addChoice/<questionID>/<prompt>', methods=['POST'])
-def addChoice(questionID, prompt):
+@app.route('/addChoice/<questionID>/', defaults={'choice': ''}, methods=['POST'])
+@app.route('/addChoice/<questionID>/<choice>', methods=['POST'])
+def addChoice(questionID, choice):
     cursor = engine.connect()
-    return survey.addChoice(cursor, questionID, prompt)
+    return survey.addChoice(cursor, questionID, choice)
 
-@app.route('/updateChoice/<choiceID>/<prompt>', methods=['GET'])
-def updateChoice(choiceID, prompt):
+@app.route('/updateChoice/<choiceID>/', defaults={'choice': ''}, methods=['PUT'])
+@app.route('/updateChoice/<choiceID>/<choice>', methods=['PUT'])
+def updateChoice(choiceID, choice):
     cursor = engine.connect()
-    survey.updateChoice(cursor, choiceID, prompt)
+    return survey.updateChoice(cursor, choiceID, choice)
 
-@app.route('/deleteChoice/<choiceID>', methods=['GET'])
+@app.route('/deleteChoice/<choiceID>', methods=['DELETE'])
 def deleteChoice(choiceID):
     cursor = engine.connect()
-    survey.deleteChoice(cursor, choiceID)
+    return survey.deleteChoice(cursor, choiceID)
 
 @app.route('/getContactLists/<userID>', methods=['GET'])
 def getContactLists(userID):
@@ -244,3 +260,8 @@ def deleteContact(contactID):
 def getQuestionsAndChoices(surveyID):
     cursor = engine.connect()
     return survey.getQuestionsAndChoices(cursor, surveyID)
+
+@app.route('/getSurveyResults/<userID>', methods=['GET'])
+def getSurveyResults(userID):
+    cursor = engine.connect()
+    return survey.getSurveyResults(cursor, userID)
