@@ -123,6 +123,13 @@ def flush_schema(engine):
     repopulate_schema(engine)
 
 
+"""
+This method returns an encoded string after adding 1 to all of the character
+ascii values of the input string. This encryption function is intended to demonstrate a proof of concept of encryption.
+
+unencrypted_info (String): the input string
+returns (String): the encrypted string
+"""
 def encode(unencrypted_info):
     # encoder adds 1 to the ascii value of each character
     encoded = ""
@@ -131,6 +138,13 @@ def encode(unencrypted_info):
     return encoded
 
 
+"""
+This method returns an decoded string after removing 1 from all of the character
+ascii values of the input encoded string. This decoding function is intended to demonstrate a proof of concept of decryption and should be paired with the encode method.
+
+encrypted_info (String): the encrypted input string
+returns (String): the decoded string
+"""
 def decode(encrypted_info):
     decoded = ""
     for char in encrypted_info:
