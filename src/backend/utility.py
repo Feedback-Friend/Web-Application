@@ -139,6 +139,34 @@ def decode(encrypted_info):
     return decoded
 
 
+"""
+This method evaluates password strength
+password strength is evaluated on the length of the password and if it
+contains special characters or not
+
+password: the password whose strength needs to be checked
+length: the length of a password of sufficient length
+
+returns:
+0 -> password is not long enough and does not contain a special character
+1 -> exactly one of (password is long enough, password contains a special character)
+2 -> password is long enough and password contains a special character
+"""
+def passwordStrength(password, length):
+    strength = 0  # the strength to be returned
+    specials = set("!@#$%")
+
+    if (len(password) >= length):
+        strength += 1  # length check
+
+    for char in password:
+        if char in specials:
+            strength += 1  # special character check
+            break
+
+    return strength
+
+
 engine = create_engine('mysql+mysqldb://root:password@localhost:3306/feedback_friend')
 
 # eject_schema(engine)
