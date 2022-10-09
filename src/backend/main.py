@@ -13,7 +13,7 @@ import src.backend.contacts as contact
 app = Flask(__name__, static_folder='../../build/', static_url_path='/')
 
 # directory defaults to /, need to change it to see pkey
-os.chdir('/var/www/html/WebApplication/')
+# os.chdir('/var/www/html/WebApplication/')
 
 # connecting to oracle cloud compute unit for database
 tunnel = sshtunnel.SSHTunnelForwarder(
