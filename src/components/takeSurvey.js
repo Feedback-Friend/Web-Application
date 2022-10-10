@@ -53,14 +53,32 @@ function TakeSurvey() {
   // On submission, prevents submission and displays an error if any questions are left unanswered. Otherwise, adds the list of responses to the survey just taken in the 'surveys' state.
   const handleSubmit = (e) => {
     const unanswered = questions.some((question) => !question.response);
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
     if (unanswered) {
       e.preventDefault();
       setUnanswered(unanswered);
     } else {
-      /* TODO: post responses */
       for (const question of questions) {
-        console.log(question.id);
-        console.log(question.response);
+        if (question.type == 1){
+            console.log(question['choices'][question.response].choice)
+            let func = async () => {
+              let req = await fetch("/addSurveyResponse/"  + question.id + "/" + question['choices'][question.response].choice, requestOptions)
+                .then(response => { return response.json()});
+                console.log(req)
+            }
+            func()
+        }else{
+          let func = async () => {
+            let req = await fetch("/addSurveyResponse/"  + question.id + "/" + question.response, requestOptions)
+              .then(response => { return response.json()});
+              console.log(req)
+          }
+          func()
+        }
       }
     }
   };

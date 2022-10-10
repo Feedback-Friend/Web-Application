@@ -17,15 +17,15 @@ def getSurveys(cursor, userID):
 def getSurveyResults(cursor, userID):
     table = cursor.execute("SELECT * FROM surveys WHERE user_id=%s", (str(userID)))
     surveys = []
-    response_list = []
     for entry in table:
         count = 0
-        questions = cursor.execute("SELECT * FROM questions WHERE survey_id=%s LIMIT 1", (str(entry[0]))) #get single question
+        questions = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (str(entry[0]))) #get single question
         for question in questions:
             responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(question[0]))) #get responses to question
+            response_list = []
             for response in responses:
                 response_list.append(response)    
-        surveys.append({"id": entry[0], "name": entry[3], "response_list": [dict(row) for row in response_list], "time": entry[4]}) #return survey id, name, and responses
+            surveys.append({"id": entry[0], "name": entry[3], "response_list": [dict(row) for row in response_list], "time": entry[4]}) #return survey id, name, and responses
     return jsonify(surveys)
       
 def addSurvey(cursor, userID, timeCreated, name):
@@ -149,3 +149,11 @@ def getQuestionsAndChoices(cursor, surveyID):
             choices_ary.append({"id": choice[0], "choice": choice[2]}) #return choice id and answer
         questions.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3], 'choices': choices_ary})
     return jsonify(questions)
+
+def addSurveyResponse(cursor, question_id, response):
+    table = cursor.execute("SELECT * FROM responses")
+    response_id = 0
+    for entry in table:
+        response_id = entry[0]+1
+    cursor.execute("INSERT INTO responses VALUES(%s, %s, %s)", (int(response_id), int(question_id), response))
+    return jsonify({'result': response})
