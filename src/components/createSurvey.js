@@ -117,7 +117,7 @@ function CreateSurvey(props) {
     }
 
     hideMessage("Done", func, "createFromExisting");
-  }, [hideMessage, showMessage, survey, questions, setFromExisting]);
+  }, [hideMessage, showMessage, survey.id, questions, setFromExisting]);
 
   // Gets contact lists from the database
   const getContactLists = useCallback(async () => {
@@ -304,6 +304,7 @@ function CreateSurvey(props) {
                 onChange={updateSurveyName}
                 value={survey.name}
                 inputProps={{ maxLength: 50 }}
+                disabled={!hasUpdatedQuestions.current || !hasUpdatedSurvey.current}
               />
               <Button
                 variant="contained"
