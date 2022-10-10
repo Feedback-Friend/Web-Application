@@ -15,9 +15,6 @@ function Homepage(props) {
   //Contains a list of created surveys. Each survey has an id, name, time created, and # of responses.
   const [surveys, setSurveys] = useState([]);
 
-  // If creating a survey from existing or editing a draft, contains the name and id of that survey. Otherwise, contains an empty string and -1.
-  const [survey, setSurvey] = useState({ name: "", id: -1 });
-
   /* 
   When surveys are in the process of being created or deleted, this state prevents retrieving surveys from the database until all operations
   are completed. It also contains a message corresponding to the current operation to be displayed to the user.
@@ -26,6 +23,8 @@ function Homepage(props) {
 
   // Contains the timer for hiding the update message
   const timerRef = useRef(null);
+
+  // Contains the name of the current fetch being attempted and a surveyID/questionID/choiceID, if applicable
   const idRef = useRef(null);
 
   // Shows the update message
@@ -35,6 +34,7 @@ function Homepage(props) {
 
   // Hides the update message after one second
   const hideMessage = useCallback((message, func, id) => {
+    // Put off autosaving until later in cases where the same operation is being attempted (e.g. updating an FRQ with id=0)
     if (timerRef.current && idRef.current === id) {
       clearTimeout(timerRef.current);
     }
@@ -64,7 +64,7 @@ function Homepage(props) {
       setSurveys(res);
     };
 
-    hideMessage("Got surveys", func, "getSurveys");
+    hideMessage("Done", func, "getSurveys");
   }, [userID, showMessage, hideMessage]);
 
   return (
@@ -79,7 +79,6 @@ function Homepage(props) {
             <Home
               surveys={surveys}
               getSurveys={getSurveys}
-              setSurvey={setSurvey}
               update={update}
               showMessage={showMessage}
               hideMessage={hideMessage}
@@ -92,7 +91,6 @@ function Homepage(props) {
           path="/create"
           element={
             <CreateSurvey
-              surveyTemplate={survey}
               userID={userID}
               update={update}
               showMessage={showMessage}
@@ -109,7 +107,6 @@ function Homepage(props) {
             <CreateFromExisting
               surveys={surveys}
               getSurveys={getSurveys}
-              setSurvey={setSurvey}
               update={update}
               setFromExisting={setFromExisting}
             />

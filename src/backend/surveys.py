@@ -47,6 +47,10 @@ def updateSurveyName(cursor, surveyID, surveyName):
     cursor.execute("UPDATE surveys SET survey_name = %s WHERE survey_id = %s", (surveyName, int(surveyID)))
     return jsonify({'result': 0})
 
+def updateTime(cursor, surveyID, time):
+    cursor.execute("UPDATE surveys set time_created = %s WHERE survey_id = %s", (time, int(surveyID)))
+    return jsonify({'result': 0})
+
 def deleteSurvey(cursor, surveyID):
     table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (str(surveyID)))
     for entry in table:

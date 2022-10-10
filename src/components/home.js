@@ -18,7 +18,7 @@ import { Link } from 'react-router-dom';
 import Nav from './nav';
 
 function Home(props) {
-    const { surveys, getSurveys, setSurvey, update, showMessage, hideMessage, setFromExisting } = props;
+    const { surveys, getSurveys, update, showMessage, hideMessage, setFromExisting } = props;
 
     // Determines whether the Dialog component for deleting surveys is open or closed
     const [openDelete, setOpenDelete] = useState(false);
@@ -32,14 +32,13 @@ function Home(props) {
     // Retrieves surveys from the database only after creating and deleting operations are completed
     useEffect(() => {
         if (!gottenSurveys.current) {
-            setSurvey({ name: "", id: -1 });
             setFromExisting(false);
             if (!update.updating) {
                 getSurveys();
                 gottenSurveys.current = true;
             }
         }
-    }, [setSurvey, setFromExisting, update.updating, getSurveys]);
+    }, [setFromExisting, update.updating, getSurveys]);
 
     // Opens the Dialog component for deleting surveys
     const handleOpen = (survey) => {
@@ -59,8 +58,11 @@ function Home(props) {
 
         gottenSurveys.current = false;
 
-        const func = async () => await fetch("/deleteSurvey/" + id, requestOptions)
-            .then(response => { return response.json(); });
+        const func = async () => {
+            await fetch("/deleteSurvey/" + id, requestOptions)
+                .then(response => { return response.json(); });
+            localStorage.setItem("survey", JSON.stringify({ name: "", id: -1 }));
+        }
 
         const name = surveyToDelete.name || "Untitled Survey";
         hideMessage("Survey '" + name + "' deleted", func, "deleteSurvey" + id);
@@ -91,7 +93,7 @@ function Home(props) {
                                         <Typography variant="h6">{survey.count} Response{survey.count !== 1 && "s"}</Typography>
                                     </CardContent>
                                     <CardActions>
-                                        <Button component={Link} to="create" onClick={(e) => setSurvey({ name: survey.name, id: survey.id })}>Edit</Button>
+                                        <Button component={Link} to="create" onClick={() => localStorage.setItem("survey", JSON.stringify({ name: survey.name, id: survey.id }))}>Edit</Button>
                                     </CardActions>
                                 </Card>
                             </Grid>
@@ -103,7 +105,7 @@ function Home(props) {
                         <Typography variant="h5">Create a new survey...</Typography>
                     </Grid>
                     <Grid item xs={6} textAlign="right">
-                        <Button variant="contained" component={Link} to="create">from scratch</Button>
+                        <Button variant="contained" component={Link} to="create" onClick={() => localStorage.setItem("survey", JSON.stringify({ name: "", id: -1 }))}>from scratch</Button>
                     </Grid>
                     <Grid item xs={6} textAlign="left">
                         <Button variant="contained" component={Link} to="createFromExisting" disabled={surveys.length === 0}>from existing</Button>

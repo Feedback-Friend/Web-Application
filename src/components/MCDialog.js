@@ -17,7 +17,7 @@ import Clear from '@mui/icons-material/Clear';
 import React, { useState } from 'react';
 
 function MCDialog(props) {
-  const { open, setOpen, questions, setQuestions, surveyID, showMessage, hideMessage } = props;
+  const { open, setOpen, questions, setQuestions, surveyID, showMessage, hideMessage, updateTime } = props;
 
   // If creating MC from suggestion, contains string corresponding to the chosen suggestion
   const [suggestion, setSuggestion] = useState("");
@@ -121,7 +121,7 @@ function MCDialog(props) {
     };
 
     setOpen(false);
-    showMessage("Autosaving...");
+    showMessage("Adding Question...");
 
     const func = async () => {
       // Add multiple choice question to database
@@ -143,9 +143,11 @@ function MCDialog(props) {
       };
 
       setQuestions([...questions, question]);
+
+      await updateTime();
     }
 
-    hideMessage("Saved", func, "addMC");
+    hideMessage("Done", func, "addMC");
   };
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

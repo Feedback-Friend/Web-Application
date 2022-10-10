@@ -13,7 +13,7 @@ import src.backend.contacts as contact
 app = Flask(__name__, static_folder='../../build/', static_url_path='/')
 
 # directory defaults to /, need to change it to see pkey
-os.chdir('/var/www/html/WebApplication/')
+#os.chdir('/var/www/html/WebApplication/')
 
 # connecting to oracle cloud compute unit for database
 tunnel = sshtunnel.SSHTunnelForwarder(
@@ -130,6 +130,11 @@ def getSurveyName(surveyID):
 def updateSurveyName(surveyID, surveyName):
     cursor = engine.connect()
     return survey.updateSurveyName(cursor, surveyID, surveyName)
+
+@app.route('/updateTime/<surveyID>/<time>', methods=['PUT'])
+def updateTime(surveyID, time):
+    cursor = engine.connect()
+    return survey.updateTime(cursor, surveyID, time)
 
 @app.route('/deleteSurvey/<surveyID>', methods=['DELETE'])
 def deleteSurvey(surveyID):

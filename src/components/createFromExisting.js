@@ -12,7 +12,9 @@ import { Link } from 'react-router-dom';
 import Nav from './nav'
 
 function CreateFromExisting(props) {
-    const { surveys, getSurveys, setSurvey, update, setFromExisting } = props;
+    const { surveys, getSurveys, update, setFromExisting } = props;
+
+    const [survey, setSurvey] = useState({ name: "", id: -1 });
 
     // The index of the selected list item
     const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -30,13 +32,18 @@ function CreateFromExisting(props) {
     // Retrieves surveys from the database only after creating and deleting operations are completed
     useEffect(() => {
         if (!gottenSurveys.current) {
-            setSurvey({ id: -1 });
             if (!update.updating) {
                 getSurveys();
                 gottenSurveys.current = true;
             }
         }
-    }, [update.updating, setSurvey, getSurveys]);
+    }, [update.updating, getSurveys]);
+
+    // Tells createSurvey that a survey is being created from existing and passes its name and id
+    const handleSubmit = () => {
+        setFromExisting(true);
+        localStorage.setItem("survey", JSON.stringify(survey));
+    }
 
     return (
         <Box>
@@ -60,7 +67,7 @@ function CreateFromExisting(props) {
                         );
                     })}
                 </List>
-                <Button variant="contained" component={Link} to="../create" onClick={() => setFromExisting(true)} disabled={selectedIndex === -1}>Create</Button>
+                <Button variant="contained" component={Link} to="../create" onClick={handleSubmit} disabled={selectedIndex === -1}>Create</Button>
             </Container>
             <Snackbar
                 open={update.updating}

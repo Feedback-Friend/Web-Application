@@ -5,7 +5,7 @@ import Clear from '@mui/icons-material/Clear';
 import React from 'react';
 
 function FRQ(props) {
-  const { questions, setQuestions, index, empty, showMessage, hideMessage } = props;
+  const { questions, setQuestions, index, empty, showMessage, hideMessage, updateTime } = props;
 
   // Updates the FRQ prompt on change
   const updateFRQ = (index, e) => {
@@ -20,8 +20,11 @@ function FRQ(props) {
 
     showMessage("Autosaving...");
 
-    const func = async () => await fetch("/updateFRQ/" + questions[index].id + "/" + e.target.value, requestOptions)
-      .then(response => { return response.json() });
+    const func = async () => {
+      await fetch("/updateFRQ/" + questions[index].id + "/" + e.target.value.trim(), requestOptions)
+        .then(response => { return response.json() });
+      await updateTime();
+    }
 
     hideMessage("Saved", func, "updateFRQ" + questions[index].id);
   };
@@ -33,16 +36,20 @@ function FRQ(props) {
       headers: { 'Content-Type': 'application/json' },
     };
 
-    showMessage("Autosaving...");
+    showMessage("Deleting Question...");
 
-    const func = async () => await fetch("/deleteFRQ/" + questions[index].id, requestOptions)
-      .then(response => { return response.json() });
+    const func = async () => {
+      await fetch("/deleteFRQ/" + questions[index].id, requestOptions)
+        .then(response => { return response.json() });
 
-    let newArr = [...questions];
-    newArr.splice(index, 1);
-    setQuestions(newArr);
+      let newArr = [...questions];
+      newArr.splice(index, 1);
+      setQuestions(newArr);
 
-    hideMessage("Saved", func, "deleteFRQ" + questions[index].id);
+      await updateTime();
+    }
+
+    hideMessage("Done", func, "deleteFRQ" + questions[index].id);
   };
 
   return (

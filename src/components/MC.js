@@ -8,7 +8,7 @@ import Choice from './choice';
 import React from 'react';
 
 function MC(props) {
-  const { questions, setQuestions, index, empty, showMessage, hideMessage } = props;
+  const { questions, setQuestions, index, empty, showMessage, hideMessage, updateTime } = props;
 
   // Updates the prompt of the MC question on change
   const updateMC = (index, e) => {
@@ -23,8 +23,11 @@ function MC(props) {
 
     showMessage("Autosaving...");
 
-    const func = async () => await fetch("/updateMCQ/" + questions[index].id + "/" + e.target.value, requestOptions)
-      .then(response => { return response.json() });
+    const func = async () => {
+      await fetch("/updateMCQ/" + questions[index].id + "/" + e.target.value.trim(), requestOptions)
+        .then(response => { return response.json() });
+      await updateTime();
+    }
 
     hideMessage("Saved", func, "updateMC" + questions[index].id);
   };
@@ -36,16 +39,20 @@ function MC(props) {
       headers: { 'Content-Type': 'application/json' },
     };
 
-    showMessage("Autosaving...");
+    showMessage("Deleting Question...");
 
-    const func = async () => await fetch("/deleteMCQ/" + questions[index].id, requestOptions)
-      .then(response => { return response.json() });
+    const func = async () => {
+      await fetch("/deleteMCQ/" + questions[index].id, requestOptions)
+        .then(response => { return response.json() });
 
-    let newArr = [...questions];
-    newArr.splice(index, 1);
-    setQuestions(newArr);
+      let newArr = [...questions];
+      newArr.splice(index, 1);
+      setQuestions(newArr);
 
-    hideMessage("Saved", func, "deleteMCQ" + questions[index].id);
+      await updateTime();
+    }
+
+    hideMessage("Done", func, "deleteMCQ" + questions[index].id);
   };
 
   // Adds a choice to the MC question
@@ -55,7 +62,7 @@ function MC(props) {
       headers: { 'Content-Type': 'application/json' },
     };
 
-    showMessage("Autosaving...");
+    showMessage("Adding Choice...");
 
     const func = async () => {
       let req = await fetch("/addChoice/" + questions[index].id + "/", requestOptions)
@@ -64,9 +71,11 @@ function MC(props) {
       let newArr = [...questions];
       newArr[index].choices.push({ choice: "", id: req.result });
       setQuestions(newArr);
+
+      await updateTime();
     }
 
-    hideMessage("Saved", func, "addChoice" + questions[index].id);
+    hideMessage("Done", func, "addChoice" + questions[index].id);
   };
 
   return (
@@ -100,6 +109,7 @@ function MC(props) {
             empty={empty && choice.choice === ""}
             showMessage={showMessage}
             hideMessage={hideMessage}
+            updateTime={updateTime}
             key={choiceIndex}
           />
         );

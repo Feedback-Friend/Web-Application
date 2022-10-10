@@ -7,7 +7,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import React from 'react';
 
 function Choice(props) {
-  const { questions, setQuestions, index, choiceIndex, empty, showMessage, hideMessage } = props;
+  const { questions, setQuestions, index, choiceIndex, empty, showMessage, hideMessage, updateTime } = props;
 
   // Updates the choice at the given index on change
   const updateChoice = (choiceIndex, e) => {
@@ -22,8 +22,11 @@ function Choice(props) {
 
     showMessage("Autosaving...");
 
-    const func = async () => await fetch("/updateChoice/" + questions[index].choices[choiceIndex].id + "/" + e.target.value, requestOptions)
-      .then(response => { return response.json() });
+    const func = async () => {
+      await fetch("/updateChoice/" + questions[index].choices[choiceIndex].id + "/" + e.target.value.trim(), requestOptions)
+        .then(response => { return response.json() });
+      await updateTime();
+    }
 
     hideMessage("Saved", func, "updateChoice" + questions[index].choices[choiceIndex].id);
   };
@@ -35,16 +38,20 @@ function Choice(props) {
       headers: { 'Content-Type': 'application/json' },
     };
 
-    showMessage("Autosaving...");
+    showMessage("Deleting Choice...");
 
-    const func = async () => await fetch("/deleteChoice/" + questions[index].choices[choiceIndex].id, requestOptions)
-      .then(response => { return response.json() });
+    const func = async () => {
+      await fetch("/deleteChoice/" + questions[index].choices[choiceIndex].id, requestOptions)
+        .then(response => { return response.json() });
 
-    let newArr = [...questions];
-    newArr[index].choices.splice(choiceIndex, 1);
-    setQuestions(newArr);
+      let newArr = [...questions];
+      newArr[index].choices.splice(choiceIndex, 1);
+      setQuestions(newArr);
 
-    hideMessage("Saved", func, "deleteChoice" + questions[index].choices[choiceIndex].id);
+      await updateTime();
+    }
+
+    hideMessage("Done", func, "deleteChoice" + questions[index].choices[choiceIndex].id);
   };
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";

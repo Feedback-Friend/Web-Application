@@ -10,17 +10,28 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import Snackbar from '@mui/material/Snackbar';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Nav from './nav';
 import PreviewDialog from './previewDialog';
 
 function CreateSurvey(props) {
-  const { surveyTemplate, userID, update, showMessage, hideMessage, fromExisting, setFromExisting } = props;
+  const { userID, update, showMessage, hideMessage, fromExisting, setFromExisting } = props;
+
+  // Contains the name and id of the survey
+  const [survey, setSurvey] = useState(JSON.parse(localStorage.getItem("survey")));
 
   // Contains survey questions
   const [questions, setQuestions] = useState([]);
 
-  const [survey, setSurvey] = useState({ name: surveyTemplate.name, id: surveyTemplate.id });
+  // Contains the names and ids of contact lists
+  const [contactLists, setContactLists] = useState([{ name: "list1", id: 0 }, { name: "list2", id: 1 }]);
+
+  // Contains the name and id of the selected contact list
+  const [contactList, setContactList] = useState("");
 
   // On survey submission, determines whether errors should be displayed (if there are any empty fields)
   const [empty, setEmpty] = useState(false);
@@ -30,6 +41,11 @@ function CreateSurvey(props) {
 
   // Determines whether the Dialog component for previewing surveys is open or closed
   const [openPreview, setOpenPreview] = useState(false);
+
+  // Set to true upon creation of new survey/retrieval of existing survey questions from database to prevent infinite loop on rerender
+  const hasUpdatedQuestions = useRef(false);
+  const hasUpdatedSurvey = useRef(false);
+  const hasUpdatedContactLists = useRef(false);
 
   // Gets the question types, prompts, and choices associated with an existing survey and populates the questions state
   const getFromExisting = useCallback(() => {
@@ -41,14 +57,14 @@ function CreateSurvey(props) {
     showMessage("Getting questions...");
 
     const func = async () => {
-      let questions = await fetch("/getQuestionsAndChoices/" + surveyTemplate.id, requestOptions)
+      let questions = await fetch("/getQuestionsAndChoices/" + survey.id, requestOptions)
         .then(response => { return response.json() });
 
       setQuestions(questions);
     }
 
-    hideMessage("Got questions", func, "getQuestionsAndChoices");
-  }, [surveyTemplate.id, showMessage, hideMessage]);
+    hideMessage("Done", func, "getQuestionsAndChoices");
+  }, [survey.id, showMessage, hideMessage]);
 
   // Adds survey to the database
   const addSurvey = useCallback(() => {
@@ -59,17 +75,18 @@ function CreateSurvey(props) {
       headers: { 'Content-Type': 'application/json' },
     };
 
-    showMessage("Autosaving...");
+    showMessage("Creating Survey...");
 
     let func = async () => {
-      let req = await fetch("/addSurvey/" + userID + "/" + timeCreated + "/" + surveyTemplate.name, requestOptions)
+      let req = await fetch("/addSurvey/" + userID + "/" + timeCreated + "/" + survey.name, requestOptions)
         .then(response => { return response.json() });
 
-      setSurvey({ name: surveyTemplate.name, id: req.result });
+      localStorage.setItem("survey", JSON.stringify({ name: survey.name, id: req.result }));
+      setSurvey({ name: survey.name, id: req.result });
     }
 
-    hideMessage("Saved", func, "addSurvey");
-  }, [surveyTemplate.name, hideMessage, showMessage, userID]);
+    hideMessage("Done", func, "addSurvey");
+  }, [setSurvey, survey.name, hideMessage, showMessage, userID]);
 
   // Creates a survey from an existing one
   const createFromExisting = useCallback(() => {
@@ -78,7 +95,7 @@ function CreateSurvey(props) {
       headers: { 'Content-Type': 'application/json' },
     };
 
-    showMessage("Creating Survey...");
+    showMessage("Autosaving Questions...");
 
     let func = async () => {
       // Add questions
@@ -99,34 +116,69 @@ function CreateSurvey(props) {
       setFromExisting(false);
     }
 
-    hideMessage("Survey '" + survey.name + "' created", func, "createFromExisting");
+    hideMessage("Done", func, "createFromExisting");
   }, [hideMessage, showMessage, survey, questions, setFromExisting]);
 
-  // Set to true upon creation of new survey/retrieval of existing survey questions from database to prevent infinite loop on rerender
-  const hasUpdatedStates = useRef(false);
+  // Gets contact lists from the database
+  const getContactLists = useCallback(async () => {
+    const requestOptions = {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    let contactLists = await fetch("/getContactLists/" + userID, requestOptions)
+      .then(response => { return response.json(); });
+    setContactLists(contactLists);
+  }, [userID]);
 
   // Creates new surveys (from scratch or from existing) and gets questions from existing surveys (creation from existing or editing draft)
   useEffect(() => {
-    if (!hasUpdatedStates.current) {
-      // Add a new survey
-      if (surveyTemplate.id === -1 || fromExisting) {
-        addSurvey();
-      }
-      // Get existing survey questions
-      if (surveyTemplate.id !== -1) {
-        getFromExisting();
-      }
-      hasUpdatedStates.current = true
-    }
-
     // Only calls createFromExisting if the boolean 'fromExisting' is true and there are questions to add
-    if (survey.id !== surveyTemplate.id && questions.length !== 0 && fromExisting) {
+    if (fromExisting && hasUpdatedSurvey.current && hasUpdatedQuestions.current) {
       createFromExisting();
     }
-  }, [survey.id, surveyTemplate.id, fromExisting, getFromExisting, addSurvey, createFromExisting, questions]);
+
+    // For surveys from existing, this is only called after the questions have been retrieved. Either way, it is only called once.
+    if ((hasUpdatedQuestions.current && !hasUpdatedSurvey.current) || (!fromExisting && !hasUpdatedSurvey.current)) {
+      // Add a new survey if from scratch or from existing
+      if (survey.id === -1 || fromExisting) {
+        addSurvey();
+      }
+      hasUpdatedSurvey.current = true;
+    }
+
+    // Only called once
+    if (!hasUpdatedQuestions.current) {
+      // Get existing survey questions
+      if (survey.id !== -1) {
+        getFromExisting();
+      }
+      hasUpdatedQuestions.current = true;
+    }
+
+    // Retrieves contact lists only once
+    if (!hasUpdatedContactLists.current) {
+      //getContactLists();
+      hasUpdatedContactLists.current = true;
+    }
+  }, [survey.id, fromExisting, getFromExisting, addSurvey, createFromExisting, getContactLists]);
+
+  // Updates the time stored in the database after a survey is edited in any way
+  const updateTime = async () => {
+    const time = new Date().getTime();
+
+    const requestOptions = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    await fetch("/updateTime/" + survey.id + "/" + time, requestOptions)
+      .then(response => { return response.json() });
+  };
 
   // Updates the survey name in both the survey state and the database
   const updateSurveyName = (e) => {
+    localStorage.setItem("survey", JSON.stringify({ name: e.target.value, id: survey.id }));
     setSurvey({ name: e.target.value, id: survey.id });
 
     const requestOptions = {
@@ -136,9 +188,11 @@ function CreateSurvey(props) {
 
     showMessage("Autosaving...");
 
-    let func = async () => await fetch("/updateSurveyName/" + survey.id + "/" + e.target.value, requestOptions)
-      .then(response => { return response.json() });
-
+    let func = async () => {
+      await fetch("/updateSurveyName/" + survey.id + "/" + e.target.value.trim(), requestOptions)
+        .then(response => { return response.json() });
+      await updateTime();
+    }
     hideMessage("Saved", func, "updateName");
   }
 
@@ -149,7 +203,7 @@ function CreateSurvey(props) {
       headers: { 'Content-Type': 'application/json' },
     };
 
-    showMessage("Autosaving...");
+    showMessage("Adding Question...");
 
     let func = async () => {
       let req = await fetch("/addFRQ/" + survey.id, requestOptions)
@@ -163,9 +217,11 @@ function CreateSurvey(props) {
       };
 
       setQuestions([...questions, question]);
+
+      await updateTime();
     }
 
-    hideMessage("Saved", func, "addFRQ");
+    hideMessage("Done", func, "addFRQ");
   };
 
   // Checks if no questions have been created or if any fields are empty, including survey name, question prompts, and MC choices.
@@ -185,10 +241,13 @@ function CreateSurvey(props) {
       /* TODO: set survey from draft to active */
       const func = async () => {
 
+        await updateTime();
       };
 
       showMessage("Publishing survey...");
       hideMessage("Survey '" + survey.name + "' published", func, "publishSurvey");
+
+      localStorage.setItem("survey", JSON.stringify({ name: "", id: -1 }));
     }
   };
 
@@ -207,6 +266,7 @@ function CreateSurvey(props) {
                   empty={empty && !question.prompt}
                   showMessage={showMessage}
                   hideMessage={hideMessage}
+                  updateTime={updateTime}
                   key={index}
                 />
               ) : (
@@ -221,6 +281,7 @@ function CreateSurvey(props) {
                   }
                   showMessage={showMessage}
                   hideMessage={hideMessage}
+                  updateTime={updateTime}
                   key={index}
                 />
               );
@@ -247,25 +308,45 @@ function CreateSurvey(props) {
               <Button
                 variant="contained"
                 onClick={addFRQ} sx={{ my: 2 }}
+                disabled={update.updating}
               >
                 + FRQ
               </Button>
               <Button
                 variant="contained"
                 onClick={() => setOpenMC(true)} sx={{ mb: 2 }}
+                disabled={update.updating}
               >
                 + MC
               </Button>
+              {contactLists.length === 0 ?
+                <Button variant="contained" sx={{ mb: 2 }}>Create a Contact List</Button>
+                :
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <InputLabel>Contact List</InputLabel>
+                  <Select
+                    label="Contact List"
+                    defaultValue=""
+                    onChange={(e) => setContactList(e.target.value)}
+                  >
+                    {contactLists.map((contactList, index) => {
+                      return (
+                        <MenuItem value={contactList} key={contactList.id}>{contactList.name}</MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              }
               <Button
                 variant="contained"
-                disabled={isEmpty}
+                disabled={isEmpty || update.updating}
                 onClick={() => setOpenPreview(true)} sx={{ mb: 2 }}
               >
                 Preview
               </Button>
               <Button
                 variant="contained"
-                disabled={isEmpty}
+                disabled={isEmpty || update.updating || !contactList}
                 component={Link}
                 to="/"
                 onClick={handleSubmit}
@@ -283,6 +364,7 @@ function CreateSurvey(props) {
           surveyID={survey.id}
           showMessage={showMessage}
           hideMessage={hideMessage}
+          updateTime={updateTime}
         />
         <PreviewDialog
           open={openPreview}
