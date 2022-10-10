@@ -16,7 +16,7 @@ import BarChart from "react-bar-chart";
 
 function Results(props) {
   const { surveys } = props;
-
+  const [userID, setUserID] = React.useState(localStorage.getItem("userID"));
   // Contains the chosen survey
   const [survey, setSurvey] = useState('');
 
@@ -41,13 +41,12 @@ function Results(props) {
 
     useEffect(() => {
       const fetch_and_set = async () => {
-          const response = await fetch('/getSurveyResults/' + 4)
+          const response = await fetch('/getSurveyResults/' + userID)
           const survey_info = await response.json()
           setFRQ(survey_info)
           const questionsresponse = await fetch('/getQuestions/' + 2)
           const questions_info = await questionsresponse.json()
           setQuestionNames(questions_info)
-
       }
       fetch_and_set()
   }, []);
