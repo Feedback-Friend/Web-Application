@@ -1,5 +1,6 @@
 import sshtunnel
 from sqlalchemy import create_engine
+from user import *
 
 # tunnel = sshtunnel.SSHTunnelForwarder(
 #     ('150.136.92.200', 22), 
@@ -187,9 +188,3 @@ def passwordStrength(password, length):
             break
 
     return strength
-
-
-engine = create_engine('mysql+mysqldb://root:password@localhost:3306/feedback_friend')
-
-# eject_schema(engine)
-flush_schema(engine)
