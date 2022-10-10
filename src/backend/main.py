@@ -265,3 +265,11 @@ def getQuestionsAndChoices(surveyID):
 def getSurveyResults(userID):
     cursor = engine.connect()
     return survey.getSurveyResults(cursor, userID)
+
+@app.route('/addSurveyResponse/<questionID>/', defaults={'response': ''}, methods=['POST'])
+@app.route('/addSurveyResponse/<question_id>/<response>', methods=['POST'])
+def addSurveyResponse(question_id, response):
+    cursor = engine.connect()
+    return survey.addSurveyResponse(cursor, question_id, response)
+
+    

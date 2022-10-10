@@ -39,10 +39,6 @@ function Results(props) {
     )
   });
 
-    console.log("hidafgsg")
-    console.log('survey', survey)
-    console.log('survyes', surveys)
-
     useEffect(() => {
       const fetch_and_set = async () => {
           const response = await fetch('/getSurveyResults/' + 4)
@@ -51,10 +47,7 @@ function Results(props) {
           const questionsresponse = await fetch('/getQuestions/' + 2)
           const questions_info = await questionsresponse.json()
           setQuestionNames(questions_info)
-          console.log('questions_info1', questionNames)
-          console.log('questions_info2', questions_info)
-          console.log(survey_info)
-          console.log('frq', frq)
+
       }
       fetch_and_set()
   }, []);
@@ -85,7 +78,6 @@ function Results(props) {
   function parseJSONFRQ(projects){
     console.log('projects', projects)
     const rows = []
-    console.log("projects.length", projects['response_list'].length)
    for (let j = 0; j < projects['response_list'].length; j++){
         console.log('projects[response]', projects['response_list'][j]['reply'])
         rows.push(createData(j, projects['response_list'][j]['reply']));
@@ -102,16 +94,12 @@ function Results(props) {
     console.log('projects', projects)
     const rows = []
     var dict = {};
-    console.log("projects.length", projects['response_list'].length)
    for (let j = 0; j < projects['response_list'].length; j++){
-        console.log('projects[response]', projects['response_list'][j]['reply'])
         if (dict[projects['response_list'][j]['reply']] !== undefined){
-            console.log("dict[projects['response_list'][j]['reply']]", projects['response_list'][j]['reply'])
             let count = dict[projects['response_list'][j]['reply']] + 1
             dict[projects['response_list'][j]['reply']] = count
         }else{
           dict[projects['response_list'][j]['reply']] = 1
-          console.log("dict[projects['1", projects['response_list'][j]['reply'])
         }
         
       }
@@ -125,8 +113,6 @@ function Results(props) {
   
   const margin = { top: 20, right: 20, bottom: 30, left: 40 };
 
-
-  console.log("questionNamesfrq", questionNames)
   return (
     <Box>
       <Nav />
