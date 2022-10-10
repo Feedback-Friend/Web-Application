@@ -5,6 +5,7 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Nav from './nav';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -15,10 +16,10 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary
 }));
 
-function FormNameRow() {
-  return (
-    <React.Fragment>
 
+const NameRow=(props)=>{
+  return (
+    <>
       {/* Row Type */}
       <Grid item xs={2}>
         <Item>Name: </Item>
@@ -60,15 +61,13 @@ function FormNameRow() {
       <Grid item xs={2}>
         <Button variant="contained">Change</Button>
       </Grid>
-
-    </React.Fragment>
-  );
+    </>
+  )
 }
 
-function FormUsernameRow() {
+const UsernameRow=(props)=>{
   return (
-    <React.Fragment>
-
+    <>
       {/* Row Type */}
       <Grid item xs={3}>
         <Item>Username: </Item>
@@ -95,15 +94,13 @@ function FormUsernameRow() {
       <Grid item xs={3}>
         <Button variant="contained">Change</Button>
       </Grid>
-
-    </React.Fragment>
-  );
+    </>
+  )
 }
 
-function FormEmailRow() {
+const EmailRow=(props)=> {
   return (
-    <React.Fragment>
-
+    <>
       {/* Row Type */}
       <Grid item xs={3}>
         <Item>Email: </Item>
@@ -130,23 +127,25 @@ function FormEmailRow() {
       <Grid item xs={3}>
         <Button variant="contained">Change</Button>
       </Grid>
-
-    </React.Fragment>
-  );
+    </>
+  )
 }
 
-export default function NestedGrid() {
+export default function NestedGrid(props) {
+  const{user} = props;
+
   return (
     <Box sx={{ flexGrow: 1 }}>
+      <Nav />
       <Grid container spacing={1}>
         <Grid container item spacing={3}>
-          <FormNameRow />
+          <NameRow />
         </Grid>
         <Grid container item spacing={3}>
-          <FormUsernameRow />
+          <UsernameRow />
         </Grid>
         <Grid container item spacing={3}>
-          <FormEmailRow />
+          <EmailRow />
         </Grid>
       </Grid>
     </Box>
