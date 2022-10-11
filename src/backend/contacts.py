@@ -57,3 +57,14 @@ def updateContactEmailAddress(cursor, contactID, emailAddress):
 
 def deleteContact(cursor, contactID):
     cursor.execute("DELETE FROM contacts WHERE contact_id = %s", (int(contactID)))
+
+def getContactListsAndContacts(cursor, userID):
+    table = cursor.execute("SELECT * FROM contact_lists WHERE user_id=%s", (str(userID)))
+    contactLists = []
+    for entry in table:
+        contacts_ary = []
+        contacts = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s",(str(entry[0])))
+        for contact in contacts:
+            contacts_ary.append({"id": contact[0], "first name": contact[2], "last name": contact[3], "email address": contact[4]}) #return contact id, first name, last name, email address
+        contactLists.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3], 'choices': contacts_ary})
+    return jsonify(contactLists)
