@@ -63,22 +63,12 @@ function TakeSurvey() {
       setUnanswered(unanswered);
     } else {
       for (const question of questions) {
-        if (question.type == 1){
-            console.log(question['choices'][question.response].choice)
-            let func = async () => {
-              let req = await fetch("/addSurveyResponse/"  + question.id + "/" + question['choices'][question.response].choice, requestOptions)
-                .then(response => { return response.json()});
-                console.log(req)
-            }
-            func()
-        }else{
-          let func = async () => {
-            let req = await fetch("/addSurveyResponse/"  + question.id + "/" + question.response, requestOptions)
-              .then(response => { return response.json()});
-              console.log(req)
-          }
-          func()
+        let func = async () => {
+          let req = await fetch("/addSurveyResponse/" + question.id + "/" + question.response, requestOptions)
+            .then(response => { return response.json() });
+          console.log(req)
         }
+        func()
       }
     }
   };
@@ -112,7 +102,7 @@ function TakeSurvey() {
                 return (
                   <FormControlLabel
                     key={choice.id}
-                    value={choice.id}
+                    value={choice.choice}
                     control={<Radio />}
                     label={alphabet.charAt(index) + ". " + choice.choice}
                   />

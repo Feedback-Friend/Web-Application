@@ -14,6 +14,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
+import Divider from '@mui/material/Divider';
+import { AppBar, Toolbar } from '@mui/material';
 import { Link } from 'react-router-dom';
 import Nav from './nav';
 
@@ -71,47 +73,67 @@ function Home(props) {
     return (
         <Box>
             <Nav />
-            <Container sx={{ width: 1 / 2 }} spacing={2}>
+            <Container>
                 <Grid container spacing={2}>
-                    <Grid item xs={12}>
-                        <Typography variant="h2" textAlign="center" sx={{ mt: 2 }}>Welcome back! You have {surveys.length} active survey{surveys.length !== 1 && "s"}.</Typography>
+                    <Grid item xs={12} textAlign="center">
+                        <Typography variant="h2">Welcome back!</Typography>
+                        <Divider />
+                        <Typography variant="h3">{surveys.length} Active Survey{surveys.length !== 1 && "s"}</Typography>
                     </Grid>
-                    {surveys.map((survey) => {
-                        return (
-                            <Grid item xs={6} key={survey.id}>
-                                <Card>
-                                    <CardHeader
-                                        action={
-                                            <IconButton onClick={() => handleOpen(survey)} disabled={update.updating}>
-                                                <Clear />
-                                            </IconButton>
-                                        }
-                                        title={survey.name || "Untitled Survey"}
-                                        subheader={new Date(survey.time).toLocaleString()}
-                                    />
-                                    <CardContent>
-                                        <Typography variant="h6">{survey.count} Response{survey.count !== 1 && "s"}</Typography>
-                                    </CardContent>
-                                    <CardActions>
-                                        <Button component={Link} to="create" onClick={() => localStorage.setItem("survey", JSON.stringify({ name: survey.name, id: survey.id }))}>Edit</Button>
-                                    </CardActions>
-                                </Card>
-                            </Grid>
-                        );
-                    })}
-                </Grid>
-                <Grid container spacing={2} sx={{ mb: 2 }}>
-                    <Grid item xs={12} textAlign="center" sx={{ mt: 2 }}>
-                        <Typography variant="h5">Create a new survey...</Typography>
+                    {
+                        surveys.map((survey) => {
+                            return (
+                                <Grid item xs={6} key={survey.id}>
+                                    <Card>
+                                        <CardHeader
+                                            title={survey.name || "Untitled Survey"}
+                                            subheader={new Date(survey.time).toLocaleString()}
+                                        />
+                                        <CardContent>
+                                            <Typography variant="h6">{survey.count} Response{survey.count !== 1 && "s"}</Typography>
+                                        </CardContent>
+                                    </Card>
+                                </Grid>
+                            );
+                        })
+                    }
+                    <Grid item xs={12} textAlign="center">
+                        <Divider />
+                        <Typography variant="h3">{surveys.length} Draft{surveys.length !== 1 && "s"}</Typography>
                     </Grid>
-                    <Grid item xs={6} textAlign="right">
-                        <Button variant="contained" component={Link} to="create" onClick={() => localStorage.setItem("survey", JSON.stringify({ name: "", id: -1 }))}>from scratch</Button>
-                    </Grid>
-                    <Grid item xs={6} textAlign="left">
-                        <Button variant="contained" component={Link} to="createFromExisting" disabled={surveys.length === 0}>from existing</Button>
-                    </Grid>
+                    {
+                        surveys.map((survey) => {
+                            return (
+                                <Grid item xs={6} key={survey.id}>
+                                    <Card>
+                                        <CardHeader
+                                            action={
+                                                <IconButton onClick={() => handleOpen(survey)} disabled={update.updating}>
+                                                    <Clear />
+                                                </IconButton>
+                                            }
+                                            title={survey.name || "Untitled Survey"}
+                                            subheader={new Date(survey.time).toLocaleString()}
+                                        />
+                                        <CardActions>
+                                            <Button component={Link} to="create" onClick={() => localStorage.setItem("survey", JSON.stringify({ name: survey.name, id: survey.id }))}>Edit</Button>
+                                        </CardActions>
+                                    </Card>
+                                </Grid>
+                            );
+                        })
+                    }
                 </Grid>
             </Container>
+            <Toolbar />
+            <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
+                <Toolbar>
+                    <Box textAlign="center" sx={{ flexGrow: 1 }}>
+                        <Button variant="inherit" component={Link} to="create" onClick={() => localStorage.setItem("survey", JSON.stringify({ name: "", id: -1 }))}>Create from scratch</Button>
+                        <Button variant="inherit" component={Link} to="createFromExisting" disabled={surveys.length === 0}>Create from existing</Button>
+                    </Box>
+                </Toolbar>
+            </AppBar>
             <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
                 <DialogTitle>
                     Are you sure you want to delete {surveyToDelete.name || "Untitled Survey"}?

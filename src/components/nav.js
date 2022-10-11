@@ -32,7 +32,7 @@ function Nav() {
 
     return (
         <Box sx={{ flexGrow: 1 }}>
-            <AppBar position="static">
+            <AppBar component="nav">
                 <Toolbar>
                     <img src={logo} width="40" height="40" />
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1, ml: 1 }}>
@@ -79,6 +79,7 @@ function Nav() {
                     </Box>
                 </Toolbar>
             </AppBar>
+            <Toolbar />
         </Box>
     );
 }

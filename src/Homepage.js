@@ -130,7 +130,7 @@ function Homepage(props) {
         <Route
           path="/results"
           element={
-            <Results surveys={surveys} />
+            <Results surveys={surveys} getSurveys={getSurveys} update={update} />
           }
         />
         {/* Profile Page*/}
