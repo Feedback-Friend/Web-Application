@@ -85,16 +85,3 @@ def deleteUser(cursor, userID):
     table = cursor.execute("SELECT * FROM contact_lists WHERE contact_list_id = %s", (int(userID)))
     for entry in table:
         deleteContactList(cursor, entry[0])
-
-
-"""
-Adds test users to the SQL database
-
-cursor (SQL alchemy cursor): the SQL alchemy cursor pointing to the SQL database
-"""
-def addTestUsers(cursor):
-    registerUser(cursor, "Kevin", "Li", "kevinli22527", "kli1", "kevinli22527@yahoo.com")
-    registerUser(cursor, "Bob", "James", "bj", "password", "bj@yahoo.com")
-    registerUser(cursor, "Billy", "Bo", "bb", "password!", "bb@yahoo.com")
-    registerUser(cursor, "Jack", "Hills", "jh", "password!!!", "jh@yahoo.com")
-    registerUser(cursor, "Hugo", "Lee", "hlee", "pass", "h@yahoo.com")

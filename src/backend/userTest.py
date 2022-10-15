@@ -204,6 +204,7 @@ def updateEmailAddress(cursor, userID, emailAddress):
 
 """
 Deletes all information pertaining to a user from the database
+Deletes surveys, contact lists, and the user record
 
 cursor (SQLAlchemy cursor) the cursor pointing to the SQL database
 userID (int): the user id of the user to be deleted
