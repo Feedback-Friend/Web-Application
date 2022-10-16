@@ -2,6 +2,7 @@ from userTest import *
 from surveyTest import *
 from contactTest import *
 
+
 """
 Adds test users to the SQL database
 
@@ -15,6 +16,11 @@ def populateTestUsers(cursor):
     registerUser(cursor, "Hugo", "Lee", "hlee", "pass", "h@yahoo.com") #5
 
 
+"""
+Adds test contact lists to the SQL database
+
+cursor (SQL alchemy cursor): the SQL alchemy cursor pointing to the SQL database
+"""
 def populateContactLists(cursor):
     # Kevin
     addContactList(cursor, 1, "Kevin Contact List 1")
@@ -32,6 +38,11 @@ def populateContactLists(cursor):
     addContactList(cursor, 5, "Hugo Contact List 1")
 
 
+"""
+Adds test contacts to the SQL database
+
+cursor (SQL alchemy cursor): the SQL alchemy cursor pointing to the SQL database
+"""
 def populateContacts(cursor):
     # Kevin Contact List 1
     addContact(cursor, 1, "Billy", "Bob", "bbx@utexas.edu")
@@ -47,3 +58,35 @@ def populateContacts(cursor):
     addContact(cursor, 4, "Jill", "J", "jj@utexas.edu")
 
     # Hugo Contact List 1 - No contacts
+
+
+"""
+Adds test surveys to the SQL database
+
+cursor (SQL alchemy cursor): the SQL alchemy cursor pointing to the SQL database
+"""
+def populateSurveys(cursor):
+    # Kevin Contact List 1
+    # Billy Contact List 1
+    # Jack Contact List 1
+    # Jack Contact List 2
+    # Hugo Contact List 1
+    pass
+
+
+"""
+Adds test questions to the SQL database
+
+cursor (SQL alchemy cursor): the SQL alchemy cursor pointing to the SQL database
+"""
+def populateQuestions(cursor):
+    pass
+
+
+"""
+Adds test responses to the SQL database
+
+cursor (SQL alchemy cursor): the SQL alchemy cursor pointing to the SQL database
+"""
+def populateResponses(cursor):
+    pass
