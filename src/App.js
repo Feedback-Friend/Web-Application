@@ -16,7 +16,7 @@ export const ContextUserID = React.createContext(null);
 function App() {
     const [userID, setUserID] = React.useState(localStorage.getItem("userID"));
 
-    if (userID !== null) {
+    if (userID === null) {
         // user is not logged in yet
         return (
             <HashRouter>
