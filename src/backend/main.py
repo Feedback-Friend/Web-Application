@@ -193,7 +193,7 @@ def deleteChoice(choiceID):
 @app.route('/getContactLists/<userID>', methods=['GET'])
 def getContactLists(userID):
     cursor = engine.connect()
-    contact.getContactLists(cursor, userID)
+    return contact.getContactLists(cursor, userID)
 
 @app.route('/addContactList/<userID>/<contactListName>', methods=['GET'])
 def addContactList(userID, contactListName):

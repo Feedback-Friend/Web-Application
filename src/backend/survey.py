@@ -1,6 +1,11 @@
 from flask import Flask
 from flask.json import jsonify
 
+
+"""
+Return each survey and the number of people who responded to that survey
+Javascript date object? Or date like "10-17-2022"
+"""
 def getSurveys(cursor, userID):
     table = cursor.execute("SELECT * FROM surveys WHERE user_id=%s", (str(userID)))
     surveys = []
@@ -13,7 +18,11 @@ def getSurveys(cursor, userID):
                 count = count + 1
         surveys.append({"id": entry[0], "name": entry[3], "count": count, "time": entry[4]}) #return survey id, name, and responses
     return jsonify(surveys)
-      
+
+
+"""
+Create a new survey without linking to any existing contact list
+"""
 def addSurvey(cursor, userID, surveyName, timeCreated):
     table = cursor.execute("SELECT * FROM surveys")
     surveyID = 0
