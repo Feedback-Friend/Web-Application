@@ -37,7 +37,7 @@ def getContacts(cursor, contactListID):
     return jsonify(contacts)
 
 def addContact(cursor, contactListID, firstName, lastName, emailAddress):
-    table = cursor.execute("SELECT * FROM surveys WHERE contact_list_id=%s"(int(contactListID)))
+    table = cursor.execute("SELECT * FROM surveys WHERE contact_list_id=%s", (int(contactListID)))
     contactID = 0
     for entry in table:
         if entry[4] == emailAddress:
