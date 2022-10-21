@@ -90,8 +90,6 @@ function Homepage(props) {
 
     func();
 
-    alert("done");
-
   }, [userID]);
 
   return (

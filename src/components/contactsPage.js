@@ -30,8 +30,6 @@ function Contacts(props) {
     <Box>
       <Nav />
       <Container>
-        test
-        {JSON.stringify(props.contactList)}
         <Grid container spacing={2}>
             <Grid item xs={3}>
               <Grid textAlign="center" sx={{ mt: 2 }}>
