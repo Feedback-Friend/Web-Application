@@ -282,4 +282,9 @@ def addSurveyResponse(question_id, response):
     cursor = engine.connect()
     return survey.addSurveyResponse(cursor, question_id, response)
 
+@app.route('/testDataStructure/<userID>')
+def testDataStructure(userID):
+    cursor = engine.connect()
+    return contact.getContactListsAndContacts(cursor, userID)
+
     

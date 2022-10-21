@@ -66,5 +66,5 @@ def getContactListsAndContacts(cursor, userID):
         contacts = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s",(str(entry[0])))
         for contact in contacts:
             contacts_ary.append({"id": contact[0], "first name": contact[2], "last name": contact[3], "email address": contact[4]}) #return contact id, first name, last name, email address
-        contactLists.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3], 'choices': contacts_ary})
+        contactLists.append({'contact_list_id': entry[0], 'user_id': entry[1], 'contact_list_name': entry[2], 'contacts': contacts_ary})
     return jsonify(contactLists)
