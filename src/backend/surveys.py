@@ -11,7 +11,7 @@ def getSurveys(cursor, userID):
             responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(question[0]))) #get responses to question
             for response in responses:
                 count = count + 1
-        surveys.append({"id": entry[0], "name": entry[3], "count": count, "time": entry[4]}) #return survey id, name, and responses
+        surveys.append({"id": entry[0], "name": entry[3], "count": count, "time": entry[4], "status": entry[5]}) #return survey id, name, and responses
     return jsonify(surveys)
 
 def getSurveyResults(cursor, surveyID):
@@ -30,15 +30,21 @@ def addSurvey(cursor, userID, timeCreated, name):
     surveyID = 0
     for entry in table:
         surveyID = entry[0]+1
-    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s, %s)", (int(surveyID), int(userID), "-1", name, timeCreated))
+    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s, %s, %s)", (int(surveyID), int(userID), "-1", name, timeCreated, "0"))
     return jsonify({'result': surveyID})
 
-def getSurveyName(cursor, surveyID):
-    table = cursor.execute("SELECT survey_name from surveys where survey_id = %s", (int(surveyID)))
+def publishSurvey(cursor, surveyID):
+    table = cursor.execute("UPDATE surveys SET status = 1 WHERE survey_id = %s", (int(surveyID)))
+    return jsonify({'result': 0})
+
+def getSurveyNameAndStatus(cursor, surveyID):
+    table = cursor.execute("SELECT survey_name, status from surveys where survey_id = %s", (int(surveyID)))
     name = ""
+    status = 0
     for entry in table:
         name = entry[0]
-    return jsonify(name)
+        status = entry[1]
+    return jsonify({'name': name, 'status': status})
 
 def updateSurveyName(cursor, surveyID, surveyName):
     cursor.execute("UPDATE surveys SET survey_name = %s WHERE survey_id = %s", (surveyName, int(surveyID)))

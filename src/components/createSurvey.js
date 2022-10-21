@@ -238,15 +238,19 @@ function CreateSurvey(props) {
       e.preventDefault();
       setEmpty(true);
     } else {
-      /* TODO: set survey from draft to active */
-      const func = async () => {
-
-        await updateTime();
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
       };
 
-      showMessage("Publishing survey...");
-      hideMessage("Survey '" + survey.name + "' published", func, "publishSurvey");
+      showMessage("Publishing Survey...");
 
+      let func = async () => {
+        let req = await fetch("/publishSurvey/" + survey.id, requestOptions)
+          .then(response => { return response.json() });
+      }
+
+      hideMessage("Survey '" + survey.name + "' published", func, "publishSurvey");
       localStorage.setItem("survey", JSON.stringify({ name: "", id: -1 }));
     }
   };
@@ -254,128 +258,130 @@ function CreateSurvey(props) {
   return (
     <Box>
       <Nav />
-      <Grid container spacing={2}>
-        <Grid item xs={6} sm={6} md={8} lg={10}>
-          {questions.map((question, index) => {
-            return question.type === 0 ? (
-              <FRQ
-                questions={questions}
-                setQuestions={setQuestions}
-                index={index}
-                empty={empty && !question.prompt}
-                showMessage={showMessage}
-                hideMessage={hideMessage}
-                updateTime={updateTime}
-                key={index}
+      <Container>
+        <Grid container spacing={2}>
+          <Grid item xs={6} sm={6} md={8} lg={10}>
+            {questions.map((question, index) => {
+              return question.type === 0 ? (
+                <FRQ
+                  questions={questions}
+                  setQuestions={setQuestions}
+                  index={index}
+                  empty={empty && !question.prompt}
+                  showMessage={showMessage}
+                  hideMessage={hideMessage}
+                  updateTime={updateTime}
+                  key={index}
+                />
+              ) : (
+                <MC
+                  questions={questions}
+                  setQuestions={setQuestions}
+                  index={index}
+                  empty={
+                    empty &&
+                    (!question.prompt ||
+                      question.choices.some((choice) => choice.choice === ""))
+                  }
+                  showMessage={showMessage}
+                  hideMessage={hideMessage}
+                  updateTime={updateTime}
+                  key={index}
+                />
+              );
+            })}
+            {empty && (
+              <Box>
+                <Alert severity="error" sx={{ mt: 1 }}>
+                  Please fill out all fields
+                </Alert>
+              </Box>
+            )}
+          </Grid>
+          <Grid item xs={6} sm={6} md={4} lg={2}>
+            <Stack sx={{ position: "sticky", top: { xs: 75, sm: 85, md: 90, lg: 90, xl: 95 }, border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2 }}>
+              <TextField
+                autoFocus
+                error={!survey.name && empty}
+                label="Survey Name"
+                variant="outlined"
+                onChange={updateSurveyName}
+                value={survey.name}
+                inputProps={{ maxLength: 50 }}
+                disabled={!hasUpdatedQuestions.current || !hasUpdatedSurvey.current}
               />
-            ) : (
-              <MC
-                questions={questions}
-                setQuestions={setQuestions}
-                index={index}
-                empty={
-                  empty &&
-                  (!question.prompt ||
-                    question.choices.some((choice) => choice.choice === ""))
-                }
-                showMessage={showMessage}
-                hideMessage={hideMessage}
-                updateTime={updateTime}
-                key={index}
-              />
-            );
-          })}
-          {empty && (
-            <Box>
-              <Alert severity="error" sx={{ mt: 1 }}>
-                Please fill out all fields
-              </Alert>
-            </Box>
-          )}
+              <Button
+                variant="contained"
+                onClick={addFRQ} sx={{ my: 2 }}
+                disabled={update.updating}
+              >
+                + FRQ
+              </Button>
+              <Button
+                variant="contained"
+                onClick={() => setOpenMC(true)} sx={{ mb: 2 }}
+                disabled={update.updating}
+              >
+                + MC
+              </Button>
+              {contactLists.length === 0 ?
+                <Button variant="contained" sx={{ mb: 2 }}>Create a Contact List</Button>
+                :
+                <FormControl fullWidth sx={{ mb: 2 }}>
+                  <InputLabel>Contact List</InputLabel>
+                  <Select
+                    label="Contact List"
+                    defaultValue=""
+                    onChange={(e) => setContactList(e.target.value)}
+                  >
+                    {contactLists.map((contactList, index) => {
+                      return (
+                        <MenuItem value={contactList} key={contactList.id}>{contactList.name}</MenuItem>
+                      );
+                    })}
+                  </Select>
+                </FormControl>
+              }
+              <Button
+                variant="contained"
+                disabled={isEmpty || update.updating}
+                onClick={() => setOpenPreview(true)} sx={{ mb: 2 }}
+              >
+                Preview
+              </Button>
+              <Button
+                variant="contained"
+                disabled={isEmpty || update.updating || !contactList}
+                component={Link}
+                to="/"
+                onClick={handleSubmit}
+              >
+                Publish
+              </Button>
+            </Stack>
+          </Grid>
         </Grid>
-        <Grid item xs={6} sm={6} md={4} lg={2}>
-          <Stack sx={{ position: "sticky", top: "6rem", border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2 }}>
-            <TextField
-              autoFocus
-              error={!survey.name && empty}
-              label="Survey Name"
-              variant="outlined"
-              onChange={updateSurveyName}
-              value={survey.name}
-              inputProps={{ maxLength: 50 }}
-              disabled={!hasUpdatedQuestions.current || !hasUpdatedSurvey.current}
-            />
-            <Button
-              variant="contained"
-              onClick={addFRQ} sx={{ my: 2 }}
-              disabled={update.updating}
-            >
-              + FRQ
-            </Button>
-            <Button
-              variant="contained"
-              onClick={() => setOpenMC(true)} sx={{ mb: 2 }}
-              disabled={update.updating}
-            >
-              + MC
-            </Button>
-            {contactLists.length === 0 ?
-              <Button variant="contained" sx={{ mb: 2 }}>Create a Contact List</Button>
-              :
-              <FormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel>Contact List</InputLabel>
-                <Select
-                  label="Contact List"
-                  defaultValue=""
-                  onChange={(e) => setContactList(e.target.value)}
-                >
-                  {contactLists.map((contactList, index) => {
-                    return (
-                      <MenuItem value={contactList} key={contactList.id}>{contactList.name}</MenuItem>
-                    );
-                  })}
-                </Select>
-              </FormControl>
-            }
-            <Button
-              variant="contained"
-              disabled={isEmpty || update.updating}
-              onClick={() => setOpenPreview(true)} sx={{ mb: 2 }}
-            >
-              Preview
-            </Button>
-            <Button
-              variant="contained"
-              disabled={isEmpty || update.updating || !contactList}
-              component={Link}
-              to="/"
-              onClick={handleSubmit}
-            >
-              Publish
-            </Button>
-          </Stack>
-        </Grid>
-      </Grid>
-      <MCDialog
-        open={openMC}
-        setOpen={setOpenMC}
-        questions={questions}
-        setQuestions={setQuestions}
-        surveyID={survey.id}
-        showMessage={showMessage}
-        hideMessage={hideMessage}
-        updateTime={updateTime}
-      />
-      <PreviewDialog
-        open={openPreview}
-        setOpen={setOpenPreview}
-        questions={questions}
-        name={survey.name}
-      />
-      <Snackbar
-        open={update.updating}
-        message={update.message}
-      />
+        <MCDialog
+          open={openMC}
+          setOpen={setOpenMC}
+          questions={questions}
+          setQuestions={setQuestions}
+          surveyID={survey.id}
+          showMessage={showMessage}
+          hideMessage={hideMessage}
+          updateTime={updateTime}
+        />
+        <PreviewDialog
+          open={openPreview}
+          setOpen={setOpenPreview}
+          questions={questions}
+          name={survey.name}
+        />
+        <Snackbar
+          open={update.updating}
+          message={update.message}
+        />
+      </Container>
     </Box>
   );
 }
