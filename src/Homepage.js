@@ -8,6 +8,7 @@ import TakeSurvey from './components/takeSurvey';
 import EndPage from './components/endPage';
 import Results from './components/results';
 import RowAndColumnSpacing from './components/profilePage';
+import Contacts from './components/contactsPage';
 
 function Homepage(props) {
   const { userID } = props;
@@ -138,6 +139,13 @@ function Homepage(props) {
           path="myProfile"
           element={
             <RowAndColumnSpacing userID={userID} />
+          }
+        />
+        {/* Contacts Page */}
+        <Route
+          path="contacts"
+          element={
+            <Contacts userID={userID} />
           }
         />
       </Routes>
