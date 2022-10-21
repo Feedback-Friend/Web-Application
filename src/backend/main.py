@@ -282,6 +282,15 @@ def addSurveyResponse(question_id, response):
     cursor = engine.connect()
     return survey.addSurveyResponse(cursor, question_id, response)
 
+
+"""
+This route is intended to test the functionality of the contact lists data structure which should contain
+information about contact lists such as name and id, as well as information on all contacts contained
+within that contact list (so, basically an array of names and email addresses associated with contacts)
+
+userID: intended to serve as the user ID of the user 
+the contact list information needs to be extracted from
+"""
 @app.route('/testDataStructure/<userID>')
 def testDataStructure(userID):
     cursor = engine.connect()
