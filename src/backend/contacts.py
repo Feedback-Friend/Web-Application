@@ -58,6 +58,10 @@ def updateContactEmailAddress(cursor, contactID, emailAddress):
 def deleteContact(cursor, contactID):
     cursor.execute("DELETE FROM contacts WHERE contact_id = %s", (int(contactID)))
 
+"""
+Given a user ID belonging to a user, return all the contact list information associated with the user.
+Each contact list entry will have contact information nested inside in a single JSON response
+"""
 def getContactListsAndContacts(cursor, userID):
     table = cursor.execute("SELECT * FROM contact_lists WHERE user_id=%s", (str(userID)))
     contactLists = []
