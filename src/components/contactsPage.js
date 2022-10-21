@@ -5,11 +5,22 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import React from 'react';
 import Nav from './nav';
-import contacts from './contacts.json';
+import MCDialog from './MCDialog';
+// import contacts from './contacts.json';
+import ContactListDialog from './contactListDialog';
 
 function Contacts(props) {
   const [contactInfo, setContactInfo] = React.useState([]);
+  // used for pop-up when pressing "Add Contact List" button
+  // TODO: update name
+  const [openMC, setOpenMC] = React.useState(false);
 
+  const contacts = props.contactList;
+
+  // Retrieves contact lists from the database if it is not already obtained
+  React.useEffect(() => {
+    props.getContactLists();
+  }, []);
 
   function populateContactInfo(e) {
     setContactInfo(contacts[e.target.id].contacts);
@@ -22,11 +33,11 @@ function Contacts(props) {
         <Grid container spacing={2}>
             <Grid item xs={3}>
               <Grid textAlign="center" sx={{ mt: 2 }}>
-                <Button variant="contained">Add Contact List</Button>
+                <Button variant="contained" onClick={() => setOpenMC(true)}>Add Contact List</Button>
               </Grid>
               <Stack sx={{ border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2, maxHeight: 200, overflow: 'auto'}}>
                   {contacts.map((contact, index) => {
-                      return(<Button onClick={populateContactInfo} id={index} variant="outlined" sx={{ my: 0.5 }}>{contact.name}</Button>);
+                      return(<Button onClick={populateContactInfo} id={index} variant="outlined" sx={{ my: 0.5 }}>{contact.contact_list_name}</Button>);
                   })}
               </Stack>
             </Grid>
@@ -43,6 +54,10 @@ function Contacts(props) {
             </Grid>
             }
         </Grid>
+        <ContactListDialog
+          open={openMC}
+          setOpen={setOpenMC}
+        />
       </Container>
     </Box>
   );
