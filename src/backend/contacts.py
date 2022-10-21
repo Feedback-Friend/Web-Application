@@ -63,9 +63,9 @@ Given a user ID belonging to a user, return all the contact list information ass
 Each contact list entry will have contact information nested inside in a single JSON response
 """
 def getContactListsAndContacts(cursor, userID):
-    table = cursor.execute("SELECT * FROM contact_lists WHERE user_id=%s", (str(userID)))
+    contactListsTable = cursor.execute("SELECT * FROM contact_lists WHERE user_id=%s", (str(userID)))
     contactLists = []
-    for contactList in table:
+    for contactList in contactListsTable:
         contacts_ary = []
         contacts = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s",(str(contactList[0])))
         for contact in contacts:
