@@ -40,3 +40,31 @@ def sendEmail(cursor, surveyID, contactListID):
         server.login(email_user,email_password)
         server.sendmail(email_user,email_send,text)
         server.quit()
+
+def catchupContact(cursor, userID, contactListID, contactFirst, contactLast, contactEmail):
+    # sender email address
+    email_user = 'OracleFeedbackFriend'+'@'+'gmail.com'
+    
+    # sender email passowrd for login purposes
+    email_password = 'c5b@bS3jrcq-TG7e'
+    
+    table = cursor.execute("SELECT * FROM surveys WHERE user_id=%s AND contact_list_id=%s", (str(userID), str(contactListID)))
+    for entry in table:
+        # list of users to whom email is to be sent
+        email_send = ['%s',(contactEmail)]
+        subject = ('Feedback Friend Survey: %s',(entry[2]))
+        msg = MIMEMultipart()
+        msg['From'] = email_user
+
+        # converting list of recipients into comma separated string
+        msg['To'] = ", ".join(email_send)
+        msg['Subject'] = subject
+        body = ('Hi %s %s, would you please take our survey?',(contactFirst,contactLast))
+        msg.attach(MIMEText(body,'plain'))
+        text = msg.as_string()
+
+        server = smtplib.SMTP('smtp.gmail.com',587)
+        server.starttls()
+        server.login(email_user,email_password)
+        server.sendmail(email_user,email_send,text)
+        server.quit()
