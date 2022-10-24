@@ -18,6 +18,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 const NameRow=(firstName)=>{
+  console.log(firstName);
   return (
     <>
       {/* Row Type */}
@@ -29,7 +30,7 @@ const NameRow=(firstName)=>{
       <Grid item xs={2}>
         <TextField 
           required type="text" disabled
-          label={"First Name"}
+          // label={firstName.first_name}
           value={firstName}
         />
       </Grid>
@@ -140,11 +141,11 @@ export default function NestedGrid(props) {
   
   React.useEffect(() => {
     getFirstName()
-  })
+  },[])
 
   const getFirstName = async () => {
     let res = await fetch('/getFirstName/' + userID)
-      .then(response => { return response });
+      .then(response => { return response.json() });
     console.log(res)
     setFirstName(res)
   };
@@ -154,7 +155,7 @@ export default function NestedGrid(props) {
       <Nav />
       <Grid container spacing={1}>
         <Grid container item spacing={3}>
-          <NameRow firstName={firstName}/>
+          <NameRow firstName={firstName.first_name}/>
         </Grid>
         <Grid container item spacing={3}>
           <UsernameRow />
