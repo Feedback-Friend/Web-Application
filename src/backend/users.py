@@ -85,3 +85,9 @@ def deleteUser(cursor, userID):
     table = cursor.execute("SELECT * FROM contact_lists WHERE contact_list_id = %s", (int(userID)))
     for entry in table:
         deleteContactList(cursor, entry[0])
+
+def getUserInfo(cursor, userID):
+    user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
+    for entry in user:
+        userInfo = {entry[1], entry[2], entry[3], entry[4], entry[5]} #first, last, user, pass, email
+        return jsonify(userInfo)
