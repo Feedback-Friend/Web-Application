@@ -17,8 +17,9 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 
-const NameRow=(firstName)=>{
-  console.log(firstName);
+const NameRow = (props) => {
+  const { firstName } = props;
+
   return (
     <>
       {/* Row Type */}
@@ -28,7 +29,7 @@ const NameRow=(firstName)=>{
 
       {/* Current First Name */}
       <Grid item xs={2}>
-        <TextField 
+        <TextField
           required type="text" disabled
           // label={firstName.first_name}
           value={firstName}
@@ -36,7 +37,7 @@ const NameRow=(firstName)=>{
       </Grid>
       {/* Current Last Name */}
       <Grid item xs={2}>
-        <TextField 
+        <TextField
           required type="text" disabled
           label={"Last Name"}
         />
@@ -44,19 +45,19 @@ const NameRow=(firstName)=>{
 
       {/* Field to Edit First Name */}
       <Grid item xs={2}>
-        <TextField 
-          required type="text" 
+        <TextField
+          required type="text"
           label={"Change First Name"}
           placeholder={"Enter if applicable"}
-          />
+        />
       </Grid>
       {/* Field to Edit Last Name */}
       <Grid item xs={2}>
-        <TextField 
-          required type="text" 
+        <TextField
+          required type="text"
           label={"Change Last Name"}
           placeholder={"Enter if applicable"}
-          />
+        />
       </Grid>
 
       {/* Button to change first name to name from fields */}
@@ -67,7 +68,7 @@ const NameRow=(firstName)=>{
   )
 }
 
-const UsernameRow=(props)=>{
+const UsernameRow = (props) => {
   return (
     <>
       {/* Row Type */}
@@ -77,7 +78,7 @@ const UsernameRow=(props)=>{
 
       {/* Current Username */}
       <Grid item xs={3}>
-        <TextField 
+        <TextField
           required type="text" disabled
           label={"Username"}
         />
@@ -85,11 +86,11 @@ const UsernameRow=(props)=>{
 
       {/* Field to Edit Username */}
       <Grid item xs={3}>
-        <TextField 
-          required type="text" 
+        <TextField
+          required type="text"
           label={"Change Username"}
           placeholder={"Enter if applicable"}
-          />
+        />
       </Grid>
 
       {/* Button to change first name to name from field */}
@@ -100,7 +101,7 @@ const UsernameRow=(props)=>{
   )
 }
 
-const EmailRow=(props)=> {
+const EmailRow = (props) => {
   return (
     <>
       {/* Row Type */}
@@ -110,7 +111,7 @@ const EmailRow=(props)=> {
 
       {/* Current Email */}
       <Grid item xs={3}>
-        <TextField 
+        <TextField
           required type="text" disabled
           label={"Email"}
         />
@@ -118,11 +119,11 @@ const EmailRow=(props)=> {
 
       {/* Field to Edit Email */}
       <Grid item xs={3}>
-        <TextField 
-          required type="text" 
+        <TextField
+          required type="text"
           label={"Change Email"}
           placeholder={"Enter if applicable"}
-          />
+        />
       </Grid>
 
       {/* Button to change email to email from field */}
@@ -137,17 +138,16 @@ export default function NestedGrid(props) {
   // Contains the current userID 
   const [userID, setUserID] = React.useState(localStorage.getItem("userID"));
 
-  const[firstName, setFirstName] = React.useState("")
-  
+  const [firstName, setFirstName] = React.useState("")
+
   React.useEffect(() => {
     getFirstName()
-  },[])
+  }, [])
 
   const getFirstName = async () => {
     let res = await fetch('/getFirstName/' + userID)
       .then(response => { return response.json() });
-    console.log(res)
-    setFirstName(res)
+    setFirstName(res.first_name)
   };
 
   return (
@@ -155,7 +155,7 @@ export default function NestedGrid(props) {
       <Nav />
       <Grid container spacing={1}>
         <Grid container item spacing={3}>
-          <NameRow firstName={firstName.first_name}/>
+          <NameRow firstName={firstName} />
         </Grid>
         <Grid container item spacing={3}>
           <UsernameRow />
