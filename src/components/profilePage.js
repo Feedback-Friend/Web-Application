@@ -5,17 +5,16 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import Nav from './nav';
-
+import Nav from "./nav";
+import { getListItemAvatarUtilityClass } from "@mui/material";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
   padding: theme.spacing(1),
   textAlign: "center",
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
 }));
-
 
 const NameRow = (props) => {
   const { firstName } = props;
@@ -30,23 +29,23 @@ const NameRow = (props) => {
       {/* Current First Name */}
       <Grid item xs={2}>
         <TextField
-          required type="text" disabled
+          required
+          type="text"
+          disabled
           // label={firstName.first_name}
           value={firstName}
         />
       </Grid>
       {/* Current Last Name */}
       <Grid item xs={2}>
-        <TextField
-          required type="text" disabled
-          label={"Last Name"}
-        />
+        <TextField required type="text" disabled label={"Last Name"} />
       </Grid>
 
       {/* Field to Edit First Name */}
       <Grid item xs={2}>
         <TextField
-          required type="text"
+          required
+          type="text"
           label={"Change First Name"}
           placeholder={"Enter if applicable"}
         />
@@ -54,7 +53,8 @@ const NameRow = (props) => {
       {/* Field to Edit Last Name */}
       <Grid item xs={2}>
         <TextField
-          required type="text"
+          required
+          type="text"
           label={"Change Last Name"}
           placeholder={"Enter if applicable"}
         />
@@ -65,8 +65,8 @@ const NameRow = (props) => {
         <Button variant="contained">Change</Button>
       </Grid>
     </>
-  )
-}
+  );
+};
 
 const UsernameRow = (props) => {
   return (
@@ -78,16 +78,14 @@ const UsernameRow = (props) => {
 
       {/* Current Username */}
       <Grid item xs={3}>
-        <TextField
-          required type="text" disabled
-          label={"Username"}
-        />
+        <TextField required type="text" disabled label={"Username"} />
       </Grid>
 
       {/* Field to Edit Username */}
       <Grid item xs={3}>
         <TextField
-          required type="text"
+          required
+          type="text"
           label={"Change Username"}
           placeholder={"Enter if applicable"}
         />
@@ -98,8 +96,8 @@ const UsernameRow = (props) => {
         <Button variant="contained">Change</Button>
       </Grid>
     </>
-  )
-}
+  );
+};
 
 const EmailRow = (props) => {
   return (
@@ -111,16 +109,14 @@ const EmailRow = (props) => {
 
       {/* Current Email */}
       <Grid item xs={3}>
-        <TextField
-          required type="text" disabled
-          label={"Email"}
-        />
+        <TextField required type="text" disabled label={"Email"} />
       </Grid>
 
       {/* Field to Edit Email */}
       <Grid item xs={3}>
         <TextField
-          required type="text"
+          required
+          type="text"
           label={"Change Email"}
           placeholder={"Enter if applicable"}
         />
@@ -131,23 +127,36 @@ const EmailRow = (props) => {
         <Button variant="contained">Change</Button>
       </Grid>
     </>
-  )
-}
+  );
+};
 
 export default function NestedGrid(props) {
-  // Contains the current userID 
+  // Contains the current userID
   const [userID, setUserID] = React.useState(localStorage.getItem("userID"));
 
-  const [firstName, setFirstName] = React.useState("")
+  // const [firstName, setFirstName] = React.useState("");
+  // const [lastName, setLastName] = React.useState("");
+  // const [username, setUsername] = React.useState("");
+  // const [email, setEmail] = React.useState("");
 
+  const [userInfo, setUserInfo] = React.useState("");
+
+  // This calls our function
+  // [] means that it will run once
   React.useEffect(() => {
-    getFirstName()
-  }, [])
+    retrieveUserInfoFromDB();
+    setVars();
+    // getFirstName();
+    // getLastName();
+    // getUsername();
+    // getEmail();
+  }, []);
 
-  const getFirstName = async () => {
-    let res = await fetch('/getFirstName/' + userID)
-      .then(response => { return response.json() });
-    setFirstName(res.first_name)
+  const retrieveUserInfoFromDB = async () => {
+    let res = await fetch("/getFirstName/" + userID).then((response) => {
+      return response.json();
+    });
+    setFirstName(res.first_name);
   };
 
   return (
@@ -167,4 +176,3 @@ export default function NestedGrid(props) {
     </Box>
   );
 }
-
