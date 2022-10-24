@@ -134,15 +134,17 @@ export default function NestedGrid(props) {
   // Contains the current userID
   const [userID, setUserID] = React.useState(localStorage.getItem("userID"));
 
-  const [firstName, setFirstName] = React.useState("");
-  const [lastName, setLastName] = React.useState("");
-  const [username, setUsername] = React.useState("");
-  const [email, setEmail] = React.useState("");
+  // const [firstName, setFirstName] = React.useState("");
+  // const [lastName, setLastName] = React.useState("");
+  // const [username, setUsername] = React.useState("");
+  // const [email, setEmail] = React.useState("");
+
+  const [userInfo, setUserInfo] = React.useState("");
 
   // This calls our function
   // [] means that it will run once
   React.useEffect(() => {
-    retrieveFromDB();
+    retrieveUserInfoFromDB();
     setVars();
     // getFirstName();
     // getLastName();
@@ -150,7 +152,7 @@ export default function NestedGrid(props) {
     // getEmail();
   }, []);
 
-  const retrieveFromDB = async () => {
+  const retrieveUserInfoFromDB = async () => {
     let res = await fetch("/getFirstName/" + userID).then((response) => {
       return response.json();
     });
