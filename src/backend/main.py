@@ -296,4 +296,7 @@ def testDataStructure(userID):
     cursor = engine.connect()
     return contact.getContactListsAndContacts(cursor, userID)
 
-    
+@app.route('/getUserInfo/<userID>', methods=['GET'])
+def getUserInfo(userID):
+    cursor = engine.connect()
+    return user.getUserInfo(cursor, userID)
