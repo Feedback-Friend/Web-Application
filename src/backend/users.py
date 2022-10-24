@@ -89,5 +89,5 @@ def deleteUser(cursor, userID):
 def getUserInfo(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
-        userInfo = {entry[1], entry[2], entry[3], entry[4], entry[5]} #first, last, user, pass, email
+        userInfo = {"firstName":entry[1], "lastName":entry[2], "username":entry[3], "password":entry[4], "email":entry[5]} #first, last, user, pass, email
         return jsonify(userInfo)
