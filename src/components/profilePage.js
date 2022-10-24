@@ -144,7 +144,7 @@ export default function NestedGrid(props) {
 
   const getFirstName = async () => {
     let res = await fetch('/getFirstName/' + userID)
-      .then(response => { return response.json() });
+      .then(response => { return response });
     console.log(res)
     setFirstName(res)
   };
