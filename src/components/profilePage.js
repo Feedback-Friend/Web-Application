@@ -132,7 +132,7 @@ const EmailRow=(props)=> {
 }
 
 export default function NestedGrid(props) {
-  const{user} = props;
+  const [userID, setUserID] = React.useState(localStorage.getItem("userID"));
 
   return (
     <Box sx={{ flexGrow: 1 }}>
