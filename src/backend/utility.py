@@ -1,5 +1,6 @@
 import sshtunnel
 from sqlalchemy import create_engine
+from user import *
 
 # tunnel = sshtunnel.SSHTunnelForwarder(
 #     ('150.136.92.200', 22), 
@@ -14,8 +15,10 @@ from sqlalchemy import create_engine
 
 """
 Repopulates an empty database with the SQL schema.
+No data is put into the database other than the schema
+
+engine (SQL alchemy engine): the SQL alchemy engine pointing to the SQL database
 void method, does not return anything
-no data is put into the database other than the schema
 """
 def repopulate_schema(engine):
     cursor = engine.connect()
@@ -57,7 +60,6 @@ def repopulate_schema(engine):
         first_name VARCHAR(30),
         last_name VARCHAR(20),
         email_address VARCHAR(50),
-        user_id INT,
         PRIMARY KEY (contact_id)
         );
         """)
@@ -107,6 +109,8 @@ def repopulate_schema(engine):
 
 """
 Deletes all tables in the database the SQLHandler is connected to
+
+engine (SQL alchemy engine): the SQL alchemy engine pointing to the SQL database
 void method, does not return anything
 """
 def eject_schema(engine):
@@ -119,6 +123,23 @@ def eject_schema(engine):
     print("all tables successfully removed")
 
 
+"""
+Resets the database to a blank slate schema using a combination of the schema deletion and schema creation. Void method, does not return anything
+
+engine (SQL alchemy engine): the SQL alchemy engine pointing to the SQL database
+"""
+def flush_schema(engine):
+    eject_schema(engine)
+    repopulate_schema(engine)
+
+
+"""
+This method returns an encoded string after adding 1 to all of the character
+ascii values of the input string. This encryption function is intended to demonstrate a proof of concept of encryption.
+
+unencrypted_info (String): the input string
+returns (String): the encrypted string
+"""
 def encode(unencrypted_info):
     # encoder adds 1 to the ascii value of each character
     encoded = ""
@@ -127,6 +148,13 @@ def encode(unencrypted_info):
     return encoded
 
 
+"""
+This method returns an decoded string after removing 1 from all of the character
+ascii values of the input encoded string. This decoding function is intended to demonstrate a proof of concept of decryption and should be paired with the encode method.
+
+encrypted_info (String): the encrypted input string
+returns (String): the decoded string
+"""
 def decode(encrypted_info):
     decoded = ""
     for char in encrypted_info:
@@ -134,7 +162,29 @@ def decode(encrypted_info):
     return decoded
 
 
-engine = create_engine('mysql+mysqldb://root:password@localhost:3306/feedback_friend')
+"""
+This method evaluates password strength
+password strength is evaluated on the length of the password and if it
+contains special characters or not
 
-eject_schema(engine)
-# repopulate_schema(engine)
+password (String): the password whose strength needs to be checked
+length (int): the length of a password of sufficient length
+
+returns (int):
+0 -> password is not long enough and does not contain a special character
+1 -> exactly one of (password is long enough, password contains a special character)
+2 -> password is long enough and password contains a special character
+"""
+def passwordStrength(password, length):
+    strength = 0  # the strength to be returned
+    specials = set("!@#$%")
+
+    if (len(password) >= length):
+        strength += 1  # length check
+
+    for char in password:
+        if char in specials:
+            strength += 1  # special character check
+            break
+
+    return strength

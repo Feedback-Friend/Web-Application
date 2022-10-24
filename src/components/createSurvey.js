@@ -28,7 +28,7 @@ function CreateSurvey(props) {
   const [questions, setQuestions] = useState([]);
 
   // Contains the names and ids of contact lists
-  const [contactLists, setContactLists] = useState([{ name: "list1", id: 0 }, { name: "list2", id: 1 }]);
+  const [contactLists, setContactLists] = useState([]);
 
   // Contains the name and id of the selected contact list
   const [contactList, setContactList] = useState("");
@@ -158,7 +158,7 @@ function CreateSurvey(props) {
 
     // Retrieves contact lists only once
     if (!hasUpdatedContactLists.current) {
-      //getContactLists();
+      getContactLists();
       hasUpdatedContactLists.current = true;
     }
   }, [survey.id, fromExisting, getFromExisting, addSurvey, createFromExisting, getContactLists]);
@@ -238,15 +238,19 @@ function CreateSurvey(props) {
       e.preventDefault();
       setEmpty(true);
     } else {
-      /* TODO: set survey from draft to active */
-      const func = async () => {
-
-        await updateTime();
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
       };
 
-      showMessage("Publishing survey...");
-      hideMessage("Survey '" + survey.name + "' published", func, "publishSurvey");
+      showMessage("Publishing Survey...");
 
+      let func = async () => {
+        let req = await fetch("/publishSurvey/" + survey.id, requestOptions)
+          .then(response => { return response.json() });
+      }
+
+      hideMessage("Survey '" + survey.name + "' published", func, "publishSurvey");
       localStorage.setItem("survey", JSON.stringify({ name: "", id: -1 }));
     }
   };
@@ -256,7 +260,7 @@ function CreateSurvey(props) {
       <Nav />
       <Container>
         <Grid container spacing={2}>
-          <Grid item xs={10}>
+          <Grid item xs={6} sm={6} md={8} lg={10}>
             {questions.map((question, index) => {
               return question.type === 0 ? (
                 <FRQ
@@ -294,8 +298,8 @@ function CreateSurvey(props) {
               </Box>
             )}
           </Grid>
-          <Grid item xs={2}>
-            <Stack sx={{ border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2 }}>
+          <Grid item xs={6} sm={6} md={4} lg={2}>
+            <Stack textAlign="center" sx={{ position: "sticky", top: { xs: 75, sm: 85, md: 90, lg: 90, xl: 95 }, border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2 }}>
               <TextField
                 autoFocus
                 error={!survey.name && empty}
@@ -321,7 +325,7 @@ function CreateSurvey(props) {
                 + MC
               </Button>
               {contactLists.length === 0 ?
-                <Button variant="contained" sx={{ mb: 2 }}>Create a Contact List</Button>
+                <Button variant="contained" sx={{ mb: 2 }} component={Link} to="/contacts">Create a Contact List</Button>
                 :
                 <FormControl fullWidth sx={{ mb: 2 }}>
                   <InputLabel>Contact List</InputLabel>
@@ -347,7 +351,7 @@ function CreateSurvey(props) {
               </Button>
               <Button
                 variant="contained"
-                disabled={isEmpty || update.updating || !contactList}
+                disabled={isEmpty || update.updating}
                 component={Link}
                 to="/"
                 onClick={handleSubmit}

@@ -5,3 +5,7 @@ npm run build
 export FLASK_APP=src/backend/main.py
 # running flask run to start backend with updated frontend code
 python3 -m flask run -p 3000
+
+# windows commands to run backend
+# set FLASK_APP=src/backend/main.py
+# flask run -p 3000

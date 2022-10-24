@@ -66,7 +66,7 @@ function LoginPage(props) {
                     <Grid item xs={12} textAlign="center" sx={{ mt: 2 }}>
                         <Typography variant="p">
                             New User?&nbsp;
-                            <Link href="register">Click here to register</Link>
+                            <Link href="/#/register">Click here to register</Link>
                         </Typography>
                     </Grid>
                 </Grid>

@@ -120,10 +120,15 @@ def addSurvey(userID, timeCreated, name):
     cursor = engine.connect()
     return survey.addSurvey(cursor, userID, timeCreated, name)
 
-@app.route('/getSurveyName/<surveyID>', methods=['GET'])
-def getSurveyName(surveyID):
+@app.route('/publishSurvey/<surveyID>', methods=['PUT'])
+def publishSurvey(surveyID):
     cursor = engine.connect()
-    return survey.getSurveyName(cursor, surveyID)
+    return survey.publishSurvey(cursor, surveyID)
+
+@app.route('/getSurveyNameAndStatus/<surveyID>', methods=['GET'])
+def getSurveyNameAndStatus(surveyID):
+    cursor = engine.connect()
+    return survey.getSurveyNameAndStatus(cursor, surveyID)
 
 @app.route('/updateSurveyName/<surveyID>/', defaults={'surveyName': ''}, methods=['PUT'])
 @app.route('/updateSurveyName/<surveyID>/<surveyName>', methods=['PUT'])
@@ -214,7 +219,7 @@ def deleteChoice(choiceID):
 @app.route('/getContactLists/<userID>', methods=['GET'])
 def getContactLists(userID):
     cursor = engine.connect()
-    contact.getContactLists(cursor, userID)
+    return contact.getContactLists(cursor, userID)
 
 @app.route('/addContactList/<userID>/<contactListName>', methods=['GET'])
 def addContactList(userID, contactListName):
@@ -266,15 +271,29 @@ def getQuestionsAndChoices(surveyID):
     cursor = engine.connect()
     return survey.getQuestionsAndChoices(cursor, surveyID)
 
-@app.route('/getSurveyResults/<userID>', methods=['GET'])
-def getSurveyResults(userID):
+@app.route('/getSurveyResults/<surveyID>', methods=['GET'])
+def getSurveyResults(surveyID):
     cursor = engine.connect()
-    return survey.getSurveyResults(cursor, userID)
+    return survey.getSurveyResults(cursor, surveyID)
 
 @app.route('/addSurveyResponse/<questionID>/', defaults={'response': ''}, methods=['POST'])
 @app.route('/addSurveyResponse/<question_id>/<response>', methods=['POST'])
 def addSurveyResponse(question_id, response):
     cursor = engine.connect()
     return survey.addSurveyResponse(cursor, question_id, response)
+
+
+"""
+This route is intended to test the functionality of the contact lists data structure which should contain
+information about contact lists such as name and id, as well as information on all contacts contained
+within that contact list (so, basically an array of names and email addresses associated with contacts)
+
+userID: intended to serve as the user ID of the user 
+the contact list information needs to be extracted from
+"""
+@app.route('/testDataStructure/<userID>')
+def testDataStructure(userID):
+    cursor = engine.connect()
+    return contact.getContactListsAndContacts(cursor, userID)
 
     

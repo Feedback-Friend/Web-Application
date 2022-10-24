@@ -23,7 +23,7 @@ def addContactList(cursor, userID, contactListName):
     return jsonify({'result': contactListID})
 
 def updateContactListName(cursor, contactListID, contactListName):
-    cursor.execute("UPDATE contact_lists SET contact_list_name = '%s' WHERE contact_list_id = %s", (contactListName, int(contactListID)))
+    cursor.execute("UPDATE contact_lists SET contact_list_name = %s WHERE contact_list_id = %s", (contactListName, int(contactListID)))
 
 def deleteContactList(cursor, contactListID):
     cursor.execute("DELETE FROM contacts WHERE contact_list_id = %s", (int(contactListID)))
@@ -37,23 +37,38 @@ def getContacts(cursor, contactListID):
     return jsonify(contacts)
 
 def addContact(cursor, contactListID, firstName, lastName, emailAddress):
-    table = cursor.execute("SELECT * FROM surveys WHERE contact_list_id=%s"(int(contactListID)))
+    table = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s", (int(contactListID)))
     contactID = 0
     for entry in table:
         if entry[4] == emailAddress:
             return jsonify({'result': '-1'})
         contactID = entry[0]+1
-    cursor.execute("INSERT INTO contact_lists VALUES(%s, %s, %s, %s, %s)", (int(contactID), int(contactListID), firstName, lastName, emailAddress))
+    cursor.execute("INSERT INTO contacts VALUES(%s, %s, %s, %s)", (int(contactID), int(contactID), firstName, lastName, emailAddress))
     return jsonify({'result': contactID})
 
 def updateContactFirstName(cursor, contactID, firstName):
-    cursor.execute("UPDATE contact_lists SET first_name = '%s' WHERE contact_id = %s", (firstName, int(contactID)))
+    cursor.execute("UPDATE contacts SET first_name = %s WHERE contact_id = %s", (firstName, int(contactID)))
 
 def updateContactLastName(cursor, contactID, lastName):
-    cursor.execute("UPDATE contact_lists SET lasst_name = '%s' WHERE contact_id = %s", (lastName, int(contactID)))
+    cursor.execute("UPDATE contacts SET lasst_name = %s WHERE contact_id = %s", (lastName, int(contactID)))
 
 def updateContactEmailAddress(cursor, contactID, emailAddress):
-    cursor.execute("UPDATE contact_lists SET email_address = '%s' WHERE contact_id = %s", (emailAddress, int(contactID)))
+    cursor.execute("UPDATE contacts SET email_address = %s WHERE contact_id = %s", (emailAddress, int(contactID)))
 
 def deleteContact(cursor, contactID):
     cursor.execute("DELETE FROM contacts WHERE contact_id = %s", (int(contactID)))
+
+"""
+Given a user ID belonging to a user, return all the contact list information associated with the user.
+Each contact list entry will have contact information nested inside in a single JSON response
+"""
+def getContactListsAndContacts(cursor, userID):
+    contactListsTable = cursor.execute("SELECT * FROM contact_lists WHERE user_id=%s", (str(userID)))
+    contactLists = []
+    for contactList in contactListsTable:
+        contacts_ary = []
+        contacts = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s",(str(contactList[0])))
+        for contact in contacts:
+            contacts_ary.append({"id": contact[0], "first_name": contact[2], "last_name": contact[3], "email": contact[4]}) #return contact id, first name, last name, email address
+        contactLists.append({'contact_list_id': contactList[0], 'user_id': contactList[1], 'contact_list_name': contactList[2], 'contacts': contacts_ary})
+    return jsonify(contactLists)

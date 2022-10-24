@@ -8,12 +8,16 @@ import TakeSurvey from './components/takeSurvey';
 import EndPage from './components/endPage';
 import Results from './components/results';
 import RowAndColumnSpacing from './components/profilePage';
+import Contacts from './components/contactsPage';
 
 function Homepage(props) {
   const { userID } = props;
 
   //Contains a list of created surveys. Each survey has an id, name, time created, and # of responses.
   const [surveys, setSurveys] = useState([]);
+
+  //Contains a list of contact lists and their respective contacts. 
+  const [contactList, setContactList] = useState([]);
 
   /* 
   When surveys are in the process of being created or deleted, this state prevents retrieving surveys from the database until all operations
@@ -67,6 +71,27 @@ function Homepage(props) {
     hideMessage("Done", func, "getSurveys");
   }, [userID, showMessage, hideMessage]);
 
+  // Gets the names, ids, time created, and response counts for every survey the user has created, and sets the survey state
+  const getContactLists = useCallback(() => {
+    const requestOptions = {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    const func = async () => {
+      let res = await fetch('/testDataStructure/' + userID, requestOptions)
+        .then(response => {
+          let jsonResponse = response.json();
+          console.log(jsonResponse); 
+          return jsonResponse; 
+        });
+      setContactList(res);
+    };
+
+    func();
+
+  }, [userID]);
+
   return (
     <HashRouter>
       {/* React Router routes to pages by loading different elements depending on the path */}
@@ -109,6 +134,7 @@ function Homepage(props) {
               getSurveys={getSurveys}
               update={update}
               setFromExisting={setFromExisting}
+              getContactLists={getContactLists}
             />
           }
         />
@@ -130,7 +156,7 @@ function Homepage(props) {
         <Route
           path="/results"
           element={
-            <Results surveys={surveys} />
+            <Results surveys={surveys} getSurveys={getSurveys} update={update} />
           }
         />
         {/* Profile Page*/}
@@ -138,6 +164,18 @@ function Homepage(props) {
           path="myProfile"
           element={
             <RowAndColumnSpacing userID={userID} />
+          }
+        />
+        {/* Contacts Page */}
+        <Route
+          path="contacts"
+          element={
+            <Contacts 
+              userID={userID}
+              contactList={contactList}
+              setContactList={setContactList}
+              getContactLists={getContactLists}
+            />
           }
         />
       </Routes>

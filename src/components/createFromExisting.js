@@ -48,8 +48,8 @@ function CreateFromExisting(props) {
     return (
         <Box>
             <Nav />
-            <Container sx={{ width: 1 / 2, textAlign: "center", my: 2 }}>
-                <Typography variant="h3">Choose a Survey</Typography>
+            <Container>
+                <Typography textAlign="center" variant="h3">{surveys.length > 0 ? "Choose a Survey" : "You Have No Existing Surveys!"}</Typography>
                 <List>
                     {surveys.map((survey, index) => {
                         return (
@@ -67,7 +67,9 @@ function CreateFromExisting(props) {
                         );
                     })}
                 </List>
-                <Button variant="contained" component={Link} to="../create" onClick={handleSubmit} disabled={selectedIndex === -1}>Create</Button>
+                <Box textAlign="right">
+                    {surveys.length > 0 && <Button variant="contained" component={Link} to="../create" onClick={handleSubmit} disabled={selectedIndex === -1}>Create</Button>}
+                </Box>
             </Container>
             <Snackbar
                 open={update.updating}

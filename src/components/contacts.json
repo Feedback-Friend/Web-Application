@@ -1,0 +1,32 @@
+[
+    {
+        "name": "list1",
+        "contacts": [
+            {
+                "first_name": "fname",
+                "last_name": "lname",
+                "email": "test@email.com"
+            },
+            {
+                "first_name": "fname2",
+                "last_name": "lname2",
+                "email": "test@email.com2"
+            }
+        ]
+    },
+    {
+        "name": "list2",
+        "contacts": [
+            {
+                "first_name": "fname3",
+                "last_name": "lname3",
+                "email": "test@email.com3"
+            },
+            {
+                "first_name": "fname4",
+                "last_name": "lname4",
+                "email": "test@email.com4"
+            }
+        ]
+    }
+]
