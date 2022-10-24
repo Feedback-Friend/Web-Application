@@ -54,7 +54,7 @@ def loginUser(userName, passWord):
     cursor = engine.connect()
     return user.loginUser(cursor, userName, passWord)
 
-@app.route('/getFirstName/<userID>/', methods=['GET'])
+@app.route('/getFirstName/<userID>', methods=['GET'])
 def getFirstName(userID):
     cursor = engine.connect()
     return user.getFirstName(cursor, userID)
