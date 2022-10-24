@@ -28,7 +28,7 @@ def getFirstName(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
         print(entry[1])
-        return entry[1]
+        return jsonify({"first_name":entry[1]})
 
 def updateFirstName(cursor, userID, firstName):
     cursor.execute("UPDATE users SET first_name = '%s' WHERE user_id = %s", (firstName, int(userID)))
@@ -36,7 +36,7 @@ def updateFirstName(cursor, userID, firstName):
 def getLastName(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
-        return entry[2]
+        return jsonify({"first_name":entry[2]})
 
 def updateLastName(cursor, userID, lastName):
     cursor.execute("UPDATE users SET last_name = '%s' WHERE user_id = %s", (lastName, int(userID)))
