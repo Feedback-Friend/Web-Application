@@ -81,6 +81,7 @@ function FRQ(props) {
       </Grid>
       <Grid item xs={11}>
         <TextField
+          style={{ backgroundColor: snapshot.isDragging ? 'ghostwhite' : 'transparent' }}
           error={empty}
           onChange={(e) => updateFRQ(index, e)}
           value={questions[index].prompt}

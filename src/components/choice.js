@@ -7,7 +7,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import React from 'react';
 
 function Choice(props) {
-  const { questions, setQuestions, index, choiceIndex, empty, showMessage, hideMessage, updateTime, provided, snapshot } = props;
+  const { questions, setQuestions, index, choiceIndex, empty, showMessage, hideMessage, updateTime, provided, snapshot, isDragging } = props;
 
   // Updates the choice at the given index on change
   const updateChoice = (choiceIndex, e) => {
@@ -83,7 +83,7 @@ function Choice(props) {
       </Grid>
       <Grid item xs={11}>
         <TextField
-          sx={{ backgroundColor: 'white' }}
+          style={{ backgroundColor: isDragging || snapshot.isDragging ? 'ghostwhite' : 'transparent' }}
           error={empty}
           value={questions[index].choices[choiceIndex].choice}
           placeholder={alphabet.charAt(choiceIndex)}

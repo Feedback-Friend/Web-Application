@@ -26,6 +26,7 @@ function CreateSurvey(props) {
   const [survey, setSurvey] = useState(JSON.parse(localStorage.getItem("survey")));
 
   // Contains survey questions
+  // Data for frontend testing: { id: 1, type: 0, prompt: 'FRQ' }, { id: 0, type: 1, prompt: 'MC', choices: [{ id: 0, choice: 'a' }, { id: 1, choice: 'b' }] }
   const [questions, setQuestions] = useState([]);
 
   // Contains the names and ids of contact lists

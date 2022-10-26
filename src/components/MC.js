@@ -106,7 +106,7 @@ function MC(props) {
       </Grid>
       <Grid item xs={11}>
         <TextField
-          sx={{ backgroundColor: 'white' }}
+          style={{ backgroundColor: snapshot.isDragging ? 'ghostwhite' : 'transparent' }}
           error={empty && !questions[index].prompt}
           onChange={(e) => updateMC(index, e)}
           value={questions[index].prompt}
@@ -131,7 +131,7 @@ function MC(props) {
           <Grid item xs={11} {...provided.droppableProps} ref={provided.innerRef}>
             {questions[index].choices.map((choice, choiceIndex) => (
               <Draggable key={choice.id} draggableId={"choice" + choice.id} index={choiceIndex} isDragDisabled={isDragDisabled}>
-                {(provided, snapshot) => (
+                {(provided, choiceSnapshot) => (
                   <Choice
                     questions={questions}
                     setQuestions={setQuestions}
@@ -142,7 +142,8 @@ function MC(props) {
                     hideMessage={hideMessage}
                     updateTime={updateTime}
                     provided={provided}
-                    snapshot={snapshot}
+                    snapshot={choiceSnapshot}
+                    isDragging={snapshot.isDragging}
                   />
                 )}
               </Draggable>
