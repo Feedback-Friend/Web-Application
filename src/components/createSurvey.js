@@ -17,6 +17,7 @@ import Select from '@mui/material/Select';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Nav from './nav';
 import PreviewDialog from './previewDialog';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 function CreateSurvey(props) {
   const { userID, update, showMessage, hideMessage, fromExisting, setFromExisting } = props;
@@ -255,49 +256,88 @@ function CreateSurvey(props) {
     }
   };
 
+  const reorder = (list, startIndex, endIndex) => {
+    const newArr = Array.from(list);
+    const [removed] = newArr.splice(startIndex, 1);
+    newArr.splice(endIndex, 0, removed);
+
+    return newArr;
+  }
+
+  const onDragEnd = (result) => {
+    if (!result.destination || result.source.index === result.destination.index) {
+      return;
+    } else if (result.type === "questions") {
+      const newQuestions = reorder(questions, result.source.index, result.destination.index);
+      setQuestions(newQuestions);
+    } else {
+      const newChoices = reorder(questions[result.type].choices, result.source.index, result.destination.index);
+      let newQuestions = [...questions];
+      newQuestions[result.type].choices = newChoices;
+      setQuestions(newQuestions);
+    }
+  };
+
   return (
     <Box>
       <Nav />
       <Container>
         <Grid container spacing={2}>
-          <Grid item xs={6} sm={6} md={8} lg={10}>
-            {questions.map((question, index) => {
-              return question.type === 0 ? (
-                <FRQ
-                  questions={questions}
-                  setQuestions={setQuestions}
-                  index={index}
-                  empty={empty && !question.prompt}
-                  showMessage={showMessage}
-                  hideMessage={hideMessage}
-                  updateTime={updateTime}
-                  key={index}
-                />
-              ) : (
-                <MC
-                  questions={questions}
-                  setQuestions={setQuestions}
-                  index={index}
-                  empty={
-                    empty &&
-                    (!question.prompt ||
-                      question.choices.some((choice) => choice.choice === ""))
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="questions" type="questions">
+              {(provided) => (
+                <Grid item xs={6} sm={6} md={8} lg={10} {...provided.droppableProps} ref={provided.innerRef}>
+                  {
+                    questions.map((question, index) => (
+                      <Draggable key={question.id} draggableId={"question" + question.id} index={index} isDragDisabled={update.updating}>
+                        {(provided, snapshot) => (
+                          question.type === 0 ? (
+                            <FRQ
+                              questions={questions}
+                              setQuestions={setQuestions}
+                              index={index}
+                              empty={empty && !question.prompt}
+                              showMessage={showMessage}
+                              hideMessage={hideMessage}
+                              updateTime={updateTime}
+                              provided={provided}
+                              snapshot={snapshot}
+                            />
+                          ) : (
+                            <MC
+                              questions={questions}
+                              setQuestions={setQuestions}
+                              index={index}
+                              empty={
+                                empty &&
+                                (!question.prompt ||
+                                  question.choices.some((choice) => choice.choice === ""))
+                              }
+                              showMessage={showMessage}
+                              hideMessage={hideMessage}
+                              updateTime={updateTime}
+                              provided={provided}
+                              snapshot={snapshot}
+                              isDragDisabled={update.updating}
+
+                            />
+                          )
+                        )}
+                      </Draggable>
+                    ))
                   }
-                  showMessage={showMessage}
-                  hideMessage={hideMessage}
-                  updateTime={updateTime}
-                  key={index}
-                />
-              );
-            })}
-            {empty && (
-              <Box>
-                <Alert severity="error" sx={{ mt: 1 }}>
-                  Please fill out all fields
-                </Alert>
-              </Box>
-            )}
-          </Grid>
+                  {empty && (
+                    <Box>
+                      <Alert severity="error" sx={{ mt: 1 }}>
+                        Please fill out all fields
+                      </Alert>
+                    </Box>
+                  )}
+                  {provided.placeholder}
+                </Grid>
+              )}
+            </Droppable>
+          </DragDropContext>
           <Grid item xs={6} sm={6} md={4} lg={2}>
             <Stack textAlign="center" sx={{ position: "sticky", top: { xs: 75, sm: 85, md: 90, lg: 90, xl: 95 }, border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2 }}>
               <TextField

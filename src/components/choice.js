@@ -1,13 +1,13 @@
-import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import IconButton from '@mui/material/IconButton';
 import Clear from '@mui/icons-material/Clear';
+import Grid from '@mui/material/Grid';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import React from 'react';
 
 function Choice(props) {
-  const { questions, setQuestions, index, choiceIndex, empty, showMessage, hideMessage, updateTime } = props;
+  const { questions, setQuestions, index, choiceIndex, empty, showMessage, hideMessage, updateTime, provided, snapshot } = props;
 
   // Updates the choice at the given index on change
   const updateChoice = (choiceIndex, e) => {
@@ -56,38 +56,56 @@ function Choice(props) {
 
   const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+  function getStyle(style, isDragging) {
+    let transform = 'none';
+    if (style?.transform) {
+      transform = `translate(0px, ${style.transform.split(',').pop()}`;
+    }
+    return {
+      ...style,
+      transform: transform,
+      zIndex: 100,
+      opacity: isDragging ? 0.5 : 1
+    };
+  }
+
   return (
-    <Box
-      style={{
-        display: "flex",
-        alignItems: "center",
-        flexWrap: "wrap",
-      }}
+    <Grid container
+      direction="row"
+      alignItems="center"
+      ref={provided.innerRef}
+      snapshot={snapshot}
+      {...provided.draggableProps}
+      style={getStyle(provided.draggableProps.style, snapshot.isDragging)}
     >
-      <RadioButtonUncheckedIcon sx={{ mr: 1 }} />
-      <TextField
-        key={choiceIndex}
-        error={empty}
-        value={questions[index].choices[choiceIndex].choice}
-        placeholder={alphabet.charAt(choiceIndex)}
-        onChange={(e) => updateChoice(choiceIndex, e)}
-        margin="normal"
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton
-                disabled={questions[index].choices.length === 2}
-                onClick={() => deleteChoice(choiceIndex)}
-                edge="end"
-              >
-                <Clear />
-              </IconButton>
-            </InputAdornment>
-          ),
-          maxLength: 500
-        }}
-      />
-    </Box>
+      <Grid item xs={1} sx={{ display: { xs: 'none', md: 'inline' } }} {...provided.dragHandleProps}>
+        <RadioButtonUncheckedIcon />
+      </Grid>
+      <Grid item xs={11}>
+        <TextField
+          sx={{ backgroundColor: 'white' }}
+          error={empty}
+          value={questions[index].choices[choiceIndex].choice}
+          placeholder={alphabet.charAt(choiceIndex)}
+          onChange={(e) => updateChoice(choiceIndex, e)}
+          margin="normal"
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  disabled={questions[index].choices.length === 2}
+                  onClick={() => deleteChoice(choiceIndex)}
+                  edge="end"
+                >
+                  <Clear />
+                </IconButton>
+              </InputAdornment>
+            ),
+            maxLength: 500
+          }}
+        />
+      </Grid>
+    </Grid>
   );
 }
 
