@@ -47,17 +47,17 @@ def test():
 @app.route('/registerUser/<firstName>/<lastName>/<userName>/<passWord>/<emailAddress>', methods=['GET'])
 def registerUser(firstName, lastName, userName, passWord, emailAddress):
     cursor = engine.connect()
-    return user.registerUser(cursor, firstName, lastName, userName, passWord, emailAddress)
+    return jsonify(user.registerUser(cursor, firstName, lastName, userName, passWord, emailAddress))
 
 @app.route('/loginUser/<userName>/<passWord>', methods=['GET'])
 def loginUser(userName, passWord):
     cursor = engine.connect()
-    return user.loginUser(cursor, userName, passWord)
+    return jsonify(user.loginUser(cursor, userName, passWord))
 
 @app.route('/getFirstName/<userID>', methods=['GET'])
 def getFirstName(userID):
     cursor = engine.connect()
-    return user.getFirstName(cursor, userID)
+    return jsonify(user.getFirstName(cursor, userID))
 
 @app.route('/updateFirstName/<userID>/<firstName>', methods=['GET'])
 def updateFirstName(userID, firstName):
@@ -67,7 +67,7 @@ def updateFirstName(userID, firstName):
 @app.route('/getLastName/<userID>', methods=['GET'])
 def getLastName(userID):
     cursor = engine.connect()
-    return user.getLastName(cursor, userID)
+    return jsonify(user.getLastName(cursor, userID))
 
 @app.route('/updateLastName/<userID>/<lastName>', methods=['GET'])
 def updateLastName(userID, lastName):
@@ -77,7 +77,7 @@ def updateLastName(userID, lastName):
 @app.route('/getUserName/<userID>', methods=['GET'])
 def getUserName(userID):
     cursor = engine.connect()
-    return user.getUserName(cursor, userID)
+    return jsonify(user.getUserName(cursor, userID))
 
 @app.route('/updateUserName/<userID>/<userName>', methods=['GET'])
 def updateUserName(userID, userName):
@@ -87,7 +87,7 @@ def updateUserName(userID, userName):
 @app.route('/getPassword/<userID>', methods=['GET'])
 def getPassWord(userID):
     cursor = engine.connect()
-    return user.getPassWord(cursor, userID)
+    return jsonify(user.getPassWord(cursor, userID))
 
 @app.route('/updatePassWord/<userID>/<passWord>', methods=['GET'])
 def updatePassWord(userID, passWord):
@@ -97,7 +97,7 @@ def updatePassWord(userID, passWord):
 @app.route('/getEmailAddress/<userID>', methods=['GET'])
 def getEmailAddress(userID):
     cursor = engine.connect()
-    return user.getEmailAddress(cursor, userID)
+    return jsonify(user.getEmailAddress(cursor, userID))
     
 @app.route('/updateEmailAddress/<userID>/<emailAddress>', methods=['GET'])
 def updateEmailAddress(userID, emailAddress):
@@ -219,7 +219,7 @@ def deleteChoice(choiceID):
 @app.route('/getContactLists/<userID>', methods=['GET'])
 def getContactLists(userID):
     cursor = engine.connect()
-    return contact.getContactLists(cursor, userID)
+    return jsonify(contact.getContactLists(cursor, userID))
 
 @app.route('/addContactList/<userID>/<contactListName>', methods=['GET'])
 def addContactList(userID, contactListName):
@@ -239,12 +239,12 @@ def deleteContactList(contactListID):
 @app.route('/getContacts/<contactListID>', methods=['GET'])
 def getContacts(contactListID):
     cursor = engine.connect()
-    return contact.getContacts(cursor, contactListID)
+    return jsonify(contact.getContacts(cursor, contactListID))
 
 @app.route('/addContact/<contactListID>/<firstName>/<lastName>/<emailAddress>', methods=['GET'])
 def addContact(contactListID, firstName, lastName, emailAddress):
     cursor = engine.connect()
-    return contact.addContact(cursor, contactListID, firstName, lastName, emailAddress)
+    return jsonify(contact.addContact(cursor, contactListID, firstName, lastName, emailAddress))
 
 @app.route('/updateContactFirstName/<contactID>/<firstName>', methods=['GET'])
 def updateContactFirstName(contactID, firstName):
@@ -291,12 +291,12 @@ within that contact list (so, basically an array of names and email addresses as
 userID: intended to serve as the user ID of the user 
 the contact list information needs to be extracted from
 """
-@app.route('/testDataStructure/<userID>')
+@app.route('/getContactInfo/<userID>')
 def testDataStructure(userID):
     cursor = engine.connect()
-    return contact.getContactListsAndContacts(cursor, userID)
+    return jsonify(contact.getContactListsAndContacts(cursor, userID))
 
 @app.route('/getUserInfo/<userID>', methods=['GET'])
 def getUserInfo(userID):
     cursor = engine.connect()
-    return user.getUserInfo(cursor, userID)
+    return jsonify(user.getUserInfo(cursor, userID))

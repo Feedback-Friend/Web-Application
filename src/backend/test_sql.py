@@ -3,7 +3,7 @@ from database_sample_populator import *
 from src.backend.utility import eject_schema
 from utility import flush_schema
 import sshtunnel
-from contacts import *
+from src.backend.contacts import *
 
 # connecting to oracle cloud compute unit for database
 tunnel = sshtunnel.SSHTunnelForwarder(
@@ -25,5 +25,5 @@ populateTestUsers(cursor)
 populateContactLists(cursor)
 populateContacts(cursor)
 
-addContactList(cursor, 1, "New CL1")
+# addContactList(cursor, 1, "New CL1")
 print("Success")
