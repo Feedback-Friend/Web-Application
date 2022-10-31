@@ -24,7 +24,11 @@ def addContactList(cursor, userID, contactListName):
 
     cursor.execute("INSERT INTO contact_lists (user_id, contact_list_name) VALUES (%s, %s)", (int(userID), contactListName))
 
-    return {'result': "success"}
+    ids = cursor.execute("SELECT id FROM contact_lists WHERE contact_list_name=%s", contactListName)
+    for id in ids:
+        return {'result': id[0]}
+
+    return {'result': '-1'}  # should not happen
 
 def updateContactListName(cursor, contactListID, contactListName):
     cursor.execute("UPDATE contact_lists SET contact_list_name = %s WHERE contact_list_id = %s", (contactListName, int(contactListID)))
