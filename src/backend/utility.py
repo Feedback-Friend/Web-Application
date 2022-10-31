@@ -72,6 +72,7 @@ def repopulate_schema(engine):
         contact_list_id INT,
         survey_name VARCHAR(50),
         status INT,
+        time BIGINT,
         PRIMARY KEY (survey_id)
         );
         """)
@@ -102,6 +103,7 @@ def repopulate_schema(engine):
         response_id INT NOT NULL AUTO_INCREMENT,
         question_id INT,
         reply VARCHAR(500),
+        time BIGINT,
         PRIMARY KEY (response_id)
         );
         """)
