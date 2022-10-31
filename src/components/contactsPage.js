@@ -9,7 +9,7 @@ import { TextField } from '@mui/material';
 
 function Contacts(props) {
   const [currentCLID, setCurrentCLID] = React.useState(-1); //current contact list ID clicked
-  const [contactInfo, setContactInfo] = React.useState([]); //second column contacts
+  const [contactInfo, setContactInfo] = React.useState(-1); //contact list index
   const [fields, setFields] = React.useState({}); //text fields values
   const contacts = props.contactList;
 
@@ -20,7 +20,8 @@ function Contacts(props) {
 
   function populateContactInfo(e) {
     setCurrentCLID(contacts[e.target.id].contact_list_id);
-    setContactInfo(contacts[e.target.id].contacts);
+    setContactInfo(e.target.id);
+    // setContactInfo(contacts[e.target.id].contacts);
   }
 
   // update the text boxes' field variables
@@ -32,16 +33,17 @@ function Contacts(props) {
   }
 
   // add contact list function
-  function addContactListClicked(event) {
-    alert(fields["contactListName"]);
-  }
-
+  // DATABASE CALL
   function addContactListClicked(e) {
     e.preventDefault(); //prevents default actions of form from happening (reloads page contents)
 
     fetch("/addContactList/" + props.userID + "/" + fields.contactListName)
         .then(response => response.json())
         .then(data => {
+          let temp = [...contacts];
+          let tempVal = {'contact_list_id': data.result, 'user_id': props.userID, 'contact_list_name': fields.contactListName, 'contacts': []};
+          temp.push(tempVal);
+          props.setContactList(temp);
         }).catch(error => {
             console.log(error);
         });
@@ -55,6 +57,11 @@ function Contacts(props) {
     fetch("/addContact/" + currentCLID + "/" + fields.firstName + "/" + fields.lastName + "/" + fields.email)
         .then(response => response.json())
         .then(data => {
+          let temp = [...contacts];
+          let temp2 = temp[contactInfo].contacts;
+          let tempVal = {"id": data.result, "first_name": fields.firstName, "last_name": fields.lastName, "email": fields.email};
+          temp2.push(tempVal);
+          props.setContactList(temp);
         }).catch(error => {
             console.log(error);
         });
@@ -84,10 +91,10 @@ function Contacts(props) {
             
             {
             //if contactInfo is not populated yet, then do not show contact information
-            (contactInfo.length != 0) &&
+            (contactInfo != -1) &&
             <Grid item xs={7}>
                 <Stack sx={{ border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2, height: 300 }}>
-                    {contactInfo.map((contact, index) => {
+                    {contacts[contactInfo].contacts.map((contact, index) => {
                         return(<Button id={index} variant="outlined" sx={{ my: 0.5 }}>{contact.first_name + " " + contact.last_name + ": " + contact.email}</Button>);
                     })}
                 </Stack>

@@ -79,7 +79,7 @@ function Homepage(props) {
     };
 
     const func = async () => {
-      let res = await fetch('/testDataStructure/' + userID, requestOptions)
+      let res = await fetch('/getContactInfo/' + userID, requestOptions)
         .then(response => {
           let jsonResponse = response.json();
           console.log(jsonResponse); 
