@@ -21,7 +21,7 @@ def loginUser(cursor, userName, passWord):
     for entry in table:
         if entry[3] == userName and entry[4] == passWord:
             print("Success")
-            return jsonify({"result": entry[0], "name": entry[1]})  # match
+            return {"result": entry[0], "name": entry[1]}  # match
     print("Error: Not Found")
     return {"result": "-1"}  # invalid login
 
