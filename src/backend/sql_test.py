@@ -1,9 +1,8 @@
 from sqlalchemy import create_engine
-from database_sample_populator import *
-from src.backend.utility import eject_schema
-from utility import flush_schema
+from src.backend.database_sample_populator import *
+from src.backend.utility import flush_schema
 import sshtunnel
-from contacts import *
+from src.backend.contacts import *
 
 # connecting to oracle cloud compute unit for database
 tunnel = sshtunnel.SSHTunnelForwarder(

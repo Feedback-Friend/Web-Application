@@ -1,6 +1,6 @@
-from userTest import *
-from surveyTest import *
-from contactTest import *
+from src.backend.userTest import *
+from src.backend.surveyTest import *
+from src.backend.contactTest import *
 
 
 """
