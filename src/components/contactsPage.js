@@ -5,17 +5,12 @@ import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import React from 'react';
 import Nav from './nav';
-import MCDialog from './MCDialog';
-// import contacts from './contacts.json';
-import ContactListDialog from './contactListDialog';
 import { TextField } from '@mui/material';
 
 function Contacts(props) {
-  const [contactInfo, setContactInfo] = React.useState([]);
-  // used for pop-up when pressing "Add Contact List" button
-  // TODO: update name
-  const [openMC, setOpenMC] = React.useState(false);
-
+  const [currentCLID, setCurrentCLID] = React.useState(-1); //current contact list ID clicked
+  const [contactInfo, setContactInfo] = React.useState([]); //second column contacts
+  const [fields, setFields] = React.useState({}); //text fields values
   const contacts = props.contactList;
 
   // Retrieves contact lists from the database if it is not already obtained
@@ -24,7 +19,35 @@ function Contacts(props) {
   }, []);
 
   function populateContactInfo(e) {
+    setCurrentCLID(contacts[e.target.id].contact_list_id);
     setContactInfo(contacts[e.target.id].contacts);
+  }
+
+  // update the text boxes' field variables
+  function updateFields(event) {
+    var name = event.target.name;
+    var value = event.target.value;
+    // only update value of credential that is actually updated
+    setFields(fields => ({...fields, [name]: value}));
+  }
+
+  // add contact list function
+  function addContactListClicked(event) {
+    alert(fields["contactListName"]);
+  }
+
+  // add contact function
+  // DATABASE CALL
+  function addContactClicked(e) {
+    e.preventDefault(); //prevents default actions of form from happening (reloads page contents)
+
+    fetch("/addContact/" + currentCLID + "/" + fields.firstName + "/" + fields.lastName + "/" + fields.email)
+        .then(response => response.json())
+        .then(data => {
+            alert(data.result + " is new contact id");
+        }).catch(error => {
+            console.log(error);
+        });
   }
 
   return (
@@ -33,6 +56,7 @@ function Contacts(props) {
       <Container>
         <Grid container spacing={2}>
             <Grid item xs={3}>
+              {currentCLID}
               <Stack sx={{ border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2, height: 300, overflow: 'auto'}}>
                 {(contacts.length == 0) && <div>No contact lists exist yet. Please add one below.</div>}
                 {contacts.map((contact, index) => {
@@ -40,10 +64,10 @@ function Contacts(props) {
                 })}
               </Stack>
               <Grid item textAlign="center" sx={{ mt: 2 }}>
-                <TextField name="username" type="text" label="Contact List Name" variant="outlined" required />
+                <TextField name="contactListName" type="text" label="Contact List Name" variant="outlined" onChange={updateFields} required />
               </Grid>
               <Grid textAlign="center" sx={{ mt: 2 }}>
-                <Button variant="contained" onClick={() => setOpenMC(true)}>Add Contact List</Button>
+                <Button variant="contained" onClick={addContactListClicked}>Add Contact List</Button>
               </Grid>
             </Grid>
 
@@ -60,25 +84,21 @@ function Contacts(props) {
                 </Stack>
                 <Grid container sx={{ mt: 2 }}>
                   <Grid item xs={4} textAlign="left">
-                    <TextField name="username" type="text" label="First Name" variant="outlined" required />
+                    <TextField name="firstName" type="text" label="First Name" variant="outlined" onChange={updateFields} required />
                   </Grid>
                   <Grid item xs={4} textAlign="center">
-                    <TextField name="password" type="password" label="Last Name" variant="outlined" required />
+                    <TextField name="lastName" type="text" label="Last Name" variant="outlined" onChange={updateFields} required />
                   </Grid>
                   <Grid item xs={4} textAlign="center">
-                    <TextField name="password" type="password" label="Email" variant="outlined" required />
+                    <TextField name="email" type="text" label="Email" variant="outlined" onChange={updateFields} required />
                   </Grid>
                 </Grid>
                 <Grid item xs={12} sx={{ mt: 2 }} textAlign="center">
-                  <Button variant="contained">Add Contact</Button>
+                  <Button variant="contained" onClick={addContactClicked}>Add Contact</Button>
                 </Grid>
             </Grid>
             }
         </Grid>
-        <ContactListDialog
-          open={openMC}
-          setOpen={setOpenMC}
-        />
       </Container>
     </Box>
   );

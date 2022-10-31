@@ -38,19 +38,17 @@ def getContacts(cursor, contactListID):
 
 def addContact(cursor, contactListID, firstName, lastName, emailAddress):
     table = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s", (int(contactListID)))
-    contactID = 0
     for entry in table:
         if entry[4] == emailAddress:
             return jsonify({'result': '-1'})
-        contactID = entry[0]+1
-    cursor.execute("INSERT INTO contacts VALUES(%s, %s, %s, %s)", (int(contactID), int(contactID), firstName, lastName, emailAddress))
-    return jsonify({'result': contactID})
+    cursor.execute("INSERT INTO contacts (contact_list_id, first_name, last_name, email_address) VALUES(%s, %s, %s, %s)", (int(contactListID), firstName, lastName, emailAddress))
+    return jsonify({'result': "success"})
 
 def updateContactFirstName(cursor, contactID, firstName):
     cursor.execute("UPDATE contacts SET first_name = %s WHERE contact_id = %s", (firstName, int(contactID)))
 
 def updateContactLastName(cursor, contactID, lastName):
-    cursor.execute("UPDATE contacts SET lasst_name = %s WHERE contact_id = %s", (lastName, int(contactID)))
+    cursor.execute("UPDATE contacts SET last_name = %s WHERE contact_id = %s", (lastName, int(contactID)))
 
 def updateContactEmailAddress(cursor, contactID, emailAddress):
     cursor.execute("UPDATE contacts SET email_address = %s WHERE contact_id = %s", (emailAddress, int(contactID)))
