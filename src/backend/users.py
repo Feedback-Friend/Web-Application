@@ -1,8 +1,8 @@
 from flask import Flask
 from flask.json import jsonify
 
-from surveys import *
-from contacts import *
+from src.backend.surveys import *
+from src.backend.contacts import *
 
 def registerUser(cursor, firstName, lastName, userName, passWord, emailAddress):
     table = cursor.execute("SELECT * FROM users")
@@ -14,6 +14,7 @@ def registerUser(cursor, firstName, lastName, userName, passWord, emailAddress):
     cursor.execute("INSERT INTO users (first_name, last_name, user_name, pass_word, email_address) VALUES(%s, %s, %s, %s, %s)", (firstName, lastName, userName, passWord, emailAddress))
     print("Success")
     return str(userID) #used to say userID -1 not sure if that was right
+
 
 def loginUser(cursor, userName, passWord):
     table = cursor.execute("SELECT * FROM users")
@@ -89,5 +90,5 @@ def deleteUser(cursor, userID):
 def getUserInfo(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
-        userInfo = {"firstName":entry[1], "lastName":entry[2], "username":entry[3], "password":entry[4], "email":entry[5]} #first, last, user, pass, email
+        userInfo = {"firstName": entry[1], "lastName": entry[2], "username": entry[3], "password": entry[4], "email": entry[5]} #first, last, user, pass, email
         return jsonify(userInfo)
