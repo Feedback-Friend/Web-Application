@@ -1,8 +1,8 @@
 from flask import Flask
 from flask.json import jsonify
 
-from src.backend.surveys import *
-from src.backend.contacts import *
+from surveys import *
+from contacts import *
 
 def registerUser(cursor, firstName, lastName, userName, passWord, emailAddress):
     table = cursor.execute("SELECT * FROM users")

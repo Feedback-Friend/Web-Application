@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from database_sample_populator import *
 from utility import flush_schema
 import sshtunnel
+from contacts import *
 
 # connecting to oracle cloud compute unit for database
 tunnel = sshtunnel.SSHTunnelForwarder(
@@ -22,4 +23,6 @@ flush_schema(engine)
 populateTestUsers(cursor)
 populateContactLists(cursor)
 populateContacts(cursor)
-pass
+
+addContactList(cursor, 1, "New CL1")
+print("Success")

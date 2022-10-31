@@ -12,15 +12,23 @@ def getContactLists(cursor, userID):
         contactLists.append({"id": entry[0], "name": entry[2], "count": count}) #return contact id, name, and contacts
     return jsonify(contactLists)
 
+
+"""
+Adds a contact list to the database. The contact list will be registered under a specific user through userID, and have a name which is contactListName
+"""
 def addContactList(cursor, userID, contactListName):
-    table = cursor.execute("SELECT * FROM contact_lists")
-    contactListID = 0
-    for entry in table:
-        if entry[3] == contactListName:
-            return jsonify({'result': '-1'})
-        contactListID = entry[0]+1
-    cursor.execute("INSERT INTO contact_lists VALUES(%s, %s, %s)", (int(contactListID), int(userID), contactListName))
-    return jsonify({'result': contactListID})
+    contact_lists = cursor.execute("SELECT * FROM contact_lists WHERE contact_list_name=%s", contactListName)
+
+    for contact_list in contact_lists:  # there should be no duplicates
+        return jsonify({'result': '-1'})
+
+    cursor.execute("INSERT INTO contact_lists (user_id, contact_list_name) VALUES (%s, %s)", (int(userID), contactListName))
+
+    # get the contact list ID that was just added
+    id = cursor.execute("SELECT contact_list_id FROM contact_lists WHERE contact_list_name=%s", contactListName)
+
+    for id_entry in id:
+        return jsonify({'result': id_entry[0]})
 
 def updateContactListName(cursor, contactListID, contactListName):
     cursor.execute("UPDATE contact_lists SET contact_list_name = %s WHERE contact_list_id = %s", (contactListName, int(contactListID)))
