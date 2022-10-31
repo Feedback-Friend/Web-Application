@@ -1,6 +1,6 @@
 import sshtunnel
 from sqlalchemy import create_engine
-from user import *
+from users import *
 
 # tunnel = sshtunnel.SSHTunnelForwarder(
 #     ('150.136.92.200', 22), 
