@@ -15,6 +15,7 @@ def registerUser(cursor, firstName, lastName, userName, passWord, emailAddress):
     print("Success")
     return str(userID) #used to say userID -1 not sure if that was right
 
+
 def loginUser(cursor, userName, passWord):
     table = cursor.execute("SELECT * FROM users")
     for entry in table:
