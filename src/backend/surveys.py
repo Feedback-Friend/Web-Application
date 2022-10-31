@@ -30,12 +30,12 @@ def getSurveyResults(cursor, surveyID):
         question_list.append({"id": entry[0], "type": entry[2], "prompt": entry[3], "response_list": [dict(row) for row in response_list]}) #return question id, type, prompt, and responses
     return jsonify(question_list)
       
-def addSurvey(cursor, userID, timeCreated, name):
+def addSurvey(cursor, userID, name, timeCreated):
     table = cursor.execute("SELECT * FROM surveys")
     surveyID = 0
     for entry in table:
         surveyID = entry[0]+1
-    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s, %s, %s)", (int(surveyID), int(userID), "-1", name, timeCreated, "0"))
+    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s, %s, %s)", (int(surveyID), int(userID), "-1", name, "0", stimeCreated))
     return jsonify({'result': surveyID})
 
 def publishSurvey(cursor, surveyID):

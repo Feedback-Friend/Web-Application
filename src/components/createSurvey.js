@@ -80,7 +80,7 @@ function CreateSurvey(props) {
     showMessage("Creating Survey...");
 
     let func = async () => {
-      let req = await fetch("/addSurvey/" + userID + "/" + timeCreated + "/" + survey.name, requestOptions)
+      let req = await fetch("/addSurvey/" + userID + "/" + survey.name + "/" + timeCreated, requestOptions)
         .then(response => { return response.json() });
 
       localStorage.setItem("survey", JSON.stringify({ name: survey.name, id: req.result }));

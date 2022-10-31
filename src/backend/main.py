@@ -115,10 +115,10 @@ def getSurveys(userID):
     return survey.getSurveys(cursor, userID)
     
 @app.route('/addSurvey/<userID>/<timeCreated>/', defaults={'name': ''}, methods=['POST'])
-@app.route('/addSurvey/<userID>/<timeCreated>/<name>', methods=['POST'])
-def addSurvey(userID, timeCreated, name):
+@app.route('/addSurvey/<userID>/<name>/<timeCreated>', methods=['POST'])
+def addSurvey(userID, name, timeCreated):
     cursor = engine.connect()
-    return survey.addSurvey(cursor, userID, timeCreated, name)
+    return survey.addSurvey(cursor, userID, name, timeCreated)
 
 @app.route('/publishSurvey/<surveyID>', methods=['PUT'])
 def publishSurvey(surveyID):
@@ -278,9 +278,9 @@ def getSurveyResults(surveyID):
 
 @app.route('/addQuestionResponse/<questionID>/', defaults={'response': ''}, methods=['POST'])
 @app.route('/addQuestionResponse/<question_id>/<response>', methods=['POST'])
-def addQuestionResponse(question_id, response):
+def addQuestionResponse(question_id, response, timeCreated):
     cursor = engine.connect()
-    return survey.addQuestionResponse(cursor, question_id, response)
+    return survey.addQuestionResponse(cursor, question_id, response, timeCreated)
 
 
 """
