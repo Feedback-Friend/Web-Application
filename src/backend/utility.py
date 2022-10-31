@@ -83,6 +83,7 @@ def repopulate_schema(engine):
         survey_id INT,
         quesion_type INT,
         prompt VARCHAR(500),
+        index INT,
         PRIMARY KEY (question_id)
         );
         """)
@@ -93,6 +94,7 @@ def repopulate_schema(engine):
         choice_id INT NOT NULL AUTO_INCREMENT,
         question_id INT,
         choice VARCHAR(500),
+        index INT,
         PRIMARY KEY (choice_id)
         );
         """)
