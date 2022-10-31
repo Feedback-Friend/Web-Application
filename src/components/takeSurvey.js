@@ -106,7 +106,7 @@ function TakeSurvey() {
     } else {
       for (const question of questions) {
         let func = async () => {
-          let req = await fetch("/addSurveyResponse/" + question.id + "/" + question.response, requestOptions)
+          let req = await fetch("/addQuestionResponse/" + question.id + "/" + question.response, requestOptions)
             .then(response => { return response.json() });
           console.log(req)
         }
