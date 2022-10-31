@@ -24,7 +24,7 @@ def addContactList(cursor, userID, contactListName):
 
     cursor.execute("INSERT INTO contact_lists (user_id, contact_list_name) VALUES (%s, %s)", (int(userID), contactListName))
 
-    ids = cursor.execute("SELECT id FROM contact_lists WHERE contact_list_name=%s", contactListName)
+    ids = cursor.execute("SELECT contact_list_id FROM contact_lists WHERE contact_list_name=%s", contactListName)
     for id in ids:
         return {'result': id[0]}
 
