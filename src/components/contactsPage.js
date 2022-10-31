@@ -36,6 +36,18 @@ function Contacts(props) {
     alert(fields["contactListName"]);
   }
 
+  function addContactListClicked(e) {
+    e.preventDefault(); //prevents default actions of form from happening (reloads page contents)
+
+    fetch("/addContactList/" + <userID>/<contactListName>)
+        .then(response => response.json())
+        .then(data => {
+            alert(data.result + " is new contact id");
+        }).catch(error => {
+            console.log(error);
+        });
+  }
+
   // add contact function
   // DATABASE CALL
   function addContactClicked(e) {
