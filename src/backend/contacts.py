@@ -48,9 +48,14 @@ def addContact(cursor, contactListID, firstName, lastName, emailAddress):
     table = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s", (int(contactListID)))
     for entry in table:
         if entry[4] == emailAddress:
-            return jsonify({'result': '-1'})
+            return jsonify({'result': '-1'})  # duplicate email address not allowed
     cursor.execute("INSERT INTO contacts (contact_list_id, first_name, last_name, email_address) VALUES(%s, %s, %s, %s)", (int(contactListID), firstName, lastName, emailAddress))
-    return {'result': "success"}
+
+    contact_ids = cursor.execute("SELECT contact_id FROM contacts WHERE email_address=%s", emailAddress)
+    for id in contact_ids:
+        return {'result': id[0]}
+
+    return {'result': "error"}
 
 def updateContactFirstName(cursor, contactID, firstName):
     cursor.execute("UPDATE contacts SET first_name = %s WHERE contact_id = %s", (firstName, int(contactID)))

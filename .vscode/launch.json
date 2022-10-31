@@ -5,6 +5,14 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Python: Current File",
+      "type": "python",
+      "request": "launch",
+      "module": "src.backend.sql_test",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
       "name": "Python: Flask",
       "type": "python",
       "request": "launch",
