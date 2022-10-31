@@ -24,11 +24,7 @@ def addContactList(cursor, userID, contactListName):
 
     cursor.execute("INSERT INTO contact_lists (user_id, contact_list_name) VALUES (%s, %s)", (int(userID), contactListName))
 
-    # get the contact list ID that was just added
-    id = cursor.execute("SELECT contact_list_id FROM contact_lists WHERE contact_list_name=%s", contactListName)
-
-    for id_entry in id:
-        return jsonify({'result': id_entry[0]})
+    return jsonify({'result': "success"})
 
 def updateContactListName(cursor, contactListID, contactListName):
     cursor.execute("UPDATE contact_lists SET contact_list_name = %s WHERE contact_list_id = %s", (contactListName, int(contactListID)))

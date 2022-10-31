@@ -39,10 +39,9 @@ function Contacts(props) {
   function addContactListClicked(e) {
     e.preventDefault(); //prevents default actions of form from happening (reloads page contents)
 
-    fetch("/addContactList/" + <userID>/<contactListName>)
+    fetch("/addContactList/" + props.userID + "/" + fields.contactListName)
         .then(response => response.json())
         .then(data => {
-            alert(data.result + " is new contact id");
         }).catch(error => {
             console.log(error);
         });
@@ -56,7 +55,6 @@ function Contacts(props) {
     fetch("/addContact/" + currentCLID + "/" + fields.firstName + "/" + fields.lastName + "/" + fields.email)
         .then(response => response.json())
         .then(data => {
-            alert(data.result + " is new contact id");
         }).catch(error => {
             console.log(error);
         });
@@ -68,7 +66,6 @@ function Contacts(props) {
       <Container>
         <Grid container spacing={2}>
             <Grid item xs={3}>
-              {currentCLID}
               <Stack sx={{ border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2, height: 300, overflow: 'auto'}}>
                 {(contacts.length == 0) && <div>No contact lists exist yet. Please add one below.</div>}
                 {contacts.map((contact, index) => {
