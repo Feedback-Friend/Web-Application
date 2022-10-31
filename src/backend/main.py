@@ -224,7 +224,7 @@ def getContactLists(userID):
 @app.route('/addContactList/<userID>/<contactListName>', methods=['GET'])
 def addContactList(userID, contactListName):
     cursor = engine.connect()
-    contact.addContactList(cursor, userID, contactListName)
+    return jsonify(contact.addContactList(cursor, userID, contactListName))
 
 @app.route('/updateContactLists/<contactListID>/<contactListName>', methods=['GET'])
 def updateContactListName(contactListID, contactListName):
