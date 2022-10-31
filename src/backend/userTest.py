@@ -1,8 +1,8 @@
 from flask import Flask
 from flask.json import jsonify
 
-from surveys import *
-from contacts import *
+from src.backend.surveys import *
+from src.backend.contacts import *
 
 
 """
