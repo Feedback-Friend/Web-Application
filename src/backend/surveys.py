@@ -16,7 +16,7 @@ def getSurveys(cursor, userID):
             responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(question[0]))) #get responses to question
             for response in responses:
                 count = count + 1
-        surveys.append({"id": entry[0], "name": entry[3], "count": count, "time": entry[4], "status": entry[5]}) #return survey id, name, and responses
+        surveys.append({"id": entry[0], "name": entry[3], "count": count, "status": entry[5], "time": entry[4]}) #return survey id, name, and responses
     return jsonify(surveys)
 
 def getSurveyResults(cursor, surveyID):
