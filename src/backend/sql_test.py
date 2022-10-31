@@ -19,10 +19,11 @@ engine = create_engine('mysql+mysqldb://test:rY!&pa4PsDAq@127.0.0.1:%s/db' % tun
 # engine = create_engine('mysql+mysqldb://root:password@localhost:3306/feedback_friend')  # establish connection to database
 cursor = engine.connect()
 
-flush_schema(engine)
-populateTestUsers(cursor)
-populateContactLists(cursor)
-populateContacts(cursor)
+# flush_schema(engine)
+# populateTestUsers(cursor)
+# populateContactLists(cursor)
+# populateContacts(cursor)
 
-addContactList(cursor, 1, "New CL1")
+# addContactList(cursor, 1, "New CL1")
+addContact(cursor, 0, "Kevin", "Li", "xyz@sadfdsa")
 print("Success")
