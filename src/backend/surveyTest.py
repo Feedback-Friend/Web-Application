@@ -103,10 +103,10 @@ def addChoice(cursor, questionID, prompt):
     for entry in table:
         choiceID = entry[0]+1
     cursor.execute("INSERT INTO choices VALUES(%s, %s, %s)", (int(choiceID), int(questionID), prompt))
-    return jsonify({'result': choiceID})
+    return 1
 
 def updateChoice(cursor, choiceID, prompt):
-    cursor.execute("UPDATE choices SET prompt = '%s' WHERE choice_id = %s", (int(choiceID), prompt))
+    cursor.execute("UPDATE choices SET choice = %s WHERE choice_id = %s", (prompt, int(choiceID)))
     return 1
 
 def deleteChoice(cursor, choiceID):
@@ -122,4 +122,4 @@ def getQuestionsAndChoices(cursor, surveyID):
         for choice in choices:
             choices_ary.append({"id": choice[0], "choice": choice[2]}) #return choice id and answer
         questions.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3], 'choices': choices_ary})
-    return jsonify(questions)
+    return questions

@@ -282,7 +282,37 @@ Adds test choices to the SQL database
 cursor (SQL alchemy cursor): the SQL alchemy cursor pointing to the SQL database
 """
 def populateChoices(cursor):
-    pass
+    addChoice(cursor, 1, "yes")
+    addChoice(cursor, 1, "no")
+    addChoice(cursor, 1, "maybe")
+    testChoices(cursor)
+
+def testChoices(cursor):
+    testgetChoices(cursor)
+    testupdateChoice(cursor)
+    testdeleteChoice(cursor)
+    testgetQuestionsAndChoices(cursor)
+
+def testgetChoices(cursor):
+    assert len(getChoices(cursor, 1)) == 3
+    assert getChoices(cursor, 1)[0]["choice"] == "yes"
+    assert getChoices(cursor, 1)[1]["choice"] == "no"
+    assert getChoices(cursor, 1)[2]["choice"] == "maybe"
+
+def testupdateChoice(cursor):
+    updateChoice(cursor, 1, "yes!!")
+    assert getChoices(cursor, 1)[0]["choice"] == "yes!!"
+    updateChoice(cursor, 1, "yes")
+    assert getChoices(cursor, 1)[0]["choice"] == "yes"
+
+def testdeleteChoice(cursor):
+    deleteChoice(cursor, 1)
+    assert len(getChoices(cursor, 1)) == 2
+
+def testgetQuestionsAndChoices(cursor):
+    assert getQuestionsAndChoices(cursor, 1)[0]["choices"][0]["choice"] == "no"
+    assert getQuestionsAndChoices(cursor, 1)[0]["choices"][1]["choice"] == "maybe"
+
 
 """
 Adds test responses to the SQL database

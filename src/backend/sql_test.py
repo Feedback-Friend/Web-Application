@@ -24,4 +24,5 @@ populateContactLists(cursor)
 populateContacts(cursor)
 populateSurveys(cursor)
 populateQuestions(cursor)
+populateChoices(cursor)
 pass
