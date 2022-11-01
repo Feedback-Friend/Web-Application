@@ -18,20 +18,21 @@ def registerUser(cursor, firstName, lastName, userName, passWord, emailAddress):
     print("Success")
     return str(userID) #used to say userID -1 not sure if that was right
 
+
 def loginUser(cursor, userName, passWord):
     table = cursor.execute("SELECT * FROM users")
     for entry in table:
         if entry[3] == userName and entry[4] == passWord:
             print("Success")
-            return jsonify({"result": entry[0], "name": entry[1]})  # match
+            return {"result": entry[0], "name": entry[1]}  # match
     print("Error: Not Found")
-    return jsonify({"result": "-1"})  # invalid login
+    return {"result": "-1"}  # invalid login
 
 def getFirstName(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
         print(entry[1])
-        return jsonify({"first_name":entry[1]})
+        return {"first_name":entry[1]}
 
 def updateFirstName(cursor, userID, firstName):
     cursor.execute("UPDATE users SET first_name = '%s' WHERE user_id = %s", (firstName, int(userID)))
@@ -39,7 +40,7 @@ def updateFirstName(cursor, userID, firstName):
 def getLastName(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
-        return jsonify({"last_name":entry[2]})
+        return {"last_name":entry[2]}
 
 def updateLastName(cursor, userID, lastName):
     cursor.execute("UPDATE users SET last_name = '%s' WHERE user_id = %s", (lastName, int(userID)))
@@ -47,7 +48,7 @@ def updateLastName(cursor, userID, lastName):
 def getUserName(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
-        return jsonify({"user_name":entry[3]})
+        return {"user_name":entry[3]}
 
 def updateUserName(cursor, userID, userName):
     table = cursor.execute("SELECT * FROM users")
@@ -59,7 +60,7 @@ def updateUserName(cursor, userID, userName):
 def getPassWord(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
-        return jsonify({"password":entry[4]})
+        return {"password":entry[4]}
         
 def updatePassWord(cursor, userID, passWord):
     cursor.execute("UPDATE users SET pass_word = '%s' WHERE user_id = %s", (passWord, int(userID)))
@@ -67,7 +68,7 @@ def updatePassWord(cursor, userID, passWord):
 def getEmailAddress(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
-        return jsonify({"email":entry[5]})
+        return {"email":entry[5]}
 
 def updateEmailAddress(cursor, userID, emailAddress):
     table = cursor.execute("SELECT * FROM users")
@@ -93,4 +94,4 @@ def getUserInfo(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
         userInfo = {"firstName": entry[1], "lastName": entry[2], "username": entry[3], "password": entry[4], "email": entry[5]} #first, last, user, pass, email
-        return jsonify(userInfo)
+        return userInfo

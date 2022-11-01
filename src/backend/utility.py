@@ -72,29 +72,31 @@ def repopulate_schema(engine):
         contact_list_id INT,
         survey_name VARCHAR(50),
         status INT,
+        time_created BIGINT,
         PRIMARY KEY (survey_id)
         );
         """)
         # create questions table
-        cursor.execute("""
-        CREATE TABLE questions(
-        question_id INT NOT NULL AUTO_INCREMENT,
-        survey_id INT,
-        quesion_type INT,
-        prompt VARCHAR(500),
-        PRIMARY KEY (question_id)
-        );
-        """)
+        # cursor.execute("""
+        # CREATE TABLE questions(
+        # question_id INT NOT NULL AUTO_INCREMENT,
+        # survey_id INT,
+        # quesion_type INT,
+        # prompt VARCHAR(500),
+        # PRIMARY KEY (question_id)
+        # );
+        # """)
 
         # create choices table
-        cursor.execute("""
-        CREATE TABLE choices(
-        choice_id INT NOT NULL AUTO_INCREMENT,
-        question_id INT,
-        choice VARCHAR(500),
-        PRIMARY KEY (choice_id)
-        );
-        """)
+        # cursor.execute("""
+        # CREATE TABLE choices(
+        # choice_id INT NOT NULL AUTO_INCREMENT,
+        # question_id INT,
+        # choice VARCHAR(500),
+        # index INT,
+        # PRIMARY KEY (choice_id)
+        # );
+        # """)
 
         # create responses table
         cursor.execute("""
@@ -102,6 +104,7 @@ def repopulate_schema(engine):
         response_id INT NOT NULL AUTO_INCREMENT,
         question_id INT,
         reply VARCHAR(500),
+        time_created BIGINT,
         PRIMARY KEY (response_id)
         );
         """)

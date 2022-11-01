@@ -10,17 +10,25 @@ def getContactLists(cursor, userID):
         for contact in contacts:
             count = count + 1
         contactLists.append({"id": entry[0], "name": entry[2], "count": count}) #return contact id, name, and contacts
-    return jsonify(contactLists)
+    return contactLists
 
+
+"""
+Adds a contact list to the database. The contact list will be registered under a specific user through userID, and have a name which is contactListName
+"""
 def addContactList(cursor, userID, contactListName):
-    table = cursor.execute("SELECT * FROM contact_lists")
-    contactListID = 0
-    for entry in table:
-        if entry[3] == contactListName:
-            return jsonify({'result': '-1'})
-        contactListID = entry[0]+1
-    cursor.execute("INSERT INTO contact_lists VALUES(%s, %s, %s)", (int(contactListID), int(userID), contactListName))
-    return jsonify({'result': contactListID})
+    contact_lists = cursor.execute("SELECT * FROM contact_lists WHERE contact_list_name=%s", contactListName)
+
+    for contact_list in contact_lists:  # there should be no duplicates
+        return {'result': '-1'}
+
+    cursor.execute("INSERT INTO contact_lists (user_id, contact_list_name) VALUES (%s, %s)", (int(userID), contactListName))
+
+    ids = cursor.execute("SELECT contact_list_id FROM contact_lists WHERE contact_list_name=%s", contactListName)
+    for id in ids:
+        return {'result': id[0]}
+
+    return {'result': '-1'}  # should not happen
 
 def updateContactListName(cursor, contactListID, contactListName):
     cursor.execute("UPDATE contact_lists SET contact_list_name = %s WHERE contact_list_id = %s", (contactListName, int(contactListID)))
@@ -34,23 +42,26 @@ def getContacts(cursor, contactListID):
     contacts = []
     for entry in table:
         contacts.append({"first name": entry[2], "last name": entry[3], "email address": entry[4]})
-    return jsonify(contacts)
+    return contacts
 
 def addContact(cursor, contactListID, firstName, lastName, emailAddress):
     table = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s", (int(contactListID)))
-    contactID = 0
     for entry in table:
         if entry[4] == emailAddress:
-            return jsonify({'result': '-1'})
-        contactID = entry[0]+1
-    cursor.execute("INSERT INTO contacts VALUES(%s, %s, %s, %s)", (int(contactID), int(contactID), firstName, lastName, emailAddress))
-    return jsonify({'result': contactID})
+            return jsonify({'result': '-1'})  # duplicate email address not allowed
+    cursor.execute("INSERT INTO contacts (contact_list_id, first_name, last_name, email_address) VALUES(%s, %s, %s, %s)", (int(contactListID), firstName, lastName, emailAddress))
+
+    contact_ids = cursor.execute("SELECT contact_id FROM contacts WHERE email_address=%s", emailAddress)
+    for id in contact_ids:
+        return {'result': id[0]}
+
+    return {'result': "error"}
 
 def updateContactFirstName(cursor, contactID, firstName):
     cursor.execute("UPDATE contacts SET first_name = %s WHERE contact_id = %s", (firstName, int(contactID)))
 
 def updateContactLastName(cursor, contactID, lastName):
-    cursor.execute("UPDATE contacts SET lasst_name = %s WHERE contact_id = %s", (lastName, int(contactID)))
+    cursor.execute("UPDATE contacts SET last_name = %s WHERE contact_id = %s", (lastName, int(contactID)))
 
 def updateContactEmailAddress(cursor, contactID, emailAddress):
     cursor.execute("UPDATE contacts SET email_address = %s WHERE contact_id = %s", (emailAddress, int(contactID)))
@@ -71,4 +82,4 @@ def getContactListsAndContacts(cursor, userID):
         for contact in contacts:
             contacts_ary.append({"id": contact[0], "first_name": contact[2], "last_name": contact[3], "email": contact[4]}) #return contact id, first name, last name, email address
         contactLists.append({'contact_list_id': contactList[0], 'user_id': contactList[1], 'contact_list_name': contactList[2], 'contacts': contacts_ary})
-    return jsonify(contactLists)
+    return contactLists
