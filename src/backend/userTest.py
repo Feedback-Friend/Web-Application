@@ -1,9 +1,9 @@
 from flask import Flask
 from flask.json import jsonify
 
-from survey import *
-from contact import *
-
+# from src.backend.surveys import *
+# from contact import *
+from surveys import *
 
 """
 Registers a user into the SQL database
@@ -222,3 +222,9 @@ def deleteUser(cursor, userID):
     # delete user from users table
     cursor.execute("DELETE FROM users WHERE user_id = %s", (int(userID)))
     return 1
+
+def getUserInfo(cursor, userID):
+    user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
+    for entry in user:
+        userInfo = {"firstName": entry[1], "lastName": entry[2], "username": entry[3], "password": entry[4], "email": entry[5]} #first, last, user, pass, email
+        return userInfo

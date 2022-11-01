@@ -12,15 +12,15 @@ def getSurveys(cursor, userID):
             for response in responses:
                 count = count + 1
         surveys.append({"id": entry[0], "name": entry[3], "count": count, "time": entry[4]}) #return survey id, name, and responses
-    return jsonify(surveys)
+    return surveys
       
-def addSurvey(cursor, userID, surveyName, timeCreated):
+def addSurvey(cursor, userID, contact_list_id, surveyName, timeCreated):
     table = cursor.execute("SELECT * FROM surveys")
     surveyID = 0
     for entry in table:
         surveyID = entry[0]+1
-    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s, %s)", (int(surveyID), int(userID), "-1", surveyName, timeCreated))
-    return jsonify({'result': surveyID})
+    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s, %s)", (int(surveyID), int(userID), int(contact_list_id), surveyName, timeCreated))
+    return 1
 
 def UpdateSurveyName(cursor, surveyID, surveyName):
     cursor.execute("UPDATE surveys SET survey_name = '%s' WHERE survey_id = %s", (surveyName, int(surveyID)))
@@ -39,7 +39,7 @@ def getQuestions(cursor, surveyID):
     questions = []
     for entry in table:
         questions.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3]}) #return question id and prompt
-    return jsonify(questions)
+    return questions
 
 def addQuestion(cursor, surveyID, questionType, prompt):
     table = cursor.execute("SELECT * FROM questions")
@@ -47,7 +47,7 @@ def addQuestion(cursor, surveyID, questionType, prompt):
     for entry in table:
         questionID = entry[0]+1
     cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), int(questionType), prompt))
-    return jsonify({'result': questionID})
+    return {'result': questionID}
 
 def addFRQ(cursor, surveyID):
     table = cursor.execute("SELECT * FROM questions")

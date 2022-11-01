@@ -22,4 +22,6 @@ flush_schema(engine)
 populateTestUsers(cursor)
 populateContactLists(cursor)
 populateContacts(cursor)
+populateSurveys(cursor)
+populateQuestions(cursor)
 pass

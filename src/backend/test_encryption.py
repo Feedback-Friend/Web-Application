@@ -1,5 +1,6 @@
-from utility import decode, encode
+from src.backend.utility import decode, encode
 import random
+from src.backend.userTest import *
 
 alphanumeric = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"
 
