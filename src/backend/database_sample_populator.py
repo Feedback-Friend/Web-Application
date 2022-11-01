@@ -214,7 +214,33 @@ def populateQuestions(cursor):
     addQuestion(cursor, 3, 0, "s3q1")
     addQuestion(cursor, 3, 1, "s3q2")
     addQuestion(cursor, 3, 1, "s3q3")
+    testQuestions(cursor)
 
+def testQuestions(cursor):
+    testgetQuestions(cursor)
+    testaddQuestion(cursor)
+
+def testgetQuestions(cursor):
+    assert len(getQuestions(cursor, 1)) == 3
+    assert len(getQuestions(cursor, 2)) == 3
+    assert len(getQuestions(cursor, 3)) == 3
+
+    assert getQuestions(cursor, 1)[0]["prompt"] == "s1q1"
+    assert getQuestions(cursor, 1)[1]["prompt"] == "s1q2"
+    assert getQuestions(cursor, 1)[2]["prompt"] == "s1q3"
+
+    assert getQuestions(cursor, 2)[0]["prompt"] == "s2q1"
+    assert getQuestions(cursor, 2)[1]["prompt"] == "s2q2"
+    assert getQuestions(cursor, 2)[2]["prompt"] == "s2q3"
+
+    assert getQuestions(cursor, 3)[0]["prompt"] == "s3q1"
+    assert getQuestions(cursor, 3)[1]["prompt"] == "s3q2"
+    assert getQuestions(cursor, 3)[2]["prompt"] == "s3q3"
+
+def testaddQuestion(cursor):
+    addQuestion(cursor, 1, 0, "s1q4")
+    assert len(getQuestions(cursor, 1)) == 4
+    assert getQuestions(cursor, 1)[3]["prompt"] == "s1q4"
 
 """
 Adds test responses to the SQL database
