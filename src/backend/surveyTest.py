@@ -23,7 +23,8 @@ def addSurvey(cursor, userID, contact_list_id, surveyName, timeCreated):
     return 1
 
 def UpdateSurveyName(cursor, surveyID, surveyName):
-    cursor.execute("UPDATE surveys SET survey_name = '%s' WHERE survey_id = %s", (surveyName, int(surveyID)))
+    cursor.execute("UPDATE surveys SET survey_name = %s WHERE survey_id = %s", (surveyName, int(surveyID)))
+    return 1
 
 def deleteSurvey(cursor, surveyID):
     table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (str(surveyID)))
@@ -59,9 +60,11 @@ def addFRQ(cursor, surveyID):
 
 def updateFRQ(cursor, questionID, prompt):
     cursor.execute("UPDATE questions SET prompt = '%s' WHERE question_id = %s", (int(questionID), prompt))
+    return 1
 
 def deleteFRQ(cursor, questionID):
     cursor.execute("DELETE FROM questions WHERE question_id = %s", (int(questionID)))
+    return 1
 
 def addMCQ_S(cursor, surveyID):
     table = cursor.execute("SELECT * FROM questions")
@@ -81,9 +84,11 @@ def addMCQ_M(cursor, surveyID):
 
 def updateMCQ(cursor, questionID, prompt):
     cursor.execute("UPDATE questions SET prompt = '%s' WHERE question_id = %s", (int(questionID), prompt))
+    return 1
 
 def deleteMCQ(cursor, questionID):
     cursor.execute("DELETE FROM questions WHERE question_id = %s", (int(questionID)))
+    return 1
 
 def getChoices(cursor, questionID):
     table = cursor.execute("SELECT * FROM choices WHERE question_id=%s", (str(questionID)))
@@ -102,9 +107,11 @@ def addChoice(cursor, questionID, prompt):
 
 def updateChoice(cursor, choiceID, prompt):
     cursor.execute("UPDATE choices SET prompt = '%s' WHERE choice_id = %s", (int(choiceID), prompt))
+    return 1
 
 def deleteChoice(cursor, choiceID):
     cursor.execute("DELETE FROM choices WHERE choice_id = %s", (int(choiceID)))
+    return 1
 
 def getQuestionsAndChoices(cursor, surveyID):
     table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (str(surveyID)))

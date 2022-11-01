@@ -1,7 +1,7 @@
-# import sshtunnel
-# from sqlalchemy import create_engine
-# from src.backend.users import *
+import sshtunnel
+from sqlalchemy import create_engine
 from users import *
+
 # tunnel = sshtunnel.SSHTunnelForwarder(
 #     ('150.136.92.200', 22), 
 #     ssh_username='opc', 
@@ -16,7 +16,6 @@ from users import *
 """
 Repopulates an empty database with the SQL schema.
 No data is put into the database other than the schema
-
 engine (SQL alchemy engine): the SQL alchemy engine pointing to the SQL database
 void method, does not return anything
 """
@@ -72,31 +71,29 @@ def repopulate_schema(engine):
         contact_list_id INT,
         survey_name VARCHAR(50),
         status INT,
-        time_created BIGINT,
         PRIMARY KEY (survey_id)
         );
         """)
         # create questions table
-        # cursor.execute("""
-        # CREATE TABLE questions(
-        # question_id INT NOT NULL AUTO_INCREMENT,
-        # survey_id INT,
-        # quesion_type INT,
-        # prompt VARCHAR(500),
-        # PRIMARY KEY (question_id)
-        # );
-        # """)
+        cursor.execute("""
+        CREATE TABLE questions(
+        question_id INT NOT NULL AUTO_INCREMENT,
+        survey_id INT,
+        quesion_type INT,
+        prompt VARCHAR(500),
+        PRIMARY KEY (question_id)
+        );
+        """)
 
         # create choices table
-        # cursor.execute("""
-        # CREATE TABLE choices(
-        # choice_id INT NOT NULL AUTO_INCREMENT,
-        # question_id INT,
-        # choice VARCHAR(500),
-        # index INT,
-        # PRIMARY KEY (choice_id)
-        # );
-        # """)
+        cursor.execute("""
+        CREATE TABLE choices(
+        choice_id INT NOT NULL AUTO_INCREMENT,
+        question_id INT,
+        choice VARCHAR(500),
+        PRIMARY KEY (choice_id)
+        );
+        """)
 
         # create responses table
         cursor.execute("""
@@ -104,7 +101,6 @@ def repopulate_schema(engine):
         response_id INT NOT NULL AUTO_INCREMENT,
         question_id INT,
         reply VARCHAR(500),
-        time_created BIGINT,
         PRIMARY KEY (response_id)
         );
         """)
@@ -112,7 +108,6 @@ def repopulate_schema(engine):
 
 """
 Deletes all tables in the database the SQLHandler is connected to
-
 engine (SQL alchemy engine): the SQL alchemy engine pointing to the SQL database
 void method, does not return anything
 """
@@ -128,7 +123,6 @@ def eject_schema(engine):
 
 """
 Resets the database to a blank slate schema using a combination of the schema deletion and schema creation. Void method, does not return anything
-
 engine (SQL alchemy engine): the SQL alchemy engine pointing to the SQL database
 """
 def flush_schema(engine):
@@ -139,7 +133,6 @@ def flush_schema(engine):
 """
 This method returns an encoded string after adding 1 to all of the character
 ascii values of the input string. This encryption function is intended to demonstrate a proof of concept of encryption.
-
 unencrypted_info (String): the input string
 returns (String): the encrypted string
 """
@@ -154,7 +147,6 @@ def encode(unencrypted_info):
 """
 This method returns an decoded string after removing 1 from all of the character
 ascii values of the input encoded string. This decoding function is intended to demonstrate a proof of concept of decryption and should be paired with the encode method.
-
 encrypted_info (String): the encrypted input string
 returns (String): the decoded string
 """
@@ -169,10 +161,8 @@ def decode(encrypted_info):
 This method evaluates password strength
 password strength is evaluated on the length of the password and if it
 contains special characters or not
-
 password (String): the password whose strength needs to be checked
 length (int): the length of a password of sufficient length
-
 returns (int):
 0 -> password is not long enough and does not contain a special character
 1 -> exactly one of (password is long enough, password contains a special character)

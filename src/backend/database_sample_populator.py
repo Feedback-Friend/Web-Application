@@ -114,16 +114,12 @@ cursor (SQL alchemy cursor): the SQL alchemy cursor pointing to the SQL database
 def populateContactLists(cursor):
     # Kevin
     addContactList(cursor, 1, "Kevin Contact List 1")
-
     # Bob has no contact lists
-
     # Billy
     addContactList(cursor, 3, "Billy Contact List 1")
-
     # Jack
     addContactList(cursor, 4, "Jack Contact List 1")
     addContactList(cursor, 4, "Jack Contact List 2")
-
     # Hugo
     addContactList(cursor, 5, "Hugo Contact List 1")
 
@@ -156,12 +152,48 @@ Adds test surveys to the SQL database
 cursor (SQL alchemy cursor): the SQL alchemy cursor pointing to the SQL database
 """
 def populateSurveys(cursor):
-    # Kevin Contact List 1
-    # Billy Contact List 1
-    # Jack Contact List 1
-    # Jack Contact List 2
-    # Hugo Contact List 1
-    pass
+    addSurvey(cursor, 1, 1, "survey1", 1667316803)
+    addSurvey(cursor, 2, 1, "survey2", 1667316804)
+    addSurvey(cursor, 3, 2, "survey3", 1667316805)
+    testSurveys(cursor)
+
+def testSurveys(cursor):
+    testgetSurveys(cursor)
+    testaddSurvey(cursor)
+    testUpdateSurveyName(cursor)
+
+def testgetSurveys(cursor):
+    assert getSurveys(cursor, 1)[0]["id"] == 1
+    assert getSurveys(cursor, 1)[0]["name"] == "survey1"
+    assert getSurveys(cursor, 1)[0]["count"] == 0
+    assert getSurveys(cursor, 1)[0]["time"] == 1667316803
+
+    assert getSurveys(cursor, 2)[0]["id"] == 2
+    assert getSurveys(cursor, 2)[0]["name"] == "survey2"
+    assert getSurveys(cursor, 2)[0]["count"] == 0
+    assert getSurveys(cursor, 2)[0]["time"] == 1667316804
+
+    assert getSurveys(cursor, 3)[0]["id"] == 3
+    assert getSurveys(cursor, 3)[0]["name"] == "survey3"
+    assert getSurveys(cursor, 3)[0]["count"] == 0
+    assert getSurveys(cursor, 3)[0]["time"] == 1667316805
+
+def testaddSurvey(cursor):
+    addSurvey(cursor, 4, 2, "survey4", 1667316806)
+    assert getSurveys(cursor, 4)[0]["id"] == 4
+    assert getSurveys(cursor, 4)[0]["name"] == "survey4"
+    assert getSurveys(cursor, 4)[0]["count"] == 0
+    assert getSurveys(cursor, 4)[0]["time"] == 1667316806
+
+def testUpdateSurveyName(cursor):
+    UpdateSurveyName(cursor, 4, "survey40")
+    assert getSurveys(cursor, 4)[0]["name"] == "survey40"
+
+# need to fix
+# def testdeleteSurvey(cursor):
+#     deleteSurvey(cursor, 4)
+#     assert getSurveys(cursor, 4)[0]["name"] == -1
+
 
 
 """
@@ -170,7 +202,18 @@ Adds test questions to the SQL database
 cursor (SQL alchemy cursor): the SQL alchemy cursor pointing to the SQL database
 """
 def populateQuestions(cursor):
-    pass
+    # survey1
+    addQuestion(cursor, 1, 1, "s1q1")
+    addQuestion(cursor, 1, 1, "s1q2")
+    addQuestion(cursor, 1, 0, "s1q3")
+    # survey2
+    addQuestion(cursor, 2, 1, "s2q1")
+    addQuestion(cursor, 2, 0, "s2q2")
+    addQuestion(cursor, 2, 1, "s2q3")
+    # survey3
+    addQuestion(cursor, 3, 0, "s3q1")
+    addQuestion(cursor, 3, 1, "s3q2")
+    addQuestion(cursor, 3, 1, "s3q3")
 
 
 """
