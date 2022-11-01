@@ -300,3 +300,13 @@ def testDataStructure(userID):
 def getUserInfo(userID):
     cursor = engine.connect()
     return jsonify(user.getUserInfo(cursor, userID))
+
+@app.route('/moveQuestion/<questionID>/<index>', methods=['POST'])
+def moveQuestion(cursor, questionID, index):
+    cursor.execute("UPDATE choices SET index = %s WHERE question_id = %s", (index, int(questionID)))
+    return jsonify({'result': 0})
+
+@app.route('/moveChoice/<chocieID>/<index>', methods=['POST'])
+def moveChoice(cursor, choiceID, index):
+    cursor.execute("UPDATE choices SET index = %s WHERE choice_id = %s", (index, int(choiceID)))
+    return jsonify({'result': 0})

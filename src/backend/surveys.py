@@ -170,3 +170,11 @@ def addQuestionResponse(cursor, question_id, response, timeCreated):
 def linkContactList(cursor, surveyID, contactListID):
     cursor.execute("UPDATE surveys SET contact_list_id = '%s' WHERE survey_id = %s", (int(contactListID), int(surveyID)))
     #cursor.execute("UPDATE contact_lists SET survey_id = '%s' WHERE contact_list_id = %s", (int(surveyID), int(contactListID)))
+
+def moveQuestion(cursor, questionID, index):
+    cursor.execute("UPDATE choices SET index = %s WHERE question_id = %s", (index, int(questionID)))
+    return jsonify({'result': 0})
+
+def moveChoice(cursor, choiceID, index):
+    cursor.execute("UPDATE choices SET index = %s WHERE choice_id = %s", (index, int(choiceID)))
+    return jsonify({'result': 0})
