@@ -151,32 +151,32 @@ def getQuestions(surveyID):
     cursor = engine.connect()
     return survey.getQuestions(cursor, surveyID)
 
-@app.route('/addQuestion/<surveyID>/<questionType>/', defaults={'prompt': ''}, methods=['POST'])
-@app.route('/addQuestion/<surveyID>/<questionType>/<prompt>/<index>', methods=['POST'])
-def addQuestion(surveyID, questionType, prompt, index):
+@app.route('/addQuestion/<surveyID>/<questionType>/<idx>', defaults={'prompt': ''}, methods=['POST'])
+@app.route('/addQuestion/<surveyID>/<questionType>/<prompt>/<idx>', methods=['POST'])
+def addQuestion(surveyID, questionType, prompt, idx):
     cursor = engine.connect()
-    return survey.addQuestion(cursor, surveyID, questionType, prompt, index)
+    return survey.addQuestion(cursor, surveyID, questionType, prompt, idx)
 
-@app.route('/addFRQ/<surveyID>', methods=['POST'])
-def addFRQ(surveyID):
+@app.route('/addFRQ/<surveyID>/<idx>', methods=['POST'])
+def addFRQ(surveyID, idx):
     cursor = engine.connect()
-    return survey.addFRQ(cursor, surveyID)
+    return survey.addFRQ(cursor, surveyID, idx)
 
 @app.route('/updateFRQ/<questionID>/', defaults={'prompt': ''}, methods=['PUT'])
-@app.route('/updateFRQ/<questionID>/<prompt>/<index>', methods=['PUT'])
-def updateFRQ(questionID, prompt, index):
+@app.route('/updateFRQ/<questionID>/<prompt>', methods=['PUT'])
+def updateFRQ(questionID, prompt):
     cursor = engine.connect()
-    return survey.updateFRQ(cursor, questionID, prompt, index)
+    return survey.updateFRQ(cursor, questionID, prompt)
 
 @app.route('/deleteFRQ/<questionID>', methods=['DELETE'])
 def deleteFRQ(questionID):
     cursor = engine.connect()
     return survey.deleteFRQ(cursor, questionID)
 
-@app.route('/addMCQ/<surveyID>/<index>', methods=['POST'])
-def addMCQ(surveyID, index):
+@app.route('/addMCQ/<surveyID>/<idx>', methods=['POST'])
+def addMCQ(surveyID, idx):
     cursor = engine.connect()
-    return survey.addMCQ(cursor, surveyID, index)
+    return survey.addMCQ(cursor, surveyID, idx)
 
 @app.route('/addMCQ_M/<surveyID>', methods=['GET'])
 def addMCQ_M(surveyID):
@@ -199,11 +199,11 @@ def getChoices(questionID):
     cursor = engine.connect()
     return survey.getChoices(cursor, questionID)
 
-@app.route('/addChoice/<questionID>/', defaults={'choice': ''}, methods=['POST'])
-@app.route('/addChoice/<questionID>/<choice>/<index>', methods=['POST'])
-def addChoice(questionID, choice, index):
+@app.route('/addChoice/<questionID>/<idx>', defaults={'choice': ''}, methods=['POST'])
+@app.route('/addChoice/<questionID>/<choice>/<idx>', methods=['POST'])
+def addChoice(questionID, choice, idx):
     cursor = engine.connect()
-    return survey.addChoice(cursor, questionID, choice, index)
+    return survey.addChoice(cursor, questionID, choice, idx)
 
 @app.route('/updateChoice/<choiceID>/', defaults={'choice': ''}, methods=['PUT'])
 @app.route('/updateChoice/<choiceID>/<choice>', methods=['PUT'])
@@ -301,12 +301,12 @@ def getUserInfo(userID):
     cursor = engine.connect()
     return jsonify(user.getUserInfo(cursor, userID))
 
-@app.route('/moveQuestion/<questionID>/<index>', methods=['POST'])
-def moveQuestion(cursor, questionID, index):
-    cursor.execute("UPDATE choices SET index = %s WHERE question_id = %s", (index, int(questionID)))
-    return jsonify({'result': 0})
+@app.route('/moveQuestion/<questionID>/<idx>', methods=['PUT'])
+def moveQuestion(questionID, idx):
+    cursor = engine.connect()
+    return survey.moveQuestion(cursor, questionID, idx)
 
-@app.route('/moveChoice/<chocieID>/<index>', methods=['POST'])
-def moveChoice(cursor, choiceID, index):
-    cursor.execute("UPDATE choices SET index = %s WHERE choice_id = %s", (index, int(choiceID)))
-    return jsonify({'result': 0})
+@app.route('/moveChoice/<choiceID>/<idx>', methods=['PUT'])
+def moveChoice(choiceID, idx):
+    cursor = engine.connect()
+    return survey.moveChoice(cursor, choiceID, idx)

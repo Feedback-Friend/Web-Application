@@ -67,7 +67,7 @@ function MC(props) {
     showMessage("Adding Choice...");
 
     const func = async () => {
-      let req = await fetch("/addChoice/" + questions[index].id + "/", requestOptions)
+      let req = await fetch("/addChoice/" + questions[index].id + "/" + questions[index].choices.length, requestOptions)
         .then(response => { return response.json() });
 
       let newArr = [...questions];
