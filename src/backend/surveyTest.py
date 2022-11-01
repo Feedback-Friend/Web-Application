@@ -59,7 +59,7 @@ def addFRQ(cursor, surveyID):
     return questionID
 
 def updateFRQ(cursor, questionID, prompt):
-    cursor.execute("UPDATE questions SET prompt = '%s' WHERE question_id = %s", (int(questionID), prompt))
+    cursor.execute("UPDATE questions SET prompt = %s WHERE question_id = %s", (prompt, int(questionID)))
     return 1
 
 def deleteFRQ(cursor, questionID):
@@ -83,7 +83,7 @@ def addMCQ_M(cursor, surveyID):
     return questionID
 
 def updateMCQ(cursor, questionID, prompt):
-    cursor.execute("UPDATE questions SET prompt = '%s' WHERE question_id = %s", (int(questionID), prompt))
+    cursor.execute("UPDATE questions SET prompt = %s WHERE question_id = %s", (prompt, int(questionID)))
     return 1
 
 def deleteMCQ(cursor, questionID):

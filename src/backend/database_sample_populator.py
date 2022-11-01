@@ -218,7 +218,13 @@ def populateQuestions(cursor):
 
 def testQuestions(cursor):
     testgetQuestions(cursor)
-    testaddQuestion(cursor)
+    testaddFRQ(cursor)
+    testupdateFRQ(cursor)
+    testdeleteFRQ(cursor)
+    testaddMCQ_S(cursor)
+    testaddMCQ_M(cursor)
+    testupdateMCQ(cursor)
+    testdeleteMCQ(cursor)
 
 def testgetQuestions(cursor):
     assert len(getQuestions(cursor, 1)) == 3
@@ -237,10 +243,46 @@ def testgetQuestions(cursor):
     assert getQuestions(cursor, 3)[1]["prompt"] == "s3q2"
     assert getQuestions(cursor, 3)[2]["prompt"] == "s3q3"
 
-def testaddQuestion(cursor):
-    addQuestion(cursor, 1, 0, "s1q4")
-    assert len(getQuestions(cursor, 1)) == 4
-    assert getQuestions(cursor, 1)[3]["prompt"] == "s1q4"
+def testaddFRQ(cursor):
+    addFRQ(cursor, 3) # shouldn't add frq include prompt element??
+    assert len(getQuestions(cursor, 3)) == 4
+
+def testupdateFRQ(cursor):
+    updateFRQ(cursor, 10, "s3frq1")
+    assert getQuestions(cursor, 3)[3]["prompt"] == "s3frq1"
+
+def testdeleteFRQ(cursor):
+    deleteFRQ(cursor, 10)
+    assert len(getQuestions(cursor, 3)) == 3
+    
+def testaddMCQ_S(cursor):
+    addMCQ_S(cursor, 3)
+    assert len(getQuestions(cursor, 3)) == 4
+
+def testaddMCQ_M(cursor):
+    addMCQ_M(cursor, 3)
+    assert len(getQuestions(cursor, 3)) == 5
+
+def testupdateMCQ(cursor):
+    updateMCQ(cursor, 10, "s3q4")
+    updateMCQ(cursor, 11, "s3q5")
+    assert getQuestions(cursor, 3)[3]["prompt"] == "s3q4"
+    assert getQuestions(cursor, 3)[4]["prompt"] == "s3q5"
+
+def testdeleteMCQ(cursor):
+    deleteMCQ(cursor, 10)
+    assert len(getQuestions(cursor, 3)) == 4
+    deleteMCQ(cursor, 11)
+    assert len(getQuestions(cursor, 3)) == 3
+
+
+"""
+Adds test choices to the SQL database
+
+cursor (SQL alchemy cursor): the SQL alchemy cursor pointing to the SQL database
+"""
+def populateChoices(cursor):
+    pass
 
 """
 Adds test responses to the SQL database
