@@ -125,14 +125,14 @@ function MCDialog(props) {
 
     const func = async () => {
       // Add multiple choice question to database
-      let req = await fetch("/addMCQ/" + surveyID, requestOptions)
+      let req = await fetch("/addMCQ/" + surveyID + "/" + questions.length, requestOptions)
         .then(response => { return response.json() });
       const questionID = req.result;
-      for (let choice of choices) {
+      for (let i in choices) {
         // Add choice to database
-        req = await fetch("/addChoice/" + questionID + "/" + choice.choice, requestOptions)
+        req = await fetch("/addChoice/" + questionID + "/" + choices[i].choice + "/" + i, requestOptions)
           .then(response => { return response.json() });
-        choice.id = req.result;
+        choices[i].id = req.result;
       }
 
       const question = {

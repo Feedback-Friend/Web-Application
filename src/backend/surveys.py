@@ -16,7 +16,7 @@ def getSurveys(cursor, userID):
             responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(question[0]))) #get responses to question
             for response in responses:
                 count = count + 1
-        surveys.append({"id": entry[0], "name": entry[3], "count": count, "status": entry[5], "time": entry[4]}) #return survey id, name, and responses
+        surveys.append({"id": entry[0], "name": entry[3], "count": count, "status": entry[4], "time": entry[5]}) #return survey id, name, and responses
     return jsonify(surveys)
 
 def getSurveyResults(cursor, surveyID):
@@ -69,26 +69,26 @@ def deleteSurvey(cursor, surveyID):
     return jsonify({'result': 0})
 
 def getQuestions(cursor, surveyID):
-    table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s ORDER BY index", (str(surveyID)))
+    table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s ORDER BY idx", (str(surveyID)))
     questions = []
     for entry in table:
         questions.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3]}) #return question id and prompt
     return jsonify(questions)
 
-def addQuestion(cursor, surveyID, questionType, prompt, index):
+def addQuestion(cursor, surveyID, questionType, prompt, idx):
     table = cursor.execute("SELECT * FROM questions")
     questionID = 0
     for entry in table:
         questionID = entry[0]+1
-    cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s)", (int(questionID), int(surveyID), int(questionType), prompt, index))
+    cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s, %s)", (int(questionID), int(surveyID), int(questionType), prompt, idx))
     return jsonify({'result': questionID})
 
-def addFRQ(cursor, surveyID, index):
+def addFRQ(cursor, surveyID, idx):
     table = cursor.execute("SELECT * FROM questions")
     questionID = 0
     for entry in table:
         questionID = entry[0]+1
-    cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s, %s)", (int(questionID), int(surveyID), 0, "", index))
+    cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s, %s)", (int(questionID), int(surveyID), 0, "", idx))
     return jsonify({'result': questionID})
 
 def updateFRQ(cursor, questionID, prompt):
@@ -99,12 +99,12 @@ def deleteFRQ(cursor, questionID):
     cursor.execute("DELETE FROM questions WHERE question_id = %s", (int(questionID)))
     return jsonify({'result': 0})
 
-def addMCQ(cursor, surveyID, index):
+def addMCQ(cursor, surveyID, idx):
     table = cursor.execute("SELECT * FROM questions")
     questionID = 0
     for entry in table:
         questionID = entry[0]+1
-    cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s, %s)", (int(questionID), int(surveyID), 1, "", index))
+    cursor.execute("INSERT INTO questions VALUES(%s, %s, %s, %s, %s)", (int(questionID), int(surveyID), 1, "", idx))
     return jsonify({'result': questionID})
 
 def addMCQ_M(cursor, surveyID):
@@ -125,18 +125,18 @@ def deleteMCQ(cursor, questionID):
     return jsonify({'result': 0})
 
 def getChoices(cursor, questionID):
-    table = cursor.execute("SELECT * FROM choices WHERE question_id=%s ORDER BY index", (str(questionID)))
+    table = cursor.execute("SELECT * FROM choices WHERE question_id=%s ORDER BY idx", (str(questionID)))
     choices = []
     for entry in table:
         choices.append({"id": entry[0], "choice": entry[2]}) #return choice id and answer
     return choices
 
-def addChoice(cursor, questionID, choice, index):
+def addChoice(cursor, questionID, choice, idx):
     table = cursor.execute("SELECT * FROM choices")
     choiceID = 0
     for entry in table:
         choiceID = entry[0]+1
-    cursor.execute("INSERT INTO choices VALUES(%s, %s, %s)", (int(choiceID), int(questionID), choice, index))
+    cursor.execute("INSERT INTO choices VALUES(%s, %s, %s, %s)", (int(choiceID), int(questionID), choice, idx))
     return jsonify({'result': choiceID})
 
 def updateChoice(cursor, choiceID, choice):
@@ -148,11 +148,11 @@ def deleteChoice(cursor, choiceID):
     return jsonify({'result': 0})
 
 def getQuestionsAndChoices(cursor, surveyID):
-    table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s ORDER BY index", (str(surveyID)))
+    table = cursor.execute("SELECT * FROM questions WHERE survey_id=%s ORDER BY idx", (str(surveyID)))
     questions = []
     for entry in table:
         choices_ary = []
-        choices = cursor.execute("SELECT * FROM choices WHERE question_id=%s ORDER BY index",(str(entry[0])))
+        choices = cursor.execute("SELECT * FROM choices WHERE question_id=%s ORDER BY idx",(str(entry[0])))
         for choice in choices:
             choices_ary.append({"id": choice[0], "choice": choice[2]}) #return choice id and answer
         questions.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3], 'choices': choices_ary})
@@ -171,10 +171,10 @@ def linkContactList(cursor, surveyID, contactListID):
     cursor.execute("UPDATE surveys SET contact_list_id = '%s' WHERE survey_id = %s", (int(contactListID), int(surveyID)))
     #cursor.execute("UPDATE contact_lists SET survey_id = '%s' WHERE contact_list_id = %s", (int(surveyID), int(contactListID)))
 
-def moveQuestion(cursor, questionID, index):
-    cursor.execute("UPDATE choices SET index = %s WHERE question_id = %s", (index, int(questionID)))
+def moveQuestion(cursor, questionID, idx):
+    cursor.execute("UPDATE questions SET idx = %s WHERE question_id = %s", (idx, int(questionID)))
     return jsonify({'result': 0})
 
-def moveChoice(cursor, choiceID, index):
-    cursor.execute("UPDATE choices SET index = %s WHERE choice_id = %s", (index, int(choiceID)))
+def moveChoice(cursor, choiceID, idx):
+    cursor.execute("UPDATE choices SET idx = %s WHERE choice_id = %s", (idx, int(choiceID)))
     return jsonify({'result': 0})

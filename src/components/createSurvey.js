@@ -101,17 +101,17 @@ function CreateSurvey(props) {
 
     let func = async () => {
       // Add questions
-      for (let question of questions) {
-        let req = await fetch("/addQuestion/" + survey.id + "/" + question.type + "/" + question.prompt, requestOptions)
+      for (let i in questions) {
+        let req = await fetch("/addQuestion/" + survey.id + "/" + questions[i].type + "/" + questions[i].prompt + "/" + i, requestOptions)
           .then(response => { return response.json() });
         const questionID = req.result;
-        question.id = questionID;
+        questions[i].id = questionID;
 
         // If a question has choices (i.e. is a MCQ), add them to the database
-        for (let choice in question.choices) {
-          req = await fetch("/addChoice/" + questionID + "/" + question.choices[choice].choice, requestOptions)
+        for (let j in questions[i].choices) {
+          req = await fetch("/addChoice/" + questionID + "/" + questions[i].choices[j].choice + "/" + j, requestOptions)
             .then(response => { return response.json() });
-          question.choices[choice].id = req.result;
+          questions[i].choices[j].id = req.result;
         }
       }
 
@@ -208,7 +208,7 @@ function CreateSurvey(props) {
     showMessage("Adding Question...");
 
     let func = async () => {
-      let req = await fetch("/addFRQ/" + survey.id, requestOptions)
+      let req = await fetch("/addFRQ/" + survey.id + "/" + questions.length, requestOptions)
         .then(response => { return response.json() });
 
       const question = {
@@ -257,6 +257,7 @@ function CreateSurvey(props) {
     }
   };
 
+  // Moves a list item originally located at startIndex to endIndex, and returns the new list
   const reorder = (list, startIndex, endIndex) => {
     const newArr = Array.from(list);
     const [removed] = newArr.splice(startIndex, 1);
@@ -265,17 +266,55 @@ function CreateSurvey(props) {
     return newArr;
   }
 
+  // Determines what operation should be done upon dropping a draggable question/choice.
   const onDragEnd = (result) => {
     if (!result.destination || result.source.index === result.destination.index) {
+      // No drag occurred, or the question/choice was picked up and dropped in the same location
       return;
     } else if (result.type === "questions") {
+      // Reorder the questions in both the state and the database
       const newQuestions = reorder(questions, result.source.index, result.destination.index);
       setQuestions(newQuestions);
+
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+      };
+
+      showMessage("Reordering...");
+
+      let func = async () => {
+        // Update the indices of the questions in the database. Only questions between the source index and destination index need to be updated
+        for (let i = Math.min(result.source.index, result.destination.index); i <= Math.max(result.source.index, result.destination.index); i++) {
+          let req = await fetch("/moveQuestion/" + newQuestions[i].id + "/" + i, requestOptions)
+            .then(response => { return response.json() });
+        }
+      }
+
+      hideMessage("Done", func, "moveQuestion");
     } else {
+      // Reorder the choices in both the state and the database
       const newChoices = reorder(questions[result.type].choices, result.source.index, result.destination.index);
       let newQuestions = [...questions];
       newQuestions[result.type].choices = newChoices;
       setQuestions(newQuestions);
+
+      const requestOptions = {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+      };
+
+      showMessage("Reordering...");
+
+      let func = async () => {
+        // Update the indices of the choice in the database. Only choices between the source index and destination index need to be updated
+        for (let i = Math.min(result.source.index, result.destination.index); i <= Math.max(result.source.index, result.destination.index); i++) {
+          let req = await fetch("/moveChoice/" + newChoices[i].id + "/" + i, requestOptions)
+            .then(response => { return response.json() });
+        }
+      }
+
+      hideMessage("Done", func, "moveChoice");
     }
   };
 
@@ -392,7 +431,7 @@ function CreateSurvey(props) {
               </Button>
               <Button
                 variant="contained"
-                disabled={isEmpty || update.updating}
+                disabled={isEmpty || update.updating || !contactList}
                 component={Link}
                 to="/"
                 onClick={handleSubmit}
