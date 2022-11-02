@@ -221,6 +221,13 @@ def getContactLists(userID):
     cursor = engine.connect()
     return jsonify(contact.getContactLists(cursor, userID))
 
+"""
+Given a userID and a contact list name in the HTTP request, a new contact
+list is created under the specific user and stored in the database
+
+userID: the user id the new contact list will be under
+contactListName: the name of the contact list
+"""
 @app.route('/addContactList/<userID>/<contactListName>', methods=['GET'])
 def addContactList(userID, contactListName):
     cursor = engine.connect()
@@ -241,6 +248,16 @@ def getContacts(contactListID):
     cursor = engine.connect()
     return jsonify(contact.getContacts(cursor, contactListID))
 
+
+"""
+Given a contact list id and personal information of a contact that is to be added,
+add this contact to the contact list specified by the id.
+
+contactListID: the ID of the contact list the new contact will be added to
+firstName: the first name of the contact
+lastName: the last name of the contact
+emailAddress: the email address of the contact
+"""
 @app.route('/addContact/<contactListID>/<firstName>/<lastName>/<emailAddress>', methods=['GET'])
 def addContact(contactListID, firstName, lastName, emailAddress):
     cursor = engine.connect()
@@ -284,7 +301,7 @@ def addQuestionResponse(question_id, response, timeCreated):
 
 
 """
-This route is intended to test the functionality of the contact lists data structure which should contain
+This route is intended to provide the data structure which should contain
 information about contact lists such as name and id, as well as information on all contacts contained
 within that contact list (so, basically an array of names and email addresses associated with contacts)
 
@@ -294,8 +311,14 @@ the contact list information needs to be extracted from
 @app.route('/getContactInfo/<userID>')
 def testDataStructure(userID):
     cursor = engine.connect()
-    return jsonify(contact.getContactListsAndContacts(cursor, userID))
+    return jsonify(contact.getContactInfoDataStructure(cursor, userID))
 
+
+"""
+This route is intended to get a user's personal information, such as
+first and last name, email, and username/password
+userID: intended to serve as the user ID of the user to get info from
+"""
 @app.route('/getUserInfo/<userID>', methods=['GET'])
 def getUserInfo(userID):
     cursor = engine.connect()

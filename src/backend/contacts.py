@@ -33,6 +33,9 @@ def addContactList(cursor, userID, contactListName):
 def updateContactListName(cursor, contactListID, contactListName):
     cursor.execute("UPDATE contact_lists SET contact_list_name = %s WHERE contact_list_id = %s", (contactListName, int(contactListID)))
 
+"""
+Given a contact list id, deletes all contacts in that contact list and the list itself
+"""
 def deleteContactList(cursor, contactListID):
     cursor.execute("DELETE FROM contacts WHERE contact_list_id = %s", (int(contactListID)))
     cursor.execute("DELETE FROM contact_lists WHERE contact_list_id = %s", (int(contactListID)))
@@ -57,23 +60,36 @@ def addContact(cursor, contactListID, firstName, lastName, emailAddress):
 
     return {'result': "error"}
 
+"""
+Updates the first name of a contact using the contact id provided
+"""
 def updateContactFirstName(cursor, contactID, firstName):
     cursor.execute("UPDATE contacts SET first_name = %s WHERE contact_id = %s", (firstName, int(contactID)))
 
+"""
+Updates the last name of a contact using the contact id provided
+"""
 def updateContactLastName(cursor, contactID, lastName):
     cursor.execute("UPDATE contacts SET last_name = %s WHERE contact_id = %s", (lastName, int(contactID)))
 
+"""
+Updates the email address of a contact using the contact id provided
+"""
 def updateContactEmailAddress(cursor, contactID, emailAddress):
     cursor.execute("UPDATE contacts SET email_address = %s WHERE contact_id = %s", (emailAddress, int(contactID)))
 
-def deleteContact(cursor, contactID):
+
+"""
+deletes a contact from a contact list of the specified id
+"""
+def deleteContact(cursor, contactListID, contactID):
     cursor.execute("DELETE FROM contacts WHERE contact_id = %s", (int(contactID)))
 
 """
 Given a user ID belonging to a user, return all the contact list information associated with the user.
 Each contact list entry will have contact information nested inside in a single JSON response
 """
-def getContactListsAndContacts(cursor, userID):
+def getContactInfoDataStructure(cursor, userID):
     contactListsTable = cursor.execute("SELECT * FROM contact_lists WHERE user_id=%s", (str(userID)))
     contactLists = []
     for contactList in contactListsTable:
