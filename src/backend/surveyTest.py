@@ -123,3 +123,35 @@ def getQuestionsAndChoices(cursor, surveyID):
             choices_ary.append({"id": choice[0], "choice": choice[2]}) #return choice id and answer
         questions.append({'id': entry[0], 'type': entry[2], 'prompt': entry[3], 'choices': choices_ary})
     return questions
+
+def getSurveyResults(cursor, surveyID):
+    question_list = []
+    questions = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (int(surveyID))) #get single question
+    for entry in questions:
+        responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(entry[0]))) #get responses to question
+        response_list = []
+        for response in responses:
+            response_list.append(response)    
+        question_list.append({"id": entry[0], "type": entry[2], "prompt": entry[3], "response_list": [dict(row) for row in response_list]}) #return question id, type, prompt, and responses
+    return question_list
+
+def addQuestionResponse(cursor, question_id, response, timeCreated):
+    table = cursor.execute("SELECT * FROM responses")
+    response_id = 0
+    for entry in table:
+        response_id = entry[0]+1
+    cursor.execute("INSERT INTO responses VALUES(%s, %s, %s, %s)", (int(response_id), int(question_id), response, timeCreated))
+    return 1
+
+def getSurveyNameAndStatus(cursor, surveyID):
+    table = cursor.execute("SELECT survey_name, status from surveys where survey_id = %s", (int(surveyID)))
+    name = ""
+    status = 0
+    for entry in table:
+        name = entry[0]
+        status = entry[1]
+    return jsonify({'name': name, 'status': status})
+
+def publishSurvey(cursor, surveyID):
+    table = cursor.execute("UPDATE surveys SET status = 1 WHERE survey_id = %s", (int(surveyID)))
+    return jsonify({'result': 0})

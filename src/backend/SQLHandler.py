@@ -136,6 +136,7 @@ class SQLHandler:
             response_id INT NOT NULL AUTO_INCREMENT,
             question_id INT,
             reply VARCHAR(500),
+            time BIGINT,
             PRIMARY KEY (response_id)
             );
             """)

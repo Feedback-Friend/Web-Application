@@ -32,7 +32,7 @@ def getContacts(cursor, contactListID):
     contacts = []
     for entry in table:
         contacts.append({"first name": entry[2], "last name": entry[3], "email address": entry[4]})
-    return jsonify(contacts)
+    return contacts
 
 def addContact(cursor, contactListID, firstName, lastName, emailAddress):
     table = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s", int(contactListID))
@@ -43,13 +43,13 @@ def addContact(cursor, contactListID, firstName, lastName, emailAddress):
     return "Success"
 
 def updateContactFirstName(cursor, contactID, firstName):
-    cursor.execute("UPDATE contact_lists SET first_name = '%s' WHERE contact_id = %s", (firstName, int(contactID)))
+    cursor.execute("UPDATE contacts SET first_name = %s WHERE contact_id = %s", (firstName, int(contactID)))
 
 def updateContactLastName(cursor, contactID, lastName):
-    cursor.execute("UPDATE contact_lists SET lasst_name = '%s' WHERE contact_id = %s", (lastName, int(contactID)))
+    cursor.execute("UPDATE contacts SET last_name = %s WHERE contact_id = %s", (lastName, int(contactID)))
 
 def updateContactEmailAddress(cursor, contactID, emailAddress):
-    cursor.execute("UPDATE contact_lists SET email_address = '%s' WHERE contact_id = %s", (emailAddress, int(contactID)))
+    cursor.execute("UPDATE contacts SET email_address = %s WHERE contact_id = %s", (emailAddress, int(contactID)))
 
 def deleteContact(cursor, contactID):
     cursor.execute("DELETE FROM contacts WHERE contact_id = %s", (int(contactID)))

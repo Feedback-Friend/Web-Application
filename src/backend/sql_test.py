@@ -25,4 +25,6 @@ populateContacts(cursor)
 populateSurveys(cursor)
 populateQuestions(cursor)
 populateChoices(cursor)
+populateResponses(cursor)
+print("Tests Passed!")
 pass
