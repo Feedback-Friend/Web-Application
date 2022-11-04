@@ -5,10 +5,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Current File",
+      "name": "Python: SQLTest",
       "type": "python",
       "request": "launch",
       "module": "src.backend.sql_test",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "Python: Email",
+      "type": "python",
+      "request": "launch",
+      "module": "src.backend.emails",
       "console": "integratedTerminal",
       "justMyCode": true
     },

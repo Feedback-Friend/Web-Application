@@ -192,3 +192,33 @@ def passwordStrength(password, length):
             break
 
     return strength
+
+
+"""
+Returns a SQLAlchemy connection engine of either a local SQL database or a cloud instance hosted SQL database
+
+The parameter connection_type supports "local" or "cloud"
+the local connection type connects to the SQL instance on your laptop (make sure you have MySQL installed), and the cloud connection type connects to the SQL instance hosted on the cloud
+"""
+def getEngine(connection_type="cloud"):
+
+    if connection_type == "local":
+        engine = create_engine('mysql+mysqldb://root:password@localhost:3306/feedback_friend')  # establish connection to database
+
+    elif connection_type == "cloud":
+        # connecting to oracle cloud compute unit for database
+        tunnel = sshtunnel.SSHTunnelForwarder(
+            ('150.136.92.200', 22), 
+            ssh_username='opc', 
+            ssh_pkey="ssh-key-2022-09-13.key",
+            remote_bind_address=('localhost', 3306)
+        )
+
+        tunnel.start()
+
+        engine = create_engine('mysql+mysqldb://test:rY!&pa4PsDAq@127.0.0.1:%s/db' % tunnel.local_bind_port)
+
+        return engine
+
+    else:
+        raise Exception("Invalid connection type")
