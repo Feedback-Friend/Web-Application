@@ -41,7 +41,8 @@ const NameRow = (props) => {
           required
           type="text"
           label={"Change First Name"}
-          placeholder={"Enter if applicable"}
+          value={firstName}
+          InputLabelProps={{ shrink: true }}
         />
       </Grid>
       {/* Field to Edit Last Name */}
@@ -50,13 +51,13 @@ const NameRow = (props) => {
           required
           type="text"
           label={"Change Last Name"}
-          placeholder={"Enter if applicable"}
+          value={lastName}
+          InputLabelProps={{ shrink: true }}
         />
       </Grid>
-
-      {/* Button to change first name to name from fields */}
-      <Grid item xs={2}>
-        <Button variant="contained">Change</Button>
+      {/* button to change first/last name */}
+      <Grid item xs={3}>
+        <Button variant="contained">Apply Changes</Button>
       </Grid>
     </>
   );
@@ -83,13 +84,13 @@ const UsernameRow = (props) => {
           required
           type="text"
           label={"Change Username"}
-          placeholder={"Enter if applicable"}
+          value={username}
+          InputLabelProps={{ shrink: true }}
         />
       </Grid>
-
-      {/* Button to change first name to name from field */}
+      {/* Button to change username to username from field */}
       <Grid item xs={3}>
-        <Button variant="contained">Change</Button>
+        <Button variant="contained">Apply Changes</Button>
       </Grid>
     </>
   );
@@ -115,13 +116,14 @@ const EmailRow = (props) => {
           required
           type="text"
           label={"Change Email"}
-          placeholder={"Enter if applicable"}
+          value={email}
+          InputLabelProps={{ shrink: true }}
         />
       </Grid>
 
       {/* Button to change email to email from field */}
       <Grid item xs={3}>
-        <Button variant="contained">Change</Button>
+        <Button variant="contained">Apply Changes</Button>
       </Grid>
     </>
   );
