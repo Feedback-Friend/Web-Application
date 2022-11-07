@@ -1,4 +1,4 @@
-from utility import passwordStrength
+from src.backend.utility import passwordStrength
 
 def test1():
     password = "abcdefghi"
