@@ -15,7 +15,7 @@ def sendEmail(cursor, surveyID, contactListID):
     userPassword = 'adnjniujniczjoye'
 
     surveyName = ""
-    surveyLink = "LINK NEEDED"
+    surveyLink = ("[IP]/#/survey/%s", surveyID)
     userFirst = ""
     userLast = ""
     table = cursor.execute("SELECT * FROM surveys WHERE survey_id=%s", (str(surveyID)))
@@ -61,7 +61,7 @@ def catchupContact(cursor, userID, contactListID, contactFirst, contactLast, con
     table = cursor.execute("SELECT * FROM surveys WHERE user_id=%s AND contact_list_id=%s", (str(userID), str(contactListID)))
     for entry in table:
         surveyName = entry[2]
-        surveyLink = "LINK NEEDED"
+        surveyLink = ("[IP]/#/survey/%s", entry[1])
         with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
             smtp.ehlo()
             smtp.starttls()
