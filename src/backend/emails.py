@@ -2,11 +2,6 @@
 # Import smtplib for our actual email sending function
 import smtplib
  
-# Helper email modules 
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.base import MIMEBase
-from email import encoders
 from src.backend.utility import getEngine
 
 
@@ -15,66 +10,71 @@ Sends an email to the user asking them to take the survey. The survey ID and con
 to ensure that responses are anonymous and linked to the correct survey and contact list
 """
 def sendEmail(cursor, surveyID, contactListID):
-    # sender email address
-    email_user = 'OracleFeedbackFriend@gmail.com'
-    
-    # sender email passowrd for login purposes
-    email_password = 'adnjniujniczjoye'
+
+    userEmail = 'OracleFeedbackFriend@gmail.com'
+    userPassword = 'adnjniujniczjoye'
 
     surveyName = ""
+    surveyLink = ("[IP]/#/survey/%s", surveyID)
+    userFirst = ""
+    userLast = ""
     table = cursor.execute("SELECT * FROM surveys WHERE survey_id=%s", (str(surveyID)))
     for entry in table:
         surveyName=entry[3]
+        user = cursor.execute("SELECT * FROM users WHERE user_id=%s", (str(entry[0])))
+        for row in user:
+            userFirst = row[1]
+            userLast = row[2]
+
 
     table = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s", (str(contactListID)))
     for entry in table:
-        # list of users to whom email is to be sent
-        email_send = ['%s',(entry[4])]
-        subject = ('Feedback Friend Survey: %s',(surveyName))
-        msg = MIMEMultipart()
-        msg['From'] = email_user
-
-        # converting list of recipients into comma separated string
-        x = ", ".join(email_send)
-        msg['To'] = ", ".join(email_send)
-        msg['Subject'] = subject
-        body = ('Hi %s %s, would you please take our survey?',(entry[2],entry[3]))
-        msg.attach(MIMEText(body,'plain'))
-        text = msg.as_string()
-
-        server = smtplib.SMTP('smtp.gmail.com',587)
-        server.starttls()
-        server.login(email_user,email_password)
-        server.sendmail(email_user,email_send,text)
-        server.quit()
+        contactFirst = entry[2]
+        contactLast = entry[3]
+        contactEmail = entry[4]
+        with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.ehlo()
+    
+            smtp.login(userEmail, userPassword)
+    
+            subject = ('Feedback Friend Survey: %s',surveyName)
+            body = ('Hi %s, would you please take our survey?\n\nThank you,\n%s', contactFirst+' '+contactLast, surveyLink, userFirst+' '+userLast)
+    
+            msg = f'Subject: {subject}\n\n{body}'
+    
+            smtp.sendmail(userEmail, contactEmail, msg)
 
 def catchupContact(cursor, userID, contactListID, contactFirst, contactLast, contactEmail):
-    # sender email address
-    email_user = 'OracleFeedbackFriend@gmail.com'
     
-    # sender email passowrd for login purposes
-    email_password = 'adnjniujniczjoye'
+    userEmail = 'OracleFeedbackFriend@gmail.com'
+    userPassword = 'adnjniujniczjoye'
     
+    userFirst = ""
+    userLast = ""
+    user = cursor.execute("SELECT * FROM users WHERE user_id=%s", (str(userID)))
+    for row in user:
+        userFirst = row[1]
+        userLast = row[2]
+
     table = cursor.execute("SELECT * FROM surveys WHERE user_id=%s AND contact_list_id=%s", (str(userID), str(contactListID)))
     for entry in table:
-        # list of users to whom email is to be sent
-        email_send = ['%s',(contactEmail)]
-        subject = ('Feedback Friend Survey: %s',(entry[2]))
-        msg = MIMEMultipart()
-        msg['From'] = email_user
-
-        # converting list of recipients into comma separated string
-        msg['To'] = ", ".join(email_send)
-        msg['Subject'] = subject
-        body = ('Hi %s %s, would you please take our survey?',(contactFirst,contactLast))
-        msg.attach(MIMEText(body,'plain'))
-        text = msg.as_string()
-
-        server = smtplib.SMTP('smtp.gmail.com',587)
-        server.starttls()
-        server.login(email_user,email_password)
-        server.sendmail(email_user,email_send,text)
-        server.quit()
+        surveyName = entry[2]
+        surveyLink = ("[IP]/#/survey/%s", entry[1])
+        with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.ehlo()
+    
+            smtp.login(userEmail, userPassword)
+    
+            subject = ('Feedback Friend Survey: %s',surveyName)
+            body = ('Hi %s, would you please take our survey?\n%s\n\nThank you,\n%s', contactFirst+' '+contactLast, surveyLink, userFirst+' '+userLast)
+    
+            msg = f'Subject: {subject}\n\n{body}'
+    
+            smtp.sendmail(userEmail, contactEmail, msg)
 
 
 engine = getEngine(connection_type='cloud')
