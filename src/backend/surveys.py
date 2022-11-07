@@ -167,9 +167,17 @@ def addQuestionResponse(cursor, question_id, response, timeCreated):
     return jsonify({'result': response})
 
 
+"""
+Given a surveyID and a contactListID, link the corresponding survey to the contact list
+
+return 'success' if successful, 'failure' if not
+"""
 def linkContactList(cursor, surveyID, contactListID):
-    cursor.execute("UPDATE surveys SET contact_list_id = '%s' WHERE survey_id = %s", (int(contactListID), int(surveyID)))
-    #cursor.execute("UPDATE contact_lists SET survey_id = '%s' WHERE contact_list_id = %s", (int(surveyID), int(contactListID)))
+    try:
+        cursor.execute("UPDATE surveys SET contact_list_id = '%s' WHERE survey_id = %s", (int(contactListID), int(surveyID)))
+        return {'message': 'success'}
+    except:
+        return {'message': 'failure'}
 
 def moveQuestion(cursor, questionID, idx):
     cursor.execute("UPDATE questions SET idx = %s WHERE question_id = %s", (idx, int(questionID)))
