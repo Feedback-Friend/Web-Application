@@ -333,3 +333,8 @@ def moveQuestion(questionID, idx):
 def moveChoice(choiceID, idx):
     cursor = engine.connect()
     return survey.moveChoice(cursor, choiceID, idx)
+
+@app.route('/linkContactList/<surveyID>/<contactListID>', methods=['PUT'])
+def linkContactList(surveyID, contactListID):
+    cursor = engine.connect()
+    return jsonify(survey.linkContactList(cursor, surveyID, contactListID))

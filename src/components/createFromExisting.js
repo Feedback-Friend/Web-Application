@@ -42,7 +42,7 @@ function CreateFromExisting(props) {
     // Tells createSurvey that a survey is being created from existing and passes its name and id
     const handleSubmit = () => {
         setFromExisting(true);
-        localStorage.setItem("survey", JSON.stringify(survey));
+        localStorage.setItem("survey", JSON.stringify({ ...survey, contactListID: -1 }));
     }
 
     return (
