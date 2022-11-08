@@ -5,12 +5,15 @@ import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Container from '@mui/material/Container';
 import { Link, TextField } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import NavLogin from './navLogin';
 
 function RegisterPage() {
+    const navigate = useNavigate();
     const [userInfo, setUserInfo] = React.useState({})
+    const [errorVisible, setErrorVisible] = React.useState("none");
     
-    // contains all credentials
+    // backend call to register user
     function submit(e) {
         e.preventDefault(); //prevents default actions of form from happening (reloads page contents)
         /*
@@ -22,6 +25,12 @@ function RegisterPage() {
         fetch("/registerUser/" + userInfo.firstName + "/" + userInfo.lastName + "/" + userInfo.username + "/" + userInfo.password + "/" + userInfo.email)
             .then(response => response.json())
             .then(data => {
+                if(data !== "-1") {
+                    // redirect to login page
+                    navigate("/");
+                } else {
+                    setErrorVisible("initial");
+                }
             }).catch(error => {
                 console.log(error);
             });
@@ -68,6 +77,11 @@ function RegisterPage() {
                 </Grid>
                 {/* login reroute text and button */}
                 <Grid container spacing={2} sx={{ mb: 2 }}>
+                    <Grid item xs={12} textAlign="center" sx={{ mt: 2 }} display={errorVisible}>
+                        <Typography variant="p" style={{color: "red"}}>
+                            Error: User already exists
+                        </Typography>
+                    </Grid>
                     <Grid item xs={12} textAlign="center" sx={{ mt: 2 }}>
                         <Typography variant="p">
                             Already have an account?&nbsp;
