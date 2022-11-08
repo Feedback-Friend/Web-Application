@@ -14,8 +14,7 @@ export const ContextUserID = React.createContext(null);
 // This function sets up the URL routing for the web application
 // Reference: https://reactrouter.com/en/v6.3.0/getting-started/tutorial
 function App() {
-    //const [userID, setUserID] = React.useState(localStorage.getItem("userID"));
-    const [userID, setUserID] = React.useState(1);
+    const [userID, setUserID] = React.useState(localStorage.getItem("userID"));
 
     if (userID === null) {
         // user is not logged in yet
