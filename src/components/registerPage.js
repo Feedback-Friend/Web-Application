@@ -10,7 +10,7 @@ import NavLogin from './navLogin';
 
 function RegisterPage() {
     const navigate = useNavigate();
-    const [userInfo, setUserInfo] = React.useState({})
+    const [userInfo, setUserInfo] = React.useState({});
     const [errorVisible, setErrorVisible] = React.useState("none");
     
     // backend call to register user

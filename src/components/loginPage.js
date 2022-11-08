@@ -8,7 +8,8 @@ import { Link, TextField } from '@mui/material';
 import NavLogin from './navLogin';
 
 function LoginPage(props) {
-    const [credentials, setCredentials] = React.useState({})
+    const [credentials, setCredentials] = React.useState({});
+    const [errorVisible, setErrorVisible] = React.useState("none");
 
     // contains username and password when submitted
     function submit(e) {
@@ -25,7 +26,7 @@ function LoginPage(props) {
                     props.setUserID(data.result);
                     localStorage.setItem("userID", data.result);
                 } else {
-                    alert("Incorrect authentication.");
+                    setErrorVisible("initial");
                 }
             }).catch(error => {
                 console.log(error);
@@ -63,6 +64,11 @@ function LoginPage(props) {
                 </Grid>
                 {/* register reroute text and button */}
                 <Grid container spacing={2} sx={{ mb: 2 }}>
+                    <Grid item xs={12} textAlign="center" sx={{ mt: 2 }} display={errorVisible}>
+                        <Typography variant="p" style={{color: "red"}}>
+                            Error: Incorrect login credentials
+                        </Typography>
+                    </Grid>
                     <Grid item xs={12} textAlign="center" sx={{ mt: 2 }}>
                         <Typography variant="p">
                             New User?&nbsp;
