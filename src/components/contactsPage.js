@@ -6,11 +6,13 @@ import Stack from '@mui/material/Stack';
 import React from 'react';
 import Nav from './nav';
 import { TextField } from '@mui/material';
+import ContactListDialog from './contactListDialog';
 
 function Contacts(props) {
   const [currentCLID, setCurrentCLID] = React.useState(-1); //current contact list ID clicked
   const [contactInfo, setContactInfo] = React.useState(-1); //contact list index
   const [fields, setFields] = React.useState({}); //text fields values
+  const [openDialog, setOpenDialog] = React.useState(false); //used to show/hide dialog box for removing contact list
   const contacts = props.contactList;
 
   // Retrieves contact lists from the database if it is not already obtained
@@ -76,7 +78,20 @@ function Contacts(props) {
               <Stack sx={{ border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2, height: 300, overflow: 'auto'}}>
                 {(contacts.length == 0) && <div>No contact lists exist yet. Please add one below.</div>}
                 {contacts.map((contact, index) => {
-                    return(<Button onClick={populateContactInfo} id={index} variant="outlined" sx={{ my: 0.5 }}>{contact.contact_list_name}</Button>);
+                    return (
+                      <Grid container>
+                        <Grid item xs={10}>
+                          <Button onClick={populateContactInfo} id={index} variant="outlined" sx={{ my: 0.5, width: "100%" }}>
+                            {contact.contact_list_name}
+                          </Button>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <Button onClick={() => setOpenDialog(true)} id={index} variant="outlined" sx={{ mx: 0, my: 0.5, minWidth: 0, width: "100%"}}>
+                            -
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    );
                 })}
               </Stack>
               <Grid item textAlign="center" sx={{ mt: 2 }}>
@@ -115,6 +130,10 @@ function Contacts(props) {
             </Grid>
             }
         </Grid>
+        <ContactListDialog
+          open={openDialog}
+          setOpen={setOpenDialog}
+        />
       </Container>
     </Box>
   );
