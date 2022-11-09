@@ -35,7 +35,7 @@ def addSurvey(cursor, userID, name, timeCreated):
     surveyID = 0
     for entry in table:
         surveyID = entry[0]+1
-    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s, %s, %s)", (int(surveyID), int(userID), "-1", name, "0", timeCreated))
+    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s, %s)", (int(userID), "-1", name, "0", timeCreated))
     return jsonify({'result': surveyID})
 
 def publishSurvey(cursor, surveyID):
