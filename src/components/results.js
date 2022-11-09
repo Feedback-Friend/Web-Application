@@ -12,7 +12,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import BarChart from "react-bar-chart";
 
 function Results(props) {
-  const { surveys, getSurveys, update } = props;
+  const { surveys, getSurveys, update, selectedSurvey, setSelectedSurvey } = props;
 
   const [frq, setFRQ] = React.useState([])
 
@@ -24,12 +24,18 @@ function Results(props) {
       if (!update.updating) {
         getSurveys()
         gottenSurveys.current = true
+        console.log(selectedSurvey);
+        if (selectedSurvey) {
+          fetch_and_set(selectedSurvey);
+        }
       }
     }
   }, [update.updating, getSurveys]);
 
-  const fetch_and_set = async (e) => {
-    const response = await fetch('/getSurveyResults/' + e.target.value.id)
+  const fetch_and_set = async (survey) => {
+    console.log(survey);
+    setSelectedSurvey(survey);
+    const response = await fetch('/getSurveyResults/' + survey.id)
     const survey_info = await response.json()
     setFRQ(survey_info)
   }
@@ -89,8 +95,8 @@ function Results(props) {
               <InputLabel>Survey</InputLabel>
               <Select
                 label="Survey"
-                onChange={(e) => fetch_and_set(e)}
-                defaultValue=""
+                onChange={(e) => fetch_and_set(e.target.value)}
+                value={surveys.find(obj => { return obj.id === selectedSurvey.id })}
               >
                 {surveys.map((survey, index) => {
                   return (

@@ -21,13 +21,16 @@ import { Link } from 'react-router-dom';
 import Nav from './nav';
 
 function Home(props) {
-    const { surveys, getSurveys, update, showMessage, hideMessage, setFromExisting } = props;
+    const { surveys, getSurveys, update, showMessage, hideMessage, setFromExisting, setSelectedSurvey } = props;
 
     // Determines whether the Dialog component for deleting surveys is open or closed
     const [openDelete, setOpenDelete] = useState(false);
 
-    // Contains the name and id of the survey up for deletion
-    const [surveyToDelete, setSurveyToDelete] = useState('');
+    // Determines whether the Dialog component for ending surveys is open or closed
+    const [openEnd, setOpenEnd] = useState(false);
+
+    // Contains the name and id of the survey up for deletion or ending
+    const [survey, setSurvey] = useState('');
 
     // Contains two arrays, one for drafts and one for active surveys
     const [groupedSurveys, setGroupedSurveys] = useState([]);
@@ -57,13 +60,14 @@ function Home(props) {
     }, [setFromExisting, update.updating, getSurveys, groupSurveys]);
 
     // Opens the Dialog component for deleting surveys
-    const handleOpen = (survey) => {
+    const handleOpenDelete = (survey) => {
         setOpenDelete(true);
-        setSurveyToDelete(survey);
+        setSurvey(survey);
     }
 
     // Deletes the survey with the given id
     const deleteSurvey = (id) => {
+        setSelectedSurvey('');
         setOpenDelete(false); // Close the Dialog
         showMessage("Deleting Survey...");
 
@@ -80,8 +84,48 @@ function Home(props) {
             localStorage.setItem("survey", JSON.stringify({ name: "", id: -1, contactListID: -1 }));
         }
 
-        const name = surveyToDelete.name || "Untitled Survey";
+        const name = survey.name || "Untitled Survey";
         hideMessage("Survey '" + name + "' deleted", func, "deleteSurvey" + id);
+    }
+
+    // Opens the Dialog component for ending surveys
+    const handleOpenEnd = (survey) => {
+        setOpenEnd(true);
+        setSurvey(survey);
+    }
+
+    // Updates the time stored in the database after a survey is ended
+    const updateTime = async () => {
+        const time = new Date().getTime();
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+        };
+
+        await fetch("/updateTime/" + survey.id + "/" + time, requestOptions)
+            .then(response => { return response.json() });
+    };
+
+    // Ends the survey with the given id
+    const endSurvey = (id) => {
+        setOpenEnd(false);
+        showMessage("Ending Survey...");
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+        };
+
+        gottenSurveys.current = false;
+
+        let func = async () => {
+            await fetch("/endSurvey/" + id, requestOptions)
+                .then(response => { return response.json() });
+            await updateTime();
+        }
+
+        hideMessage("Survey '" + survey.name + "' ended", func, "endSurvey");
     }
 
     return (
@@ -104,16 +148,20 @@ function Home(props) {
                                         <Card>
                                             <CardHeader
                                                 action={
-                                                    <IconButton onClick={() => handleOpen(survey)} disabled={update.updating}>
+                                                    <IconButton onClick={() => handleOpenDelete(survey)} disabled={update.updating}>
                                                         <Clear />
                                                     </IconButton>
                                                 }
                                                 title={survey.name || "Untitled Survey"}
-                                                subheader={new Date(survey.time).toLocaleString()}
+                                                subheader={"Published " + new Date(survey.time).toLocaleString()}
                                             />
                                             <CardContent>
                                                 <Typography variant="h6">{survey.count} Response{survey.count !== 1 && "s"}</Typography>
                                             </CardContent>
+                                            <CardActions textAlign="left">
+                                                <Button component={Link} to="results" onClick={() => setSelectedSurvey(survey)}>View Results</Button>
+                                                <Button onClick={() => handleOpenEnd(survey)}>End Survey</Button>
+                                            </CardActions>
                                         </Card>
                                     </Grid>
                                 );
@@ -132,15 +180,46 @@ function Home(props) {
                                         <Card>
                                             <CardHeader
                                                 action={
-                                                    <IconButton onClick={() => handleOpen(survey)} disabled={update.updating}>
+                                                    <IconButton onClick={() => handleOpenDelete(survey)} disabled={update.updating}>
                                                         <Clear />
                                                     </IconButton>
                                                 }
                                                 title={survey.name || "Untitled Survey"}
-                                                subheader={new Date(survey.time).toLocaleString()}
+                                                subheader={"Last edited " + new Date(survey.time).toLocaleString()}
                                             />
                                             <CardActions textAlign="left">
                                                 <Button component={Link} to="create" onClick={() => localStorage.setItem("survey", JSON.stringify({ name: survey.name, id: survey.id, contactListID: survey.contactListID }))}>Edit</Button>
+                                            </CardActions>
+                                        </Card>
+                                    </Grid>
+                                );
+                            })}
+                        </>
+                    }
+                    {"2" in groupedSurveys &&
+                        <>
+                            <Grid item xs={12}>
+                                {("0" in groupedSurveys || "1" in groupedSurveys) && <Divider />}
+                                <Typography variant="h3">{groupedSurveys["2"].length} Completed Survey{groupedSurveys["2"].length !== 1 && "s"}</Typography>
+                            </Grid>
+                            {groupedSurveys["2"].map((survey) => {
+                                return (
+                                    <Grid item xs={12} md={6} key={survey.id}>
+                                        <Card>
+                                            <CardHeader
+                                                action={
+                                                    <IconButton onClick={() => handleOpenDelete(survey)} disabled={update.updating}>
+                                                        <Clear />
+                                                    </IconButton>
+                                                }
+                                                title={survey.name || "Untitled Survey"}
+                                                subheader={"Completed " + new Date(survey.time).toLocaleString()}
+                                            />
+                                            <CardContent>
+                                                <Typography variant="h6">{survey.count} Response{survey.count !== 1 && "s"}</Typography>
+                                            </CardContent>
+                                            <CardActions textAlign="left">
+                                                <Button component={Link} to="results" onClick={() => setSelectedSurvey(survey)}>View Results</Button>
                                             </CardActions>
                                         </Card>
                                     </Grid>
@@ -161,11 +240,20 @@ function Home(props) {
             </AppBar>
             <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
                 <DialogTitle>
-                    Are you sure you want to delete {surveyToDelete.name || "Untitled Survey"}?
+                    Are you sure you want to delete {survey.name || "Untitled Survey"}? This can't be undone.
                 </DialogTitle>
                 <DialogContent sx={{ textAlign: "center" }}>
-                    <Button onClick={() => deleteSurvey(surveyToDelete.id)}>Yes</Button>
+                    <Button onClick={() => deleteSurvey(survey.id)}>Yes</Button>
                     <Button onClick={() => setOpenDelete(false)}>No</Button>
+                </DialogContent>
+            </Dialog>
+            <Dialog open={openEnd} onClose={() => setOpenEnd(false)}>
+                <DialogTitle>
+                    Are you sure you want to end {survey.name || "Untitled Survey"}? This can't be undone.
+                </DialogTitle>
+                <DialogContent sx={{ textAlign: "center" }}>
+                    <Button onClick={() => endSurvey(survey.id)}>Yes</Button>
+                    <Button onClick={() => setOpenEnd(false)}>No</Button>
                 </DialogContent>
             </Dialog>
             <Snackbar

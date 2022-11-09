@@ -25,6 +25,9 @@ function Homepage(props) {
   */
   const [update, setUpdate] = useState({ updating: false, message: '' });
 
+  // Contains the current survey displayed on the results page
+  const [selectedSurvey, setSelectedSurvey] = useState('');
+
   // Contains the timer for hiding the update message
   const timerRef = useRef(null);
 
@@ -82,8 +85,8 @@ function Homepage(props) {
       let res = await fetch('/getContactInfo/' + userID, requestOptions)
         .then(response => {
           let jsonResponse = response.json();
-          console.log(jsonResponse); 
-          return jsonResponse; 
+          console.log(jsonResponse);
+          return jsonResponse;
         });
       setContactList(res);
     };
@@ -108,6 +111,7 @@ function Homepage(props) {
               showMessage={showMessage}
               hideMessage={hideMessage}
               setFromExisting={setFromExisting}
+              setSelectedSurvey={setSelectedSurvey}
             />
           }
         />
@@ -156,7 +160,7 @@ function Homepage(props) {
         <Route
           path="/results"
           element={
-            <Results surveys={surveys} getSurveys={getSurveys} update={update} />
+            <Results surveys={surveys} getSurveys={getSurveys} update={update} selectedSurvey={selectedSurvey} setSelectedSurvey={setSelectedSurvey} />
           }
         />
         {/* Profile Page*/}
@@ -170,7 +174,7 @@ function Homepage(props) {
         <Route
           path="contacts"
           element={
-            <Contacts 
+            <Contacts
               userID={userID}
               contactList={contactList}
               setContactList={setContactList}

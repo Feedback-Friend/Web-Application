@@ -54,6 +54,10 @@ def publishSurvey(cursor, surveyID):
     cursor.execute("UPDATE surveys SET status = 1 WHERE survey_id = %s", (int(surveyID)))
     return jsonify({'result': 0})
 
+def endSurvey(cursor, surveyID):
+    cursor.execute("UPDATE surveys SET status = 2 WHERE survey_id = %s", (int(surveyID)))
+    return jsonify({'result': 0})
+
 def getSurveyNameAndStatus(cursor, surveyID):
     table = cursor.execute("SELECT survey_name, status from surveys where survey_id = %s", (int(surveyID)))
     name = ""

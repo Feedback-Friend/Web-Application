@@ -56,7 +56,7 @@ def getUserName(cursor, userID):
 def updateUserName(cursor, userID, userName):
     table = cursor.execute("SELECT * FROM users")
     for entry in table:
-        if entry[3] == userName :
+        if entry[3] == userName:
             return "-1"
     cursor.execute("UPDATE users SET user_name = %s WHERE user_id = %s", (userName, int(userID)))
     return "1"
@@ -65,7 +65,7 @@ def getPassWord(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
         return {"password":entry[4]}
-        
+
 def updatePassWord(cursor, userID, passWord):
     cursor.execute("UPDATE users SET pass_word = %s WHERE user_id = %s", (passWord, int(userID)))
 
