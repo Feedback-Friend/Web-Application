@@ -126,6 +126,11 @@ def publishSurvey(surveyID):
     cursor = engine.connect()
     return survey.publishSurvey(cursor, surveyID)
 
+@app.route('/endSurvey/<surveyID>', methods=['PUT'])
+def endSurvey(surveyID):
+    cursor = engine.connect()
+    return survey.endSurvey(cursor, surveyID)
+
 @app.route('/getSurveyNameAndStatus/<surveyID>', methods=['GET'])
 def getSurveyNameAndStatus(surveyID):
     cursor = engine.connect()

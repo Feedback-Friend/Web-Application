@@ -263,6 +263,7 @@ function CreateSurvey(props) {
           .then(response => { return response.json() });
         await fetch("/sendEmail/" + survey.id + "/" + survey.contactListID)
           .then(response => { return response.json() });
+        await updateTime();
       }
 
       hideMessage("Survey '" + survey.name + "' published", func, "publishSurvey");
