@@ -5,8 +5,8 @@ import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
+import Typography from '@mui/material/Typography';
 import Nav from "./nav";
-import { getListItemAvatarUtilityClass } from "@mui/material";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -16,125 +16,14 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const NameRow = (props) => {
-  const { firstName, lastName } = props;
-
-  return (
-    <>
-      {/* Row Type */}
-      <Grid item xs={2}>
-        <Item>Name: </Item>
-      </Grid>
-
-      {/* Current First Name */}
-      <Grid item xs={2}>
-        <TextField required type="text" disabled value={firstName} />
-      </Grid>
-      {/* Current Last Name */}
-      <Grid item xs={2}>
-        <TextField required type="text" disabled value={lastName} />
-      </Grid>
-
-      {/* Field to Edit First Name */}
-      <Grid item xs={2}>
-        <TextField
-          required
-          type="text"
-          label={"Change First Name"}
-          value={firstName}
-          InputLabelProps={{ shrink: true }}
-        />
-      </Grid>
-      {/* Field to Edit Last Name */}
-      <Grid item xs={2}>
-        <TextField
-          required
-          type="text"
-          label={"Change Last Name"}
-          value={lastName}
-          InputLabelProps={{ shrink: true }}
-        />
-      </Grid>
-      {/* button to change first/last name */}
-      <Grid item xs={3}>
-        <Button variant="contained">Apply Changes</Button>
-      </Grid>
-    </>
-  );
-};
-
-const UsernameRow = (props) => {
-  const { username } = props;
-
-  return (
-    <>
-      {/* Row Type */}
-      <Grid item xs={3}>
-        <Item>Username: </Item>
-      </Grid>
-
-      {/* Current Username */}
-      <Grid item xs={3}>
-        <TextField required type="text" disabled value={username} />
-      </Grid>
-
-      {/* Field to Edit Username */}
-      <Grid item xs={3}>
-        <TextField
-          required
-          type="text"
-          label={"Change Username"}
-          value={username}
-          InputLabelProps={{ shrink: true }}
-        />
-      </Grid>
-      {/* Button to change username to username from field */}
-      <Grid item xs={3}>
-        <Button variant="contained">Apply Changes</Button>
-      </Grid>
-    </>
-  );
-};
-
-const EmailRow = (props) => {
-  const { email } = props;
-  return (
-    <>
-      {/* Row Type */}
-      <Grid item xs={3}>
-        <Item>Email: </Item>
-      </Grid>
-
-      {/* Current Email */}
-      <Grid item xs={3}>
-        <TextField required type="text" disabled value={email} />
-      </Grid>
-
-      {/* Field to Edit Email */}
-      <Grid item xs={3}>
-        <TextField
-          required
-          type="text"
-          label={"Change Email"}
-          value={email}
-          InputLabelProps={{ shrink: true }}
-        />
-      </Grid>
-
-      {/* Button to change email to email from field */}
-      <Grid item xs={3}>
-        <Button variant="contained">Apply Changes</Button>
-      </Grid>
-    </>
-  );
-};
-
 export default function NestedGrid(props) {
   // Contains the current userID
   const [userID, setUserID] = React.useState(localStorage.getItem("userID"));
 
   // Use {} in usestate for json objects
   const [userInfo, setUserInfo] = React.useState({});
+
+  const TOP_MARGIN_CONST = 1;
 
   // This calls our function
   // [] means that it will run once
@@ -156,19 +45,69 @@ export default function NestedGrid(props) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Nav />
-      <Grid container spacing={1}>
-        <Grid container item spacing={3}>
-          <NameRow
-            firstName={userInfo.firstName}
-            lastName={userInfo.lastName}
-          />
+      <Grid container textAlign="center" spacing={2} sx={{ mb: 2 }}>
+        <Grid item xs={0.25} />
+        <Grid item xs={1.25} textAlign="left" sx={{ mt: 2 }}>
+          <TextField required sx={{"fieldset": { border: 'none' }}} type="text" disabled value="Name:" />
+          <TextField required sx={{"fieldset": { border: 'none' }, mt: 0.5}} type="text" disabled value="Email:" />
+          <TextField required sx={{"fieldset": { border: 'none' }, mt: 0.5}} type="text" disabled value="Username:" />
         </Grid>
-        <Grid container item spacing={3}>
-          <UsernameRow username={userInfo.username} />
+        <Grid item xs={2.5} textAlign="left" sx={{ mt: 2 }}>
+          <TextField required sx={{ width: "100%" }} type="text" disabled value={userInfo.firstName + " " + userInfo.lastName} />
+          <TextField required sx={{ width: "100%", mt: TOP_MARGIN_CONST }} type="text" disabled value={userInfo.email} />
+          <TextField required sx={{ width: "100%", mt: TOP_MARGIN_CONST }} type="text" disabled value={userInfo.username} />
         </Grid>
-        <Grid container item spacing={3}>
-          <EmailRow email={userInfo.email} />
+        <Grid item xs={1.5} />
+        <Grid item xs={5} textAlign="left" sx={{ mt: 2 }}>
+          <Grid container>
+            <Grid item xs={6}>
+              <TextField
+                required
+                type="text"
+                label={"Change First Name"}
+                value={userInfo.firstName}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                required
+                sx={{ mt: TOP_MARGIN_CONST }}
+                type="text"
+                label={"Change Email"}
+                value={userInfo.email}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                required
+                sx={{ mt: TOP_MARGIN_CONST }}
+                type="text"
+                label={"Change Username"}
+                value={userInfo.username}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                required
+                type="text"
+                label={"Change Last Name"}
+                value={userInfo.lastName}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField sx={{ mt: TOP_MARGIN_CONST, visibility: "hidden" }} />
+              <TextField
+                required
+                sx={{ mt: TOP_MARGIN_CONST }}
+                type="text"
+                label={"Change Password"}
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+          </Grid>
         </Grid>
+        <Grid item xs={1.5} />
+      </Grid>
+      <Grid item xs={12} textAlign="center" sx={{ mt: 3 }}>
+        <Button variant="contained">Apply Changes</Button>
       </Grid>
     </Box>
   );
