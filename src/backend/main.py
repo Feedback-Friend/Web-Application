@@ -8,6 +8,7 @@ import os
 import src.backend.users as user
 import src.backend.surveys as survey
 import src.backend.contacts as contact
+import src.backend.emails as email
 
 # the build files for react go in the specified static folder, which allows flask to access react's frontend
 app = Flask(__name__, static_folder='../../build/', static_url_path='/')
@@ -338,3 +339,7 @@ def moveChoice(choiceID, idx):
 def linkContactList(surveyID, contactListID):
     cursor = engine.connect()
     return jsonify(survey.linkContactList(cursor, surveyID, contactListID))
+
+def sendEmail(surveyID, contactListID):
+    cursor = engine.connect()
+    email.sendEmail(cursor, surveyID, contactListID)
