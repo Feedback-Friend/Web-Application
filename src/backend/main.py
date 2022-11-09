@@ -345,10 +345,10 @@ def linkContactList(surveyID, contactListID):
     cursor = engine.connect()
     return jsonify(survey.linkContactList(cursor, surveyID, contactListID))
 
-@app.route('/sendEmail/<surveyID>/<contactListID>', methods=['GET'])
-def sendEmail(surveyID, contactListID):
+@app.route('/sendEmail/<surveyID>/<contactListID>/<userID>', methods=['GET'])
+def sendEmail(surveyID, contactListID, userID):
     cursor = engine.connect()
-    return(email.sendEmail(cursor, surveyID, contactListID))
+    return(email.sendEmail(cursor, surveyID, contactListID, userID))
 
 @app.route('/bandaid', methods=['PUT'])
 def bandaid(): #need to run after flush before demo

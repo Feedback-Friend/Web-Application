@@ -9,23 +9,22 @@ from src.backend.utility import getEngine
 Sends an email to the user asking them to take the survey. The survey ID and contact list ID will be linked to the email
 to ensure that responses are anonymous and linked to the correct survey and contact list
 """
-def sendEmail(cursor, surveyID, contactListID):
+def sendEmail(cursor, surveyID, contactListID, userID):
     try:
         userEmail = 'OracleFeedbackFriend@gmail.com'
         userPassword = 'adnjniujniczjoye'
 
         surveyName = ""
         surveyLink = ("[IP]/#/survey/"+surveyID)
-        userFirst = ""
-        userLast = ""
+        userFirst = "not"
+        userLast = "updated"
         table = cursor.execute("SELECT * FROM surveys WHERE survey_id=%s", (str(surveyID)))
         for entry in table:
             surveyName=entry[3]
-            user = cursor.execute("SELECT * FROM users WHERE user_id=%s", (str(entry[0])))
+            user = cursor.execute("SELECT * FROM users WHERE user_id=%s", (str(userID)))
             for row in user:
                 userFirst = row[1]
                 userLast = row[2]
-                break
 
 
         table = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s", (str(contactListID)))
