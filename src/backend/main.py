@@ -340,6 +340,7 @@ def linkContactList(surveyID, contactListID):
     cursor = engine.connect()
     return jsonify(survey.linkContactList(cursor, surveyID, contactListID))
 
+@app.route('/sendEmail/<surveyID>/<contactListID>', methods=['GET'])
 def sendEmail(surveyID, contactListID):
     cursor = engine.connect()
     email.sendEmail(cursor, surveyID, contactListID)
