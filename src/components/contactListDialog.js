@@ -23,9 +23,7 @@ function ContactListDialog(props) {
         .then(response => response.json())
         .then(data => {
           let temp = contactList.filter(contact => contact.contact_list_id !== currentCLID);
-          if(temp.length <= 0) {
-            setContactInfo(-1);
-          }
+          setContactInfo(-1);
           setContactList(temp);
           setOpen(false);
         }).catch(error => {

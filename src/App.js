@@ -30,7 +30,7 @@ function App() {
         },
     });
 
-    if (userID !== null) {
+    if (userID === null) {
         // user is not logged in yet
         return (
             <ThemeProvider theme={theme}>
