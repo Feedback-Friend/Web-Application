@@ -63,7 +63,7 @@ def getFirstName(userID):
 @app.route('/updateFirstName/<userID>/<firstName>', methods=['GET'])
 def updateFirstName(userID, firstName):
     cursor = engine.connect()
-    user.updateFirstName(cursor, userID, firstName)
+    return jsonify(user.updateFirstName(cursor, userID, firstName))
 
 @app.route('/getLastName/<userID>', methods=['GET'])
 def getLastName(userID):
@@ -73,7 +73,7 @@ def getLastName(userID):
 @app.route('/updateLastName/<userID>/<lastName>', methods=['GET'])
 def updateLastName(userID, lastName):
     cursor = engine.connect()
-    user.updateLastName(cursor, userID, lastName)
+    return jsonify(user.updateLastName(cursor, userID, lastName))
 
 @app.route('/getUserName/<userID>', methods=['GET'])
 def getUserName(userID):
@@ -83,7 +83,7 @@ def getUserName(userID):
 @app.route('/updateUserName/<userID>/<userName>', methods=['GET'])
 def updateUserName(userID, userName):
     cursor = engine.connect()
-    user.updateUserName(cursor, userID, userName)
+    return jsonify(user.updateUserName(cursor, userID, userName))
 
 @app.route('/getPassword/<userID>', methods=['GET'])
 def getPassWord(userID):
@@ -93,7 +93,7 @@ def getPassWord(userID):
 @app.route('/updatePassWord/<userID>/<passWord>', methods=['GET'])
 def updatePassWord(userID, passWord):
     cursor = engine.connect()
-    user.updatePassWord(cursor, userID, passWord)
+    return jsonify(user.updatePassWord(cursor, userID, passWord))
 
 @app.route('/getEmailAddress/<userID>', methods=['GET'])
 def getEmailAddress(userID):
@@ -103,7 +103,7 @@ def getEmailAddress(userID):
 @app.route('/updateEmailAddress/<userID>/<emailAddress>', methods=['GET'])
 def updateEmailAddress(userID, emailAddress):
     cursor = engine.connect()
-    user.updateEmailAddress(cursor, userID, emailAddress)
+    return jsonify(user.updateEmailAddress(cursor, userID, emailAddress))
 
 @app.route('/deleteUser/<userID>', methods=['DELETE'])
 def deleteUser(userID):

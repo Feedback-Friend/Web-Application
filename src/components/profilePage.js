@@ -24,6 +24,11 @@ export default function NestedGrid(props) {
   const [userInfo, setUserInfo] = React.useState({});
   const [fields, setFields] = React.useState({}); //text fields values
 
+  const [successEmail, setSuccessEmail] = React.useState(true);
+  const [successUsername, setSuccessUsername] = React.useState(true);
+
+  const [name, setName] = React.useState()
+
   const TOP_MARGIN_CONST = 1;
 
   // update the text boxes' field variables
@@ -34,9 +39,17 @@ export default function NestedGrid(props) {
     setFields(fields => ({...fields, [name]: value}));
   }
 
-  // update fields in db call
+  // submit button click function
   function submit(e) {
-    alert(JSON.stringify(fields));
+    e.preventDefault();
+    // update database then update variables
+    updateDatabase(e).then(() => {
+      retrieveUserInfoFromDB();
+    })
+  }
+
+  // update fields in db call
+  async function updateDatabase(e) {
     e.preventDefault(); //prevents default actions of form from happening (reloads page contents)
     /*
       *
@@ -44,6 +57,7 @@ export default function NestedGrid(props) {
       *
       */
     // update firstname
+    
     if(fields.hasOwnProperty("firstName")) {
       if(fields["firstName"] !== "") {
         fetch("/updateFirstName/" + userID + "/" + fields["firstName"])
@@ -65,23 +79,33 @@ export default function NestedGrid(props) {
           });
       }
     }
-    // update email
+    // update email (can fail)
     if(fields.hasOwnProperty("email")) {
       if(fields["email"] !== "") {
         fetch("/updateEmailAddress/" + userID + "/" + fields["email"])
           .then(response => response.json())
           .then(data => {
+            if(data === "-1") {
+              setSuccessEmail(false);
+            } else {
+              setSuccessEmail(true);
+            }
           }).catch(error => {
               console.log(error);
           });
       }
     }
-    // update username
+    // update username (can fail)
     if(fields.hasOwnProperty("username")) {
       if(fields["username"] !== "") {
-        fetch("/updateUsername/" + userID + "/" + fields["username"])
+        fetch("/updateUserName/" + userID + "/" + fields["username"])
           .then(response => response.json())
           .then(data => {
+            if(data === "-1") {
+              setSuccessUsername(false);
+            } else {
+              setSuccessUsername(true);
+            }
           }).catch(error => {
               console.log(error);
           });
@@ -90,7 +114,7 @@ export default function NestedGrid(props) {
     // update password
     if(fields.hasOwnProperty("password")) {
       if(fields["password"] !== "") {
-        fetch("/updatePassword/" + userID + "/" + fields["password"])
+        fetch("/updatePassWord/" + userID + "/" + fields["password"])
           .then(response => response.json())
           .then(data => {
           }).catch(error => {
@@ -127,18 +151,19 @@ export default function NestedGrid(props) {
           <TextField required sx={{"fieldset": { border: 'none' }}} type="text" disabled value="Name:" />
           <TextField required sx={{"fieldset": { border: 'none' }, mt: 0.5}} type="text" disabled value="Email:" />
           <TextField required sx={{"fieldset": { border: 'none' }, mt: 0.5}} type="text" disabled value="Username:" />
+          <TextField required sx={{"fieldset": { border: 'none' }, mt: 0.5}} type="text" disabled value="Password:" />
         </Grid>
         <Grid item xs={2.5} textAlign="left" sx={{ mt: 2 }}>
           <TextField required sx={{ width: "100%" }} type="text" disabled value={userInfo.firstName + " " + userInfo.lastName} />
           <TextField required sx={{ width: "100%", mt: TOP_MARGIN_CONST }} type="text" disabled value={userInfo.email} />
           <TextField required sx={{ width: "100%", mt: TOP_MARGIN_CONST }} type="text" disabled value={userInfo.username} />
+          <TextField required sx={{ width: "100%", mt: 1 }} type="password" disabled value="password" />
         </Grid>
         <Grid item xs={1.5} />
         <Grid item xs={5} textAlign="left" sx={{ mt: 2 }}>
           <Grid container>
             <Grid item xs={6}>
               <TextField
-                required
                 type="text"
                 label={"Change First Name"}
                 name="firstName"
@@ -146,7 +171,6 @@ export default function NestedGrid(props) {
                 InputLabelProps={{ shrink: true }}
               />
               <TextField
-                required
                 sx={{ mt: TOP_MARGIN_CONST }}
                 type="text"
                 label={"Change Email"}
@@ -155,7 +179,6 @@ export default function NestedGrid(props) {
                 InputLabelProps={{ shrink: true }}
               />
               <TextField
-                required
                 sx={{ mt: TOP_MARGIN_CONST }}
                 type="text"
                 label={"Change Username"}
@@ -164,9 +187,8 @@ export default function NestedGrid(props) {
                 InputLabelProps={{ shrink: true }}
               />
               <TextField
-                required
                 sx={{ mt: TOP_MARGIN_CONST }}
-                type="text"
+                type="password"
                 name="password"
                 onChange={updateFields}
                 label={"Change Password"}
@@ -175,7 +197,6 @@ export default function NestedGrid(props) {
             </Grid>
             <Grid item xs={6}>
               <TextField
-                required
                 type="text"
                 name="lastName"
                 label={"Change Last Name"}
@@ -186,6 +207,23 @@ export default function NestedGrid(props) {
           </Grid>
         </Grid>
         <Grid item xs={1.5} />
+      </Grid>
+      <Grid item xs={12} textAlign="center" sx={{ mt: 3 }}>
+        {/* just username */}
+        {(successEmail == true && successUsername == false) && 
+        <Typography variant="p" style={{color: "red"}}>
+            Error: Username already exists. The other submitted fields have been changed.
+        </Typography>}
+        {/* just email */}
+        {(successEmail == false && successUsername == true) && 
+        <Typography variant="p" style={{color: "red"}}>
+            Error: Email already exists. The other submitted fields have been changed.
+        </Typography>}
+        {/* username and email */}
+        {(successEmail == false && successUsername == false) && 
+        <Typography variant="p" style={{color: "red"}}>
+            Error: Username and Email already exists. The other submitted fields have been changed.
+        </Typography>}
       </Grid>
       <Grid item xs={12} textAlign="center" sx={{ mt: 3 }}>
         <Button variant="contained" onClick={submit}>Apply Changes</Button>
