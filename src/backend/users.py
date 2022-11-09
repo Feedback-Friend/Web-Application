@@ -38,7 +38,7 @@ def getFirstName(cursor, userID):
         return {"first_name":entry[1]}
 
 def updateFirstName(cursor, userID, firstName):
-    cursor.execute("UPDATE users SET first_name = '%s' WHERE user_id = %s", (firstName, int(userID)))
+    cursor.execute("UPDATE users SET first_name = %s WHERE user_id = %s", (firstName, int(userID)))
 
 def getLastName(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
@@ -46,7 +46,7 @@ def getLastName(cursor, userID):
         return {"last_name":entry[2]}
 
 def updateLastName(cursor, userID, lastName):
-    cursor.execute("UPDATE users SET last_name = '%s' WHERE user_id = %s", (lastName, int(userID)))
+    cursor.execute("UPDATE users SET last_name = %s WHERE user_id = %s", (lastName, int(userID)))
 
 def getUserName(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
@@ -58,7 +58,7 @@ def updateUserName(cursor, userID, userName):
     for entry in table:
         if entry[3] == userName :
             return "-1"
-    cursor.execute("UPDATE users SET user_name = '%s' WHERE user_id = %s", (userName, int(userID)))
+    cursor.execute("UPDATE users SET user_name = %s WHERE user_id = %s", (userName, int(userID)))
 
 def getPassWord(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
@@ -66,7 +66,7 @@ def getPassWord(cursor, userID):
         return {"password":entry[4]}
         
 def updatePassWord(cursor, userID, passWord):
-    cursor.execute("UPDATE users SET pass_word = '%s' WHERE user_id = %s", (passWord, int(userID)))
+    cursor.execute("UPDATE users SET pass_word = %s WHERE user_id = %s", (passWord, int(userID)))
 
 def getEmailAddress(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
@@ -78,7 +78,7 @@ def updateEmailAddress(cursor, userID, emailAddress):
     for entry in table:
         if entry[5] == emailAddress:
             return "-1"
-    cursor.execute("UPDATE users SET email_address = '%s' WHERE user_id = %s", (emailAddress, int(userID)))
+    cursor.execute("UPDATE users SET email_address = %s WHERE user_id = %s", (emailAddress, int(userID)))
 
 def deleteUser(cursor, userID):
     # also need to delete all surveys, contacts, and contact lists associated with the user
