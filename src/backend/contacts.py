@@ -104,7 +104,9 @@ def getContactInfoDataStructure(cursor, userID):
     for contactList in contactListsTable:
         contacts_ary = []
         contacts = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s",(str(contactList[0])))
+        size = 0
         for contact in contacts:
             contacts_ary.append({"id": contact[0], "first_name": contact[2], "last_name": contact[3], "email": contact[4]}) #return contact id, first name, last name, email address
-        contactLists.append({'contact_list_id': contactList[0], 'user_id': contactList[1], 'contact_list_name': contactList[2], 'contacts': contacts_ary})
+            size += 1
+        contactLists.append({'contact_list_id': contactList[0], 'user_id': contactList[1], 'contact_list_name': contactList[2], 'contacts': contacts_ary, 'size': size})
     return contactLists

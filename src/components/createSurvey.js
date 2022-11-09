@@ -259,7 +259,9 @@ function CreateSurvey(props) {
       showMessage("Publishing Survey...");
 
       let func = async () => {
-        let req = await fetch("/publishSurvey/" + survey.id, requestOptions)
+        await fetch("/publishSurvey/" + survey.id, requestOptions)
+          .then(response => { return response.json() });
+        await fetch("/sendEmail/" + survey.id + "/" + survey.contactListID)
           .then(response => { return response.json() });
       }
 
