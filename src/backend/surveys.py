@@ -29,6 +29,18 @@ def getSurveyResults(cursor, surveyID):
             response_list.append(response)    
         question_list.append({"id": entry[0], "type": entry[2], "prompt": entry[3], "response_list": [dict(row) for row in response_list]}) #return question id, type, prompt, and responses
     return jsonify(question_list)
+
+def getSurveyResultsFiltered(cursor, surveyID, startTime, endTime):
+    question_list = []
+    questions = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (int(surveyID))) #get single question
+    for entry in questions:
+        responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(entry[0]))) #get responses to question
+        response_list = []
+        for response in responses:
+            if(response[3]>startTime and response[3]<endTime):
+                response_list.append(response[2])    
+        question_list.append({"id": entry[0], "type": entry[2], "prompt": entry[3], "response_list": response_list}) #return question id, type, prompt, and responses
+    return jsonify(question_list)
       
 def addSurvey(cursor, userID, name, timeCreated):
     table = cursor.execute("SELECT * FROM surveys")

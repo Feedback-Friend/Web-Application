@@ -346,6 +346,10 @@ def sendEmail(surveyID, contactListID):
     return(email.sendEmail(cursor, surveyID, contactListID))
 
 @app.route('/bandaid', methods=['PUT'])
-def bandaid():
+def bandaid(): #need to run after flush before demo
     cursor = engine.connect()
     survey.bandaid(cursor)
+
+def getSurveyResultsFiltered(surveyID, startTime, endTime):
+    cursor = engine.connect()
+    survey.getSurveyResultsFiltered(cursor, surveyID, startTime, endTime)
