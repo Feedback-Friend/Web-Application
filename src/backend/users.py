@@ -4,6 +4,10 @@ from flask.json import jsonify
 from src.backend.surveys import *
 from src.backend.contacts import *
 
+
+"""
+Given user information, attempts to register the user and returns the user ID if registration is successful.
+"""
 def registerUser(cursor, firstName, lastName, userName, passWord, emailAddress):
     table = cursor.execute("SELECT * FROM users")
     for entry in table:  # validate if user already exists
@@ -12,10 +16,10 @@ def registerUser(cursor, firstName, lastName, userName, passWord, emailAddress):
     cursor.execute("INSERT INTO users (first_name, last_name, user_name, pass_word, email_address) VALUES(%s, %s, %s, %s, %s)", (firstName, lastName, userName, passWord, emailAddress))
     print("Success")
     # return the userID of the user just registered
-    user_result = cursor.execute("SELECT * FROM users WHERE user_name = %s AND email = %s", (userName, emailAddress))
+    user_result = cursor.execute("SELECT * FROM users WHERE user_name = %s AND email_address = %s", (userName, emailAddress))
     for user in user_result:
         return user[0]
-    return "-1"
+    return "-1"  # should never happen
 
 
 def loginUser(cursor, userName, passWord):

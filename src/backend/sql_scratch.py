@@ -16,4 +16,5 @@ tunnel = sshtunnel.SSHTunnelForwarder(
 tunnel.start()
 
 engine = getEngine()  # default: CLOUD engine
-validateSQL(engine)
+# validateSQL(engine)
+flush_schema(engine)

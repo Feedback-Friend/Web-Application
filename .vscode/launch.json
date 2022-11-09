@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: SQLTest",
+      "name": "Python: SQLScratch",
       "type": "python",
       "request": "launch",
       "module": "src.backend.sql_scratch",
