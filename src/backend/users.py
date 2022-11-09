@@ -59,6 +59,7 @@ def updateUserName(cursor, userID, userName):
         if entry[3] == userName :
             return "-1"
     cursor.execute("UPDATE users SET user_name = %s WHERE user_id = %s", (userName, int(userID)))
+    return "1"
 
 def getPassWord(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
@@ -79,6 +80,7 @@ def updateEmailAddress(cursor, userID, emailAddress):
         if entry[5] == emailAddress:
             return "-1"
     cursor.execute("UPDATE users SET email_address = %s WHERE user_id = %s", (emailAddress, int(userID)))
+    return "1"
 
 def deleteUser(cursor, userID):
     # also need to delete all surveys, contacts, and contact lists associated with the user
