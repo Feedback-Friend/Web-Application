@@ -88,10 +88,10 @@ function Home(props) {
         <Box>
             <Nav />
             <Container>
-                <Grid container spacing={2} textAlign="center">
-                    <Grid item xs={12}>
+                <Grid container spacing={2}>
+                    <Grid item xs={12} textAlign="center">
                         <Typography variant="h2">Welcome Back!</Typography>
-                        {surveys.length === 0 && <Typography variant="h3">Get started by creating a survey.</Typography>}
+                        {surveys.length === 0 && !update.updating && <Typography variant="h3">Get started by creating a survey.</Typography>}
                     </Grid>
                     {"1" in groupedSurveys &&
                         <>

@@ -344,3 +344,8 @@ def linkContactList(surveyID, contactListID):
 def sendEmail(surveyID, contactListID):
     cursor = engine.connect()
     return(email.sendEmail(cursor, surveyID, contactListID))
+
+@app.route('/bandaid', methods=['PUT'])
+def bandaid():
+    cursor = engine.connect()
+    survey.bandaid(cursor)

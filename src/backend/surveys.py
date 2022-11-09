@@ -39,7 +39,7 @@ def addSurvey(cursor, userID, name, timeCreated):
     return jsonify({'result': surveyID})
 
 def publishSurvey(cursor, surveyID):
-    table = cursor.execute("UPDATE surveys SET status = 1 WHERE survey_id = %s", (int(surveyID)))
+    cursor.execute("UPDATE surveys SET status = 1 WHERE survey_id = %s", (int(surveyID)))
     return jsonify({'result': 0})
 
 def getSurveyNameAndStatus(cursor, surveyID):
@@ -186,3 +186,8 @@ def moveQuestion(cursor, questionID, idx):
 def moveChoice(cursor, choiceID, idx):
     cursor.execute("UPDATE choices SET idx = %s WHERE choice_id = %s", (idx, int(choiceID)))
     return jsonify({'result': 0})
+
+def bandaid(cursor):
+    table = cursor.execute("SELECT * FROM surveys")
+    if table.size() == 0:
+        cursor.execute("INSERT INTO surveys VALUES(-1, -1, -1, -1, -1, -1)")
