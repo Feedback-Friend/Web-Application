@@ -58,7 +58,7 @@ def addContact(cursor, contactListID, firstName, lastName, emailAddress):
     for id in contact_ids:
         return {'result': id[0]}
 
-    return {'result': "error"}
+    return {'result': "-1"}
 
 """
 Updates the first name of a contact using the contact id provided

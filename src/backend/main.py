@@ -241,7 +241,7 @@ def updateContactListName(contactListID, contactListName):
 @app.route('/deleteContactLists/<contactListID>', methods=['GET'])
 def deleteContactList(contactListID):
     cursor = engine.connect()
-    contact.deleteContactList(cursor, contactListID)
+    return jsonify(contact.deleteContactList(cursor, contactListID))
 
 @app.route('/getContacts/<contactListID>', methods=['GET'])
 def getContacts(contactListID):

@@ -15,15 +15,23 @@ function Contacts(props) {
   const [openDialog, setOpenDialog] = React.useState(false); //used to show/hide dialog box for removing contact list
   const contacts = props.contactList;
 
+  // contact list 
+
   // Retrieves contact lists from the database if it is not already obtained
   React.useEffect(() => {
     props.getContactLists();
   }, []);
 
+  // on contact list click
   function populateContactInfo(e) {
     setCurrentCLID(contacts[e.target.id].contact_list_id);
     setContactInfo(e.target.id);
-    // setContactInfo(contacts[e.target.id].contacts);
+  }
+
+  // on contact list delete click
+  function deleteContactListDialog(e) {
+    setCurrentCLID(contacts[e.target.id].contact_list_id);
+    setOpenDialog(true);
   }
 
   // update the text boxes' field variables
@@ -42,10 +50,12 @@ function Contacts(props) {
     fetch("/addContactList/" + props.userID + "/" + fields.contactListName)
         .then(response => response.json())
         .then(data => {
-          let temp = [...contacts];
-          let tempVal = {'contact_list_id': data.result, 'user_id': props.userID, 'contact_list_name': fields.contactListName, 'contacts': []};
-          temp.push(tempVal);
-          props.setContactList(temp);
+          if(data.result !== "-1") {
+            let temp = [...contacts];
+            let tempVal = {'contact_list_id': data.result, 'user_id': props.userID, 'contact_list_name': fields.contactListName, 'contacts': []};
+            temp.push(tempVal);
+            props.setContactList(temp);
+          }
         }).catch(error => {
             console.log(error);
         });
@@ -59,11 +69,13 @@ function Contacts(props) {
     fetch("/addContact/" + currentCLID + "/" + fields.firstName + "/" + fields.lastName + "/" + fields.email)
         .then(response => response.json())
         .then(data => {
-          let temp = [...contacts];
-          let temp2 = temp[contactInfo].contacts;
-          let tempVal = {"id": data.result, "first_name": fields.firstName, "last_name": fields.lastName, "email": fields.email};
-          temp2.push(tempVal);
-          props.setContactList(temp);
+          if(data.result !== "-1") {
+            let temp = [...contacts];
+            let temp2 = temp[contactInfo].contacts;
+            let tempVal = {"id": data.result, "first_name": fields.firstName, "last_name": fields.lastName, "email": fields.email};
+            temp2.push(tempVal);
+            props.setContactList(temp);
+          }
         }).catch(error => {
             console.log(error);
         });
@@ -86,7 +98,7 @@ function Contacts(props) {
                           </Button>
                         </Grid>
                         <Grid item xs={2}>
-                          <Button onClick={() => setOpenDialog(true)} id={index} variant="outlined" sx={{ mx: 0, my: 0.5, minWidth: 0, width: "100%"}}>
+                          <Button onClick={deleteContactListDialog} id={index} variant="outlined" sx={{ mx: 0, my: 0.5, minWidth: 0, width: "100%"}}>
                             -
                           </Button>
                         </Grid>
@@ -133,6 +145,10 @@ function Contacts(props) {
         <ContactListDialog
           open={openDialog}
           setOpen={setOpenDialog}
+          currentCLID={currentCLID}
+          contactList={contacts}
+          setContactList={props.setContactList}
+          setContactInfo={setContactInfo}
         />
       </Container>
     </Box>
