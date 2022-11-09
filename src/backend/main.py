@@ -343,4 +343,4 @@ def linkContactList(surveyID, contactListID):
 @app.route('/sendEmail/<surveyID>/<contactListID>', methods=['GET'])
 def sendEmail(surveyID, contactListID):
     cursor = engine.connect()
-    email.sendEmail(cursor, surveyID, contactListID)
+    return(email.sendEmail(cursor, surveyID, contactListID))
