@@ -104,9 +104,11 @@ function TakeSurvey() {
       e.preventDefault();
       setUnanswered(unanswered);
     } else {
+      const time = new Date().getTime();
+
       for (const question of questions) {
         let func = async () => {
-          let req = await fetch("/addQuestionResponse/" + question.id + "/" + question.response, requestOptions)
+          let req = await fetch("/addQuestionResponse/" + question.id + "/" + question.response + "/" + time, requestOptions)
             .then(response => { return response.json() });
           console.log(req)
         }

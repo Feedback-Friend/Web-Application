@@ -24,7 +24,6 @@ function Results(props) {
       if (!update.updating) {
         getSurveys()
         gottenSurveys.current = true
-        console.log(selectedSurvey);
         if (selectedSurvey) {
           fetch_and_set(selectedSurvey);
         }
@@ -33,7 +32,6 @@ function Results(props) {
   }, [update.updating, getSurveys]);
 
   const fetch_and_set = async (survey) => {
-    console.log(survey);
     setSelectedSurvey(survey);
     const response = await fetch('/getSurveyResults/' + survey.id)
     const survey_info = await response.json()

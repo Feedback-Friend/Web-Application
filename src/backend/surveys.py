@@ -176,10 +176,7 @@ def getQuestionsAndChoices(cursor, surveyID):
 
 def addQuestionResponse(cursor, question_id, response, timeCreated):
     table = cursor.execute("SELECT * FROM responses")
-    response_id = 0
-    for entry in table:
-        response_id = entry[0]+1
-    cursor.execute("INSERT INTO responses VALUES(%s, %s, %s)", (int(response_id), int(question_id), response, timeCreated))
+    cursor.execute("INSERT INTO responses (question_id, reply, time_created) VALUES(%s, %s, %s)", (int(question_id), response, timeCreated))
     return jsonify({'result': response})
 
 

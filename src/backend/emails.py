@@ -79,8 +79,3 @@ def catchupContact(cursor, userID, contactListID, contactFirst, contactLast, con
             msg = f'Subject: {subject}\n\n{body}'
     
             smtp.sendmail(userEmail, contactEmail, msg)
-
-
-engine = getEngine(connection_type='cloud')
-cursor = engine.connect()
-sendEmail(cursor, 1, 3)

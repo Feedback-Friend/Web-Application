@@ -261,7 +261,7 @@ function CreateSurvey(props) {
       let func = async () => {
         await fetch("/publishSurvey/" + survey.id, requestOptions)
           .then(response => { return response.json() });
-        await fetch("/sendEmail/" + survey.id + "/" + survey.contactListID)
+        await fetch("/sendEmail/" + survey.id + "/" + survey.contactListID + "/" + userID)
           .then(response => { return response.json() });
         await updateTime();
       }
