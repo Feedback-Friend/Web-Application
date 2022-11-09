@@ -8,7 +8,7 @@
       "name": "Python: SQLTest",
       "type": "python",
       "request": "launch",
-      "module": "src.backend.sql_test",
+      "module": "src.backend.sql_scratch",
       "console": "integratedTerminal",
       "justMyCode": true
     },

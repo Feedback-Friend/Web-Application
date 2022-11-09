@@ -6,14 +6,16 @@ from src.backend.contacts import *
 
 def registerUser(cursor, firstName, lastName, userName, passWord, emailAddress):
     table = cursor.execute("SELECT * FROM users")
-    userID = 0
     for entry in table:  # validate if user already exists
         if entry[3] == userName or entry[5] == emailAddress:
             return "-1"  # no duplicate usernames or emails
-        userID = entry[0]+1
     cursor.execute("INSERT INTO users (first_name, last_name, user_name, pass_word, email_address) VALUES(%s, %s, %s, %s, %s)", (firstName, lastName, userName, passWord, emailAddress))
     print("Success")
-    return str(userID) #used to say userID -1 not sure if that was right
+    # return the userID of the user just registered
+    user_result = cursor.execute("SELECT * FROM users WHERE user_name = %s AND email = %s", (userName, emailAddress))
+    for user in user_result:
+        return user[0]
+    return "-1"
 
 
 def loginUser(cursor, userName, passWord):

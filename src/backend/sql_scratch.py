@@ -1,8 +1,9 @@
 from sqlalchemy import create_engine
 from src.backend.database_sample_populator import *
-from src.backend.utility import flush_schema
+from src.backend.utility import flush_schema, getEngine
 import sshtunnel
 from src.backend.contacts import *
+from src.backend.SQL_validation_tools import validateSQL
 
 # connecting to oracle cloud compute unit for database
 tunnel = sshtunnel.SSHTunnelForwarder(
@@ -14,16 +15,5 @@ tunnel = sshtunnel.SSHTunnelForwarder(
 
 tunnel.start()
 
-engine = create_engine('mysql+mysqldb://test:rY!&pa4PsDAq@127.0.0.1:%s/db' % tunnel.local_bind_port)
-
-# engine = create_engine('mysql+mysqldb://root:password@localhost:3306/feedback_friend')  # establish connection to database
-cursor = engine.connect()
-
-# flush_schema(engine)
-# populateTestUsers(cursor)
-# populateContactLists(cursor)
-# populateContacts(cursor)
-
-# addContactList(cursor, 1, "New CL1")
-addContact(cursor, 0, "Kevin", "Li", "xyz@sadfdsa")
-print("Success")
+engine = getEngine()  # default: CLOUD engine
+validateSQL(engine)

@@ -35,9 +35,18 @@ def updateContactListName(cursor, contactListID, contactListName):
 
 """
 Given a contact list id, deletes all contacts in that contact list and the list itself
+
+this action will remove all contacts associated with the contact list and the contact list itself
+in addition, any survey that was previously linked to the contact list being deleted will be linked to a null contact list (-1)
 """
 def deleteContactList(cursor, contactListID):
+    # all of the surveys that point to this contact list need to be set to reference contact list -1 now
+    cursor.execute("UPDATE surveys SET contact_list_id = -1 WHERE contact_list_id = %s", (int(contactListID)))
+
+    # delete all contacts in the contact list
     cursor.execute("DELETE FROM contacts WHERE contact_list_id = %s", (int(contactListID)))
+
+    # delete the contact list itself
     cursor.execute("DELETE FROM contact_lists WHERE contact_list_id = %s", (int(contactListID)))
 
 def getContacts(cursor, contactListID):
