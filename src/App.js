@@ -29,6 +29,15 @@ function App() {
             },
         },
     });
+    
+    // FRONTEND TESTING, DOES NOT CALL LOGIN PAGE
+    // return (
+    //     <ThemeProvider theme={theme}>
+    //         <ContextUserID.Provider value={[userID, setUserID]} >
+    //             <Homepage userID={userID} />
+    //         </ContextUserID.Provider>
+    //     </ThemeProvider>
+    // )
 
     if (userID === null) {
         // user is not logged in yet

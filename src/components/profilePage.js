@@ -22,8 +22,84 @@ export default function NestedGrid(props) {
 
   // Use {} in usestate for json objects
   const [userInfo, setUserInfo] = React.useState({});
+  const [fields, setFields] = React.useState({}); //text fields values
 
   const TOP_MARGIN_CONST = 1;
+
+  // update the text boxes' field variables
+  function updateFields(event) {
+    var name = event.target.name;
+    var value = event.target.value;
+    // only update value of credential that is actually updated
+    setFields(fields => ({...fields, [name]: value}));
+  }
+
+  // update fields in db call
+  function submit(e) {
+    alert(JSON.stringify(fields));
+    e.preventDefault(); //prevents default actions of form from happening (reloads page contents)
+    /*
+      *
+      * This is where we are calling backend component
+      *
+      */
+    // update firstname
+    if(fields.hasOwnProperty("firstName")) {
+      if(fields["firstName"] !== "") {
+        fetch("/updateFirstName/" + userID + "/" + fields["firstName"])
+          .then(response => response.json())
+          .then(data => {
+          }).catch(error => {
+              console.log(error);
+          });
+      }
+    }
+    // update lastname
+    if(fields.hasOwnProperty("lastName")) {
+      if(fields["firstName"] !== "") {
+        fetch("/updateLastName/" + userID + "/" + fields["lastName"])
+          .then(response => response.json())
+          .then(data => {
+          }).catch(error => {
+              console.log(error);
+          });
+      }
+    }
+    // update email
+    if(fields.hasOwnProperty("email")) {
+      if(fields["email"] !== "") {
+        fetch("/updateEmailAddress/" + userID + "/" + fields["email"])
+          .then(response => response.json())
+          .then(data => {
+          }).catch(error => {
+              console.log(error);
+          });
+      }
+    }
+    // update username
+    if(fields.hasOwnProperty("username")) {
+      if(fields["username"] !== "") {
+        fetch("/updateUsername/" + userID + "/" + fields["username"])
+          .then(response => response.json())
+          .then(data => {
+          }).catch(error => {
+              console.log(error);
+          });
+      }
+    }
+    // update password
+    if(fields.hasOwnProperty("password")) {
+      if(fields["password"] !== "") {
+        fetch("/updatePassword/" + userID + "/" + fields["password"])
+          .then(response => response.json())
+          .then(data => {
+          }).catch(error => {
+              console.log(error);
+          });
+      }
+    }
+  }
+
 
   // This calls our function
   // [] means that it will run once
@@ -65,7 +141,8 @@ export default function NestedGrid(props) {
                 required
                 type="text"
                 label={"Change First Name"}
-                value={userInfo.firstName}
+                name="firstName"
+                onChange={updateFields}
                 InputLabelProps={{ shrink: true }}
               />
               <TextField
@@ -73,7 +150,8 @@ export default function NestedGrid(props) {
                 sx={{ mt: TOP_MARGIN_CONST }}
                 type="text"
                 label={"Change Email"}
-                value={userInfo.email}
+                name="email"
+                onChange={updateFields}
                 InputLabelProps={{ shrink: true }}
               />
               <TextField
@@ -81,7 +159,17 @@ export default function NestedGrid(props) {
                 sx={{ mt: TOP_MARGIN_CONST }}
                 type="text"
                 label={"Change Username"}
-                value={userInfo.username}
+                name="username"
+                onChange={updateFields}
+                InputLabelProps={{ shrink: true }}
+              />
+              <TextField
+                required
+                sx={{ mt: TOP_MARGIN_CONST }}
+                type="text"
+                name="password"
+                onChange={updateFields}
+                label={"Change Password"}
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
@@ -89,16 +177,9 @@ export default function NestedGrid(props) {
               <TextField
                 required
                 type="text"
+                name="lastName"
                 label={"Change Last Name"}
-                value={userInfo.lastName}
-                InputLabelProps={{ shrink: true }}
-              />
-              <TextField sx={{ mt: TOP_MARGIN_CONST, visibility: "hidden" }} />
-              <TextField
-                required
-                sx={{ mt: TOP_MARGIN_CONST }}
-                type="text"
-                label={"Change Password"}
+                onChange={updateFields}
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
@@ -107,7 +188,7 @@ export default function NestedGrid(props) {
         <Grid item xs={1.5} />
       </Grid>
       <Grid item xs={12} textAlign="center" sx={{ mt: 3 }}>
-        <Button variant="contained">Apply Changes</Button>
+        <Button variant="contained" onClick={submit}>Apply Changes</Button>
       </Grid>
     </Box>
   );
