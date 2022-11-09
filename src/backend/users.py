@@ -65,7 +65,7 @@ def getPassWord(cursor, userID):
     user=cursor.execute("SELECT * FROM users WHERE user_id = %s", (int(userID)))
     for entry in user:
         return {"password":entry[4]}
-        
+
 def updatePassWord(cursor, userID, passWord):
     cursor.execute("UPDATE users SET pass_word = %s WHERE user_id = %s", (passWord, int(userID)))
 
