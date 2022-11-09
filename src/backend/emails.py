@@ -15,7 +15,7 @@ def sendEmail(cursor, surveyID, contactListID):
         userPassword = 'adnjniujniczjoye'
 
         surveyName = ""
-        surveyLink = ("[IP]/#/survey/%s", surveyID)
+        surveyLink = ("[IP]/#/survey/"+surveyID)
         userFirst = ""
         userLast = ""
         table = cursor.execute("SELECT * FROM surveys WHERE survey_id=%s", (str(surveyID)))
