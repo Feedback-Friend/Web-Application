@@ -77,7 +77,7 @@ function Home(props) {
         const func = async () => {
             await fetch("/deleteSurvey/" + id, requestOptions)
                 .then(response => { return response.json(); });
-            localStorage.setItem("survey", JSON.stringify({ name: "", id: -1 }));
+            localStorage.setItem("survey", JSON.stringify({ name: "", id: -1, contactListID: -1 }));
         }
 
         const name = surveyToDelete.name || "Untitled Survey";
@@ -140,7 +140,7 @@ function Home(props) {
                                                 subheader={new Date(survey.time).toLocaleString()}
                                             />
                                             <CardActions textAlign="left">
-                                                <Button component={Link} to="create" onClick={() => localStorage.setItem("survey", JSON.stringify({ name: survey.name, id: survey.id }))}>Edit</Button>
+                                                <Button component={Link} to="create" onClick={() => localStorage.setItem("survey", JSON.stringify({ name: survey.name, id: survey.id, contactListID: survey.contactListID }))}>Edit</Button>
                                             </CardActions>
                                         </Card>
                                     </Grid>
@@ -154,7 +154,7 @@ function Home(props) {
             <AppBar position="fixed" sx={{ top: 'auto', bottom: 0 }}>
                 <Toolbar>
                     <Box textAlign="center" sx={{ flexGrow: 1 }}>
-                        <Button variant="inherit" component={Link} to="create" onClick={() => localStorage.setItem("survey", JSON.stringify({ name: "", id: -1 }))}>Create from scratch</Button>
+                        <Button variant="inherit" component={Link} to="create" onClick={() => localStorage.setItem("survey", JSON.stringify({ name: "", id: -1, contactListID: -1 }))}>Create from scratch</Button>
                         <Button variant="inherit" component={Link} to="createFromExisting" disabled={surveys.length === 0}>Create from existing</Button>
                     </Box>
                 </Toolbar>

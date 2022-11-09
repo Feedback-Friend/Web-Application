@@ -16,7 +16,7 @@ def getSurveys(cursor, userID):
             responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(question[0]))) #get responses to question
             for response in responses:
                 count = count + 1
-        surveys.append({"id": entry[0], "name": entry[3], "count": count, "status": entry[4], "time": entry[5]}) #return survey id, name, and responses
+        surveys.append({"id": entry[0], "contactListID": entry[2], "name": entry[3], "count": count, "status": entry[4], "time": entry[5]}) #return survey id, name, and responses
     return jsonify(surveys)
 
 def getSurveyResults(cursor, surveyID):
@@ -174,7 +174,7 @@ return 'success' if successful, 'failure' if not
 """
 def linkContactList(cursor, surveyID, contactListID):
     try:
-        cursor.execute("UPDATE surveys SET contact_list_id = '%s' WHERE survey_id = %s", (int(contactListID), int(surveyID)))
+        cursor.execute("UPDATE surveys SET contact_list_id = %s WHERE survey_id = %s", (int(contactListID), int(surveyID)))
         return {'message': 'success'}
     except:
         return {'message': 'failure'}

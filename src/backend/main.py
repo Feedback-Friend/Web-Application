@@ -241,7 +241,7 @@ def updateContactListName(contactListID, contactListName):
 @app.route('/deleteContactLists/<contactListID>', methods=['GET'])
 def deleteContactList(contactListID):
     cursor = engine.connect()
-    contact.deleteContactList(cursor, contactListID)
+    return jsonify(contact.deleteContactList(cursor, contactListID))
 
 @app.route('/getContacts/<contactListID>', methods=['GET'])
 def getContacts(contactListID):
@@ -333,3 +333,8 @@ def moveQuestion(questionID, idx):
 def moveChoice(choiceID, idx):
     cursor = engine.connect()
     return survey.moveChoice(cursor, choiceID, idx)
+
+@app.route('/linkContactList/<surveyID>/<contactListID>', methods=['PUT'])
+def linkContactList(surveyID, contactListID):
+    cursor = engine.connect()
+    return jsonify(survey.linkContactList(cursor, surveyID, contactListID))

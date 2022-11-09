@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Divider from '@mui/material/Divider';
-import { Link } from 'react-router-dom';
+import { NavLink, Link } from 'react-router-dom';
 import logo from './logo.svg';
 import { ContextUserID } from '../App';
 
@@ -30,6 +30,10 @@ function Nav() {
         localStorage.removeItem("userID");
     }
 
+    let activeStyle = {
+        color: "ghostwhite",
+    };
+
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar component="nav">
@@ -39,10 +43,10 @@ function Nav() {
                         Feedback Friend
                     </Typography>
                     <Box textAlign="right" sx={{ display: { xs: 'none', md: 'flex' } }}>
-                        <Button color="inherit" component={Link} to="/">Home</Button>
-                        <Button color="inherit" component={Link} to="/myProfile">Profile</Button>
-                        <Button color="inherit" component={Link} to="/contacts">Contacts</Button>
-                        <Button color="inherit" component={Link} to="/results">Results</Button>
+                        <Button color="inherit" component={NavLink} to="/" end style={({ isActive }) => isActive ? activeStyle : undefined}>Home</Button>
+                        <Button color="inherit" component={NavLink} to="/myProfile" style={({ isActive }) => isActive ? activeStyle : undefined}>Profile</Button>
+                        <Button color="inherit" component={NavLink} to="/contacts" style={({ isActive }) => isActive ? activeStyle : undefined}>Contacts</Button>
+                        <Button color="inherit" component={NavLink} to="/results" style={({ isActive }) => isActive ? activeStyle : undefined}>Results</Button>
                         <Button color="inherit" variant="outlined" onClick={logOut}>Log out</Button>
                     </Box>
                     <Box sx={{ display: { xs: 'flex', md: 'none' } }}>

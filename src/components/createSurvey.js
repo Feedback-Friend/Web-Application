@@ -32,9 +32,6 @@ function CreateSurvey(props) {
   // Contains the names and ids of contact lists
   const [contactLists, setContactLists] = useState([]);
 
-  // Contains the name and id of the selected contact list
-  const [contactList, setContactList] = useState("");
-
   // On survey submission, determines whether errors should be displayed (if there are any empty fields)
   const [empty, setEmpty] = useState(false);
 
@@ -83,8 +80,8 @@ function CreateSurvey(props) {
       let req = await fetch("/addSurvey/" + userID + "/" + survey.name + "/" + timeCreated, requestOptions)
         .then(response => { return response.json() });
 
-      localStorage.setItem("survey", JSON.stringify({ name: survey.name, id: req.result }));
-      setSurvey({ name: survey.name, id: req.result });
+      localStorage.setItem("survey", JSON.stringify({ name: survey.name, id: req.result, contactListID: -1 }));
+      setSurvey({ name: survey.name, id: req.result, contactListID: -1 });
     }
 
     hideMessage("Done", func, "addSurvey");
@@ -133,6 +130,20 @@ function CreateSurvey(props) {
     setContactLists(contactLists);
   }, [userID]);
 
+  // Links the selected contact list to the survey
+  const linkContactList = async (e) => {
+    const requestOptions = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+    };
+
+    await fetch("/linkContactList/" + survey.id + "/" + e.target.value.id, requestOptions)
+      .then(response => { return response.json(); });
+
+    localStorage.setItem("survey", JSON.stringify({ name: survey.name, id: survey.id, contactListID: e.target.value.id }));
+    setSurvey({ name: survey.name, id: survey.id, contactListID: e.target.value.id });
+  }
+
   // Creates new surveys (from scratch or from existing) and gets questions from existing surveys (creation from existing or editing draft)
   useEffect(() => {
     // Only calls createFromExisting if the boolean 'fromExisting' is true and there are questions to add
@@ -180,8 +191,8 @@ function CreateSurvey(props) {
 
   // Updates the survey name in both the survey state and the database
   const updateSurveyName = (e) => {
-    localStorage.setItem("survey", JSON.stringify({ name: e.target.value, id: survey.id }));
-    setSurvey({ name: e.target.value, id: survey.id });
+    localStorage.setItem("survey", JSON.stringify({ name: e.target.value, id: survey.id, contactListID: survey.contactListID }));
+    setSurvey({ name: e.target.value, id: survey.id, contactListID: survey.contactListID });
 
     const requestOptions = {
       method: 'PUT',
@@ -253,7 +264,7 @@ function CreateSurvey(props) {
       }
 
       hideMessage("Survey '" + survey.name + "' published", func, "publishSurvey");
-      localStorage.setItem("survey", JSON.stringify({ name: "", id: -1 }));
+      localStorage.setItem("survey", JSON.stringify({ name: "", id: -1, contactListID: -1 }));
     }
   };
 
@@ -411,8 +422,8 @@ function CreateSurvey(props) {
                   <InputLabel>Contact List</InputLabel>
                   <Select
                     label="Contact List"
-                    defaultValue=""
-                    onChange={(e) => setContactList(e.target.value)}
+                    value={contactLists.find(obj => { return obj.id === survey.contactListID })}
+                    onChange={linkContactList}
                   >
                     {contactLists.map((contactList, index) => {
                       return (
@@ -431,7 +442,7 @@ function CreateSurvey(props) {
               </Button>
               <Button
                 variant="contained"
-                disabled={isEmpty || update.updating || !contactList}
+                disabled={isEmpty || update.updating || survey.contactListID === -1}
                 component={Link}
                 to="/"
                 onClick={handleSubmit}
