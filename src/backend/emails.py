@@ -25,6 +25,7 @@ def sendEmail(cursor, surveyID, contactListID):
             for row in user:
                 userFirst = row[1]
                 userLast = row[2]
+                break
 
 
         table = cursor.execute("SELECT * FROM contacts WHERE contact_list_id=%s", (str(contactListID)))
