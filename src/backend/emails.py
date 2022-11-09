@@ -40,7 +40,7 @@ def sendEmail(cursor, surveyID, contactListID):
                 smtp.login(userEmail, userPassword)
         
                 subject = ('Feedback Friend Survey: %s',surveyName)
-                body = ('Hi %s, would you please take our survey?\n\nThank you,\n%s', contactFirst+' '+contactLast, surveyLink, userFirst+' '+userLast)
+                body = ('Hi %s, would you please take our survey?\n\nThank you,\n%s', (contactFirst+' '+contactLast, surveyLink, userFirst+' '+userLast))
         
                 msg = f'Subject: {subject}\n\n{body}'
         
