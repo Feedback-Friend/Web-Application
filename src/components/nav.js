@@ -31,7 +31,8 @@ function Nav() {
     }
 
     let activeStyle = {
-        color: "ghostwhite",
+        color: 'ghostwhite',
+        textShadow: '-1px -1px 1px black',
     };
 
     return (
@@ -47,7 +48,7 @@ function Nav() {
                         <Button color="inherit" component={NavLink} to="/myProfile" style={({ isActive }) => isActive ? activeStyle : undefined}>Profile</Button>
                         <Button color="inherit" component={NavLink} to="/contacts" style={({ isActive }) => isActive ? activeStyle : undefined}>Contacts</Button>
                         <Button color="inherit" component={NavLink} to="/results" style={({ isActive }) => isActive ? activeStyle : undefined}>Results</Button>
-                        <Button color="inherit" variant="outlined" onClick={logOut}>Log out</Button>
+                        <Button color="inherit" onClick={logOut}>Log out</Button>
                     </Box>
                     <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
                         <IconButton

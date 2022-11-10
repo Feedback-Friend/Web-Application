@@ -6,7 +6,6 @@ import Homepage from './Homepage'
 import TakeSurvey from './components/takeSurvey'
 import EndPage from './components/endPage'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
-import { amber } from '@mui/material/colors';
 
 
 // allow userID to be "global" to make it easy to log out or access mysql info at any point
@@ -20,7 +19,9 @@ function App() {
 
     const theme = createTheme({
         palette: {
-            primary: amber,
+            primary: {
+                main: '#cc5500',
+            },
         },
         typography: {
             allVariants: {
@@ -29,7 +30,7 @@ function App() {
             },
         },
     });
-    
+
     // FRONTEND TESTING, DOES NOT CALL LOGIN PAGE
     // return (
     //     <ThemeProvider theme={theme}>

@@ -14,6 +14,7 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
+import Paper from '@mui/material/Paper';
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Nav from './nav';
 import PreviewDialog from './previewDialog';
@@ -340,7 +341,7 @@ function CreateSurvey(props) {
           <DragDropContext onDragEnd={onDragEnd}>
             <Droppable droppableId="questions" type="questions">
               {(provided) => (
-                <Grid item xs={6} sm={6} md={8} lg={10} {...provided.droppableProps} ref={provided.innerRef}>
+                <Grid item xs={6} sm={6} md={9} {...provided.droppableProps} ref={provided.innerRef}>
                   {
                     questions.map((question, index) => (
                       <Draggable key={question.id} draggableId={"question" + question.id} index={index} isDragDisabled={update.updating}>
@@ -392,67 +393,69 @@ function CreateSurvey(props) {
               )}
             </Droppable>
           </DragDropContext>
-          <Grid item xs={6} sm={6} md={4} lg={2}>
-            <Stack textAlign="center" sx={{ position: "sticky", top: { xs: 75, sm: 85, md: 90, lg: 90, xl: 95 }, border: "solid 1px black", backgroundColor: "ghostwhite", p: 2, mt: 2 }}>
-              <TextField
-                autoFocus
-                error={!survey.name && empty}
-                label="Survey Name"
-                variant="outlined"
-                onChange={updateSurveyName}
-                value={survey.name}
-                inputProps={{ maxLength: 50 }}
-                disabled={!hasUpdatedQuestions.current || !hasUpdatedSurvey.current}
-              />
-              <Button
-                variant="contained"
-                onClick={addFRQ} sx={{ my: 2 }}
-                disabled={update.updating}
-              >
-                + FRQ
-              </Button>
-              <Button
-                variant="contained"
-                onClick={() => setOpenMC(true)} sx={{ mb: 2 }}
-                disabled={update.updating}
-              >
-                + MC
-              </Button>
-              {contactLists.length === 0 ?
-                <Button variant="contained" sx={{ mb: 2 }} component={Link} to="/contacts">Create a Contact List</Button>
-                :
-                <FormControl fullWidth sx={{ mb: 2 }}>
-                  <InputLabel>Contact List</InputLabel>
-                  <Select
-                    label="Contact List"
-                    value={contactLists.find(obj => { return obj.id === survey.contactListID })}
-                    onChange={linkContactList}
-                  >
-                    {contactLists.map((contactList, index) => {
-                      return (
-                        <MenuItem value={contactList} key={contactList.id}>{contactList.name}</MenuItem>
-                      );
-                    })}
-                  </Select>
-                </FormControl>
-              }
-              <Button
-                variant="contained"
-                disabled={isEmpty || update.updating}
-                onClick={() => setOpenPreview(true)} sx={{ mb: 2 }}
-              >
-                Preview
-              </Button>
-              <Button
-                variant="contained"
-                disabled={isEmpty || update.updating || survey.contactListID === -1}
-                component={Link}
-                to="/"
-                onClick={handleSubmit}
-              >
-                Publish
-              </Button>
-            </Stack>
+          <Grid item xs={6} sm={6} md={3}>
+            <Paper>
+              <Stack textAlign="center" sx={{ position: "sticky", top: { xs: 75, sm: 85, md: 90, lg: 90, xl: 95 }, p: 2, mt: 2 }}>
+                <TextField
+                  autoFocus
+                  error={!survey.name && empty}
+                  label="Survey Name"
+                  variant="outlined"
+                  onChange={updateSurveyName}
+                  value={survey.name}
+                  inputProps={{ maxLength: 50 }}
+                  disabled={!hasUpdatedQuestions.current || !hasUpdatedSurvey.current}
+                />
+                <Button
+                  variant="contained"
+                  onClick={addFRQ} sx={{ my: 2 }}
+                  disabled={update.updating}
+                >
+                  + FRQ
+                </Button>
+                <Button
+                  variant="contained"
+                  onClick={() => setOpenMC(true)} sx={{ mb: 2 }}
+                  disabled={update.updating}
+                >
+                  + MC
+                </Button>
+                {contactLists.length === 0 ?
+                  <Button variant="contained" sx={{ mb: 2 }} component={Link} to="/contacts">Create a Contact List</Button>
+                  :
+                  <FormControl fullWidth sx={{ mb: 2 }}>
+                    <InputLabel>Contact List</InputLabel>
+                    <Select
+                      label="Contact List"
+                      value={contactLists.find(obj => { return obj.id === survey.contactListID })}
+                      onChange={linkContactList}
+                    >
+                      {contactLists.map((contactList, index) => {
+                        return (
+                          <MenuItem value={contactList} key={contactList.id}>{contactList.name}</MenuItem>
+                        );
+                      })}
+                    </Select>
+                  </FormControl>
+                }
+                <Button
+                  variant="contained"
+                  disabled={isEmpty || update.updating}
+                  onClick={() => setOpenPreview(true)} sx={{ mb: 2 }}
+                >
+                  Preview
+                </Button>
+                <Button
+                  variant="contained"
+                  disabled={isEmpty || update.updating || survey.contactListID === -1}
+                  component={Link}
+                  to="/"
+                  onClick={handleSubmit}
+                >
+                  Publish
+                </Button>
+              </Stack>
+            </Paper>
           </Grid>
         </Grid>
         <MCDialog
@@ -476,7 +479,7 @@ function CreateSurvey(props) {
           message={update.message}
         />
       </Container>
-    </Box>
+    </Box >
   );
 }
 
