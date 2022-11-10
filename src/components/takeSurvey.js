@@ -47,7 +47,9 @@ function TakeSurvey() {
     let req = await fetch("/getSurveyNameAndStatus/" + id, requestOptions)
       .then(response => { return response.json(); });
     if (req.status === 0) {
-      setSurvey({ id: -1, name: "Sorry, the survey you're trying to access doesn't exist" });
+      setSurvey({ id: -1, name: "Sorry, the survey you're trying to access doesn't exist." });
+    } else if (req.status === 2) {
+      setSurvey({ id: -1, name: "Sorry, this survey has ended." });
     } else {
       setSurvey({ id: id, name: req.name });
     }
