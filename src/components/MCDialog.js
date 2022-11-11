@@ -249,7 +249,7 @@ function MCDialog(props) {
               </Button>
             </Box>
           }
-          <Button variant="contained" onClick={addSuggestion} sx={{ mt: 4 }}>Add suggestion</Button>
+          {/*<Button variant="contained" onClick={addSuggestion} sx={{ mt: 4 }}>Add suggestion</Button>*/}
         </Stack>
       </DialogContent>
     </Dialog>
