@@ -44,11 +44,10 @@ def getSurveyResultsFiltered(cursor, surveyID, startTime, endTime):
       
 def addSurvey(cursor, userID, name, timeCreated):
     table = cursor.execute("SELECT * FROM surveys")
-    surveyID = 0
-    for entry in table:
-        surveyID = entry[0]+1
-    cursor.execute("INSERT INTO surveys VALUES(%s, %s, %s, %s, %s, %s)", (int(surveyID), int(userID), "-1", name, "0", timeCreated))
-    return jsonify({'result': surveyID})
+    cursor.execute("INSERT INTO surveys (user_id, contact_list_id, survey_name, status, time_created) VALUES(%s, %s, %s, %s, %s)", (int(userID), "-1", name, "0", timeCreated))
+    survey_result = cursor.execute("SELECT * FROM surveys WHERE user_id = %s AND time_created = %s", (int(userID), timeCreated))
+    for survey in survey_result:
+        return jsonify({'result': survey[0]})
 
 def publishSurvey(cursor, surveyID):
     cursor.execute("UPDATE surveys SET status = 1 WHERE survey_id = %s", (int(surveyID)))
