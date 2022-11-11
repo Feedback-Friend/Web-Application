@@ -100,7 +100,7 @@ function CreateSurvey(props) {
     let func = async () => {
       // Add questions
       for (let i in questions) {
-        let req = await fetch("/addQuestion/" + survey.id + "/" + questions[i].type + "/" + questions[i].prompt + "/" + i, requestOptions)
+        let req = await fetch("/addQuestion/" + survey.id + "/" + questions[i].type + "/" + questions[i].prompt.replace('?', "%3f") + "/" + i, requestOptions)
           .then(response => { return response.json() });
         const questionID = req.result;
         questions[i].id = questionID;

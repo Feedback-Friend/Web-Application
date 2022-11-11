@@ -23,7 +23,7 @@ function FRQ(props) {
     showMessage("Autosaving...");
 
     const func = async () => {
-      await fetch("/updateFRQ/" + questions[index].id + "/" + e.target.value.trim(), requestOptions)
+      await fetch("/updateFRQ/" + questions[index].id + "/" + e.target.value.trim().replace('?', "%3f"), requestOptions)
         .then(response => { return response.json() });
       await updateTime();
     }
