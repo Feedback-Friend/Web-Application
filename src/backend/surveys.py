@@ -204,3 +204,15 @@ def bandaid(cursor):
     table = cursor.execute("SELECT * FROM surveys")
     if table.size() == 0:
         cursor.execute("INSERT INTO surveys VALUES(-1, -1, -1, -1, -1, -1)")
+
+def checkEmail(cursor, surveyID, email):
+    result = "failure"
+    contactListID = -1
+    table = cursor.execute("SELECT contact_list_id from surveys WHERE survey_id=%s", str(surveyID))
+    for entry in table:
+        contactListID = entry[0]
+    table = cursor.execute("SELECT email_address from contacts WHERE contact_list_id=%s", str(contactListID))
+    for entry in table:
+        if entry[0] == email:
+            result = "success"
+    return jsonify({'result': result})

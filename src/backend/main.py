@@ -115,7 +115,7 @@ def getSurveys(userID):
     cursor = engine.connect()
     return survey.getSurveys(cursor, userID)
     
-@app.route('/addSurvey/<userID>/<timeCreated>/', defaults={'name': ''}, methods=['POST'])
+@app.route('/addSurvey/<userID>/<timeCreated>', defaults={'name': ''}, methods=['POST'])
 @app.route('/addSurvey/<userID>/<name>/<timeCreated>', methods=['POST'])
 def addSurvey(userID, name, timeCreated):
     cursor = engine.connect()
@@ -358,3 +358,8 @@ def bandaid(): #need to run after flush before demo
 def getSurveyResultsFiltered(surveyID, startTime, endTime):
     cursor = engine.connect()
     survey.getSurveyResultsFiltered(cursor, surveyID, startTime, endTime)
+
+@app.route('/checkEmail/<surveyID>/<email>', methods=['GET'])
+def checkEmail(surveyID, email):
+    cursor = engine.connect()
+    return survey.checkEmail(cursor, surveyID, email)

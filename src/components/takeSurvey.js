@@ -70,7 +70,9 @@ function TakeSurvey() {
         setUnanswered(false);
 
         /* TODO: check if email is in contact list and hasn't taken survey yet */
-        if (true) {
+        let req = await fetch("/checkEmail/" + id + "/" + email)
+          .then(response => { return response.json(); });
+        if (req.result === "success") {
           setInvalid(false);
 
           // Retrieve survey questions
