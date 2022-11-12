@@ -8,23 +8,24 @@ import Stack from '@mui/material/Stack';
 import React from 'react';
 
 // ALL of this was derived from MCDialog
-function ContactListDialog(props) {
-  const { open, setOpen, currentCLID, contactList, setContactList, setContactListIndex } = props;
+function ContactDeleteDialog(props) {
+  const { open, setOpen, currentCLID, currentContactID, contactList, setContactList, contactListIndex } = props;
 
-  // contains username and password when submitted
-  function deleteContactList(e) {
+  // backend function for deleting contacts
+  function deleteContact(e) {
     e.preventDefault(); //prevents default actions of form from happening (reloads page contents)
     /*
     *
     * This is where we are calling backend component to register user.
     *
     */
-    fetch("/deleteContactLists/" + currentCLID)
+    fetch("/deleteContact/" + currentContactID)
         .then(response => response.json())
         .then(data => {
-          let temp = contactList.filter(contact => contact.contact_list_id !== currentCLID);
-          setContactListIndex(-1);
-          setContactList(temp);
+          let temp1 = [...contactList];
+          let temp2 = contactList[contactListIndex].contacts.filter(contact => contact.id !== currentContactID);
+          temp1[contactListIndex].contacts = temp2;
+          setContactList(temp1);
           setOpen(false);
         }).catch(error => {
             console.log(error);
@@ -33,16 +34,16 @@ function ContactListDialog(props) {
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)}>
-      <DialogTitle>Contact List Deletion</DialogTitle>
+      <DialogTitle>Contact Deletion</DialogTitle>
       <DialogContent>
         <DialogContentText>
-          Are you sure you want to delete this contact list? Once it has been deleted, it cannot be recovered!
+          Are you sure you want to delete this contact from your contact list? Once it has been deleted, it cannot be recovered!
         </DialogContentText>
         <Grid container>
           <Grid item xs={3} />
           <Grid item xs={6}>
             <Stack>
-              <Button variant="contained" color="error" onClick={deleteContactList} sx={{ m: 2 }}>Yes</Button>
+              <Button variant="contained" color="error" onClick={deleteContact} sx={{ m: 2 }}>Yes</Button>
               <Button variant="outlined" onClick={() => setOpen(false)} sx={{ m: 2, mt: 0.5 }}>No</Button>
             </Stack>
           </Grid>
@@ -53,4 +54,4 @@ function ContactListDialog(props) {
   );
 }
 
-export default ContactListDialog;
+export default ContactDeleteDialog;

@@ -91,7 +91,7 @@ def updateContactEmailAddress(cursor, contactID, emailAddress):
 """
 deletes a contact from a contact list of the specified id
 """
-def deleteContact(cursor, contactListID, contactID):
+def deleteContact(cursor, contactID):
     cursor.execute("DELETE FROM contacts WHERE contact_id = %s", (int(contactID)))
 
 """

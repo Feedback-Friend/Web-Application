@@ -9,12 +9,15 @@ import { TextField } from '@mui/material';
 import ContactListDialog from './contactListDialog';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+import ContactDeleteDialog from './contactDeleteDialog';
 
 function Contacts(props) {
+  const [currentContactID, setCurrentContactID] = React.useState(-1); //current contact ID clicked
   const [currentCLID, setCurrentCLID] = React.useState(-1); //current contact list ID clicked
-  const [contactInfo, setContactInfo] = React.useState(-1); //contact list index
+  const [contactListIndex, setContactListIndex] = React.useState(-1); //contact list index
   const [fields, setFields] = React.useState({}); //text fields values
   const [openDialog, setOpenDialog] = React.useState(false); //used to show/hide dialog box for removing contact list
+  const [openContactDialog, setOpenContactDialog] = React.useState(false); //used to show/hide dialog box for removing contacts
   const contacts = props.contactList;
 
   // contact list 
@@ -27,13 +30,19 @@ function Contacts(props) {
   // on contact list click
   function populateContactInfo(e) {
     setCurrentCLID(contacts[e.target.id].contact_list_id);
-    setContactInfo(e.target.id);
+    setContactListIndex(e.target.id);
   }
 
   // on contact list delete click
   function deleteContactListDialog(e) {
     setCurrentCLID(contacts[e.target.id].contact_list_id);
     setOpenDialog(true);
+  }
+
+  // on contact delete click
+  function deleteContactDialog(e) {
+    setCurrentContactID(contacts[contactListIndex].contacts[e.target.id].id);
+    setOpenContactDialog(true);
   }
 
   // update the text boxes' field variables
@@ -73,7 +82,7 @@ function Contacts(props) {
       .then(data => {
         if (data.result !== "-1") {
           let temp = [...contacts];
-          let temp2 = temp[contactInfo].contacts;
+          let temp2 = temp[contactListIndex].contacts;
           let tempVal = { "id": data.result, "first_name": fields.firstName, "last_name": fields.lastName, "email": fields.email };
           temp2.push(tempVal);
           props.setContactList(temp);
@@ -121,13 +130,26 @@ function Contacts(props) {
           <Grid item xs={1} />
 
           {
-            //if contactInfo is not populated yet, then do not show contact information
-            (contactInfo != -1) &&
+            //if contactListIndex is not populated yet, then do not show contact information
+            (contactListIndex != -1) &&
             <Grid item xs={7}>
               <Paper>
                 <Stack sx={{ p: 2, mt: 2, height: 300 }}>
-                  {contacts[contactInfo].contacts.map((contact, index) => {
-                    return (<Button id={index} variant="outlined" sx={{ my: 0.5 }}>{contact.first_name + " " + contact.last_name + ": " + contact.email}</Button>);
+                  {contacts[contactListIndex].contacts.map((contact, index) => {
+                    return (
+                      <Grid container>
+                        <Grid item xs={10}>
+                          <Button id={index} variant="outlined" sx={{ my: 0.5, width: "100%" }}>
+                            {contact.first_name + " " + contact.last_name + ": " + contact.email}
+                          </Button>
+                        </Grid>
+                        <Grid item xs={2}>
+                          <Button onClick={deleteContactDialog} id={index} variant="outlined" sx={{ mx: 0, my: 0.5, minWidth: 0, width: "100%" }}>
+                            -
+                          </Button>
+                        </Grid>
+                      </Grid>
+                    );
                   })}
                 </Stack>
               </Paper>
@@ -154,7 +176,16 @@ function Contacts(props) {
           currentCLID={currentCLID}
           contactList={contacts}
           setContactList={props.setContactList}
-          setContactInfo={setContactInfo}
+          setContactListIndex={setContactListIndex}
+        />
+        <ContactDeleteDialog
+          open={openContactDialog}
+          setOpen={setOpenContactDialog}
+          currentCLID={currentCLID}
+          currentContactID={currentContactID}
+          contactList={contacts}
+          setContactList={props.setContactList}
+          contactListIndex={contactListIndex}
         />
       </Container>
     </Box>

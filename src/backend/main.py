@@ -287,7 +287,7 @@ def updateContactEmailAddress(contactID, emailAddress):
 @app.route('/deleteContact/<contactID>', methods=['GET'])
 def deleteContact(contactID):
     cursor = engine.connect()
-    contact.deleteContact(cursor, contactID)
+    return jsonify(contact.deleteContact(cursor, contactID))
 
 @app.route('/getQuestionsAndChoices/<surveyID>', methods=['GET'])
 def getQuestionsAndChoices(surveyID):
