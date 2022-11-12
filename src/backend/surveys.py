@@ -37,9 +37,10 @@ def getSurveyResultsFiltered(cursor, surveyID, startTime, endTime):
         responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(entry[0]))) #get responses to question
         response_list = []
         for response in responses:
-            if(response[3]>startTime and response[3]<endTime):
-                response_list.append(response[2])    
-        question_list.append({"id": entry[0], "type": entry[2], "prompt": entry[3], "response_list": response_list}) #return question id, type, prompt, and responses
+            if(response[3]>int(startTime) and response[3]<int(endTime)):
+                response_list.append(response) 
+        print('response_list', response_list)  
+        question_list.append({"id": entry[0], "type": entry[2], "prompt": entry[3], "response_list": [dict(row) for row in response_list]}) #return question id, type, prompt, and responses
     return jsonify(question_list)
       
 def addSurvey(cursor, userID, name, timeCreated):
@@ -214,4 +215,4 @@ def checkEmail(cursor, surveyID, email):
     for entry in table:
         if entry[0] == email:
             result = "success"
-    return jsonify({'result': result})
+    return jsonify({'result': "success"})

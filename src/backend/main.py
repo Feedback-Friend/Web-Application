@@ -355,9 +355,10 @@ def bandaid(): #need to run after flush before demo
     cursor = engine.connect()
     survey.bandaid(cursor)
 
+@app.route('/getSurveyResultsFiltered/<surveyID>/<startTime>/<endTime>', methods=['GET'])
 def getSurveyResultsFiltered(surveyID, startTime, endTime):
     cursor = engine.connect()
-    survey.getSurveyResultsFiltered(cursor, surveyID, startTime, endTime)
+    return survey.getSurveyResultsFiltered(cursor, surveyID, startTime, endTime)
 
 @app.route('/checkEmail/<surveyID>/<email>', methods=['GET'])
 def checkEmail(surveyID, email):
