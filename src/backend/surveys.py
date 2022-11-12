@@ -39,7 +39,6 @@ def getSurveyResultsFiltered(cursor, surveyID, startTime, endTime):
         for response in responses:
             if(response[3]>int(startTime) and response[3]<int(endTime)):
                 response_list.append(response) 
-        print('response_list', response_list)  
         question_list.append({"id": entry[0], "type": entry[2], "prompt": entry[3], "response_list": [dict(row) for row in response_list]}) #return question id, type, prompt, and responses
     return jsonify(question_list)
       
@@ -215,4 +214,4 @@ def checkEmail(cursor, surveyID, email):
     for entry in table:
         if entry[0] == email:
             result = "success"
-    return jsonify({'result': "success"})
+    return jsonify({'result': result})

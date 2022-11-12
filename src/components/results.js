@@ -13,7 +13,7 @@ import BarChart from "react-bar-chart";
 import Typography from '@mui/material/Typography';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import {Switch, FormControlLabel} from '@mui/material';
+
 
 
 function Results(props) {
@@ -135,7 +135,7 @@ function Results(props) {
                 })}
               </Select>
             </FormControl>
-            <FormControlLabel control={<Switch checked={checked} onChange={handleCheckedChange}/>} label="Choose Date Range" />
+            <FormControlLabel control={<Switch checked={checked} onChange={handleCheckedChange}/>} label="Choose a Date Range" />
             {checked &&
               <div>
               <Typography variant="subtitle1">Select a Start Date: </Typography>
