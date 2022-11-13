@@ -22,17 +22,21 @@ import {
   Title,
   Tooltip,
   Legend,
+  PointElement,
+  LineElement,
 } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { Line } from 'react-chartjs-2';
 
 ChartJS.register(
   CategoryScale,
+  PointElement,
   LinearScale,
   BarElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  LineElement,
 );
 
 export const options = {
@@ -64,8 +68,8 @@ function Results(props) {
         getSurveys()
         gottenSurveys.current = true
         if (selectedSurvey) {
-            fetch_and_set(selectedSurvey);
-            fetch_and_set_line(selectedSurvey);
+            fetch_and_set(selectedSurvey)
+            fetch_and_set_line(selectedSurvey)
         }
       }
     }
@@ -80,29 +84,23 @@ function Results(props) {
   }, [update.updating, getSurveys, startDate, endDate, checked]);
 
   const fetch_and_set = async (survey) => {
-    console.log('fetch_and_set', survey)
     setSelectedSurvey(survey);
     const response2 = await fetch('/getSurveyResults/' + survey.id)
     const survey_info2 = await response2.json()
     setFRQ(survey_info2)
-    console.log('survey_info2', survey_info2)
   }
 
   const fetch_and_set_filtered = async (survey) => {
     setSelectedSurvey(survey);
-    console.log('startDate', startDate.getTime(), 'endDate', endDate.getTime())
     const response = await fetch('/getSurveyResultsFiltered/' + survey.id + '/' + startDate.getTime() + '/' + endDate.getTime())
     const survey_info = await response.json()
     setFRQ(survey_info)
-    console.log('survey_info', survey_info)
   }
 
   const fetch_and_set_line = async (survey) => {
-    console.log('survey_inasdfasffo', survey)
     const response3 = await fetch('/getSurveyResultsHourlyBuckets/' + survey.id)
     const survey_info3 = await response3.json()
     setLineData(survey_info3)
-    console.log('survey_info2sadfsa', survey_info3)
   }
 
   const columns = [
@@ -127,31 +125,24 @@ function Results(props) {
     return { id, result };
   }
   function parseJSONFRQ(projects) {
-    console.log('projects', projects)
     const rows = []
     for (let j = 0; j < projects['response_list'].length; j++) {
-      console.log('projects[response]', projects['response_list'][j]['reply'])
       rows.push(createData(j, projects['response_list'][j]['reply']));
     }
-    console.log("rows", rows)
     return rows;
   }
   function createLineGraphData(projects) {
     const timeStamps = []
-    console.log('frq', projects)
     // const labels = []
     const labels = [];
-    console.log('projects["time_range"]', projects["time_range"])
     for (let j = 0; j < projects["time_range"].length; j++) {
         labels.push(projects["time_range"][j])
         if(projects["time_range"][j] in projects["hours"]){
-            console.log("projects[j][timestamp]sadfas")
             timeStamps.push(projects["hours"][projects["time_range"][j]])
         }else{
           timeStamps.push(0)
         }
     }
-    console.log('timeStamps', timeStamps)
     const data = {
         labels,
         datasets: [
@@ -174,7 +165,6 @@ function Results(props) {
 
 
   function parseJSONMC(projects) {
-    console.log('projects', projects)
     const rows = []
     var dict = {};
     for (let j = 0; j < projects['response_list'].length; j++) {
@@ -200,7 +190,6 @@ function Results(props) {
         },
       ],
     }
-    console.log("mcrows", data)
     return data;
   }
 

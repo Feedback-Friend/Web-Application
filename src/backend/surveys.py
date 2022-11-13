@@ -35,7 +35,6 @@ def getSurveyResultsHourlyBuckets(cursor, surveyID):
     hourly_results = []
     questions = cursor.execute("SELECT * FROM questions WHERE survey_id=%s", (int(surveyID))) #get single question
     for entry in questions:
-        # responses = cursor.execute("SELECT * FROM responses WHERE question_id=%s", (str(entry[0]))) #get responses to question
         hours = cursor.execute("select group_concat(DATE_FORMAT(FROM_UNIXTIME(time_created/1000),'%%Y-%%m-%%d %%H')), COUNT(1) from responses where question_id=%s group by DATE_FORMAT(FROM_UNIXTIME(time_created/1000),'%%Y %%D %%M %%H');", (str(entry[0]))) #get responses to question
         response_list = {}
         times = []
@@ -43,11 +42,8 @@ def getSurveyResultsHourlyBuckets(cursor, surveyID):
             response_list[hour[0].split(',')[0]] = hour[1]
             times.append(hour[0].split(','))
         hourly_results.append(response_list)
-    print('response_list[0]', hourly_results[0])
     times_list = [item for sublist in times for item in sublist]
-    time_range = pandas.date_range(min(times_list), max(times_list), freq='H').strftime("%Y-%m-%d %H").tolist()
-    print("time_range", time_range)
-    
+    time_range = pandas.date_range(min(times_list), max(times_list), freq='H').strftime("%Y-%m-%d %H").tolist()    
     return jsonify({"hours": hourly_results[0], "time_range": time_range})
 
 def getSurveyResultsFiltered(cursor, surveyID, startTime, endTime):
