@@ -299,6 +299,11 @@ def getSurveyResults(surveyID):
     cursor = engine.connect()
     return survey.getSurveyResults(cursor, surveyID)
 
+@app.route('/getSurveyResultsHourlyBuckets/<surveyID>', methods=['GET'])
+def getSurveyResultsHourlyBuckets(surveyID):
+    cursor = engine.connect()
+    return survey.getSurveyResultsHourlyBuckets(cursor, surveyID)
+
 @app.route('/addQuestionResponse/<questionID>/<timeCreated>', defaults={'response': ''}, methods=['POST'])
 @app.route('/addQuestionResponse/<question_id>/<response>/<timeCreated>', methods=['POST'])
 def addQuestionResponse(question_id, response, timeCreated):

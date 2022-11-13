@@ -13,6 +13,31 @@ import BarChart from "react-bar-chart";
 import Typography from '@mui/material/Typography';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import {Switch, FormControlLabel, ToggleButton, ToggleButtonGroup} from '@mui/material';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
+
+export const options = {
+  responsive: true,
+};
 
 
 
@@ -20,12 +45,18 @@ function Results(props) {
   const { surveys, getSurveys, update, selectedSurvey, setSelectedSurvey } = props;
 
   const [frq, setFRQ] = React.useState([])
+  const [lineData, setLineData] = React.useState(null)
 
   const gottenSurveys = useRef(false)
-  const [startDate, setStartDate] = React.useState(new Date());
-  const [endDate, setEndDate] = React.useState(new Date());
+  const [startDate, setStartDate] = React.useState(null);
+  const [endDate, setEndDate] = React.useState(null);
   const [checked, setChecked] = React.useState(false);
+  const [alignment, setAlignment] = React.useState('left');
 
+  const handleSwitchChange = (event, newAlignment) => {
+    setAlignment(newAlignment);
+  };
+  
   // Retrieves surveys from the database only after creating and deleting operations are completed
   useEffect(() => {
     if (!gottenSurveys.current) {
@@ -34,22 +65,27 @@ function Results(props) {
         gottenSurveys.current = true
         if (selectedSurvey) {
             fetch_and_set(selectedSurvey);
+            fetch_and_set_line(selectedSurvey);
         }
       }
     }
     if (!checked){
       fetch_and_set(selectedSurvey)
+      fetch_and_set_line(selectedSurvey)
     }
     if (startDate && endDate){
       fetch_and_set_filtered(selectedSurvey)
+      fetch_and_set_line(selectedSurvey)
     }
   }, [update.updating, getSurveys, startDate, endDate, checked]);
 
   const fetch_and_set = async (survey) => {
+    console.log('fetch_and_set', survey)
     setSelectedSurvey(survey);
     const response2 = await fetch('/getSurveyResults/' + survey.id)
     const survey_info2 = await response2.json()
     setFRQ(survey_info2)
+    console.log('survey_info2', survey_info2)
   }
 
   const fetch_and_set_filtered = async (survey) => {
@@ -58,11 +94,34 @@ function Results(props) {
     const response = await fetch('/getSurveyResultsFiltered/' + survey.id + '/' + startDate.getTime() + '/' + endDate.getTime())
     const survey_info = await response.json()
     setFRQ(survey_info)
+    console.log('survey_info', survey_info)
+  }
+
+  const fetch_and_set_line = async (survey) => {
+    console.log('survey_inasdfasffo', survey)
+    const response3 = await fetch('/getSurveyResultsHourlyBuckets/' + survey.id)
+    const survey_info3 = await response3.json()
+    setLineData(survey_info3)
+    console.log('survey_info2sadfsa', survey_info3)
   }
 
   const columns = [
     { field: 'result', headerName: 'Results', width: 150 },
   ];
+
+  const children = [
+    <ToggleButton value="left" key="left">
+      <Typography variant="subtitle1">Overall Stats</Typography>
+    </ToggleButton>,
+    <ToggleButton value="right" key="right">
+      <Typography variant="subtitle1">Individual Questions</Typography>
+    </ToggleButton>,
+  ];
+  const control = {
+    value: alignment,
+    onChange: handleSwitchChange,
+    exclusive: true,
+  };
 
   function createData(id, result) {
     return { id, result };
@@ -77,7 +136,34 @@ function Results(props) {
     console.log("rows", rows)
     return rows;
   }
-
+  function createLineGraphData(projects) {
+    const timeStamps = []
+    console.log('frq', projects)
+    // const labels = []
+    const labels = [];
+    console.log('projects["time_range"]', projects["time_range"])
+    for (let j = 0; j < projects["time_range"].length; j++) {
+        labels.push(projects["time_range"][j])
+        if(projects["time_range"][j] in projects["hours"]){
+            console.log("projects[j][timestamp]sadfas")
+            timeStamps.push(projects["hours"][projects["time_range"][j]])
+        }else{
+          timeStamps.push(0)
+        }
+    }
+    console.log('timeStamps', timeStamps)
+    const data = {
+        labels,
+        datasets: [
+        {
+            label: 'Response Counts',
+            data: timeStamps,
+            backgroundColor: 'rgba(255, 99, 132, 0.5)',
+        },
+        ],
+    };
+    return data;
+  }
   const handleCheckedChange = (event) => {
     setChecked(event.target.checked);
     if (!event.target.checked){
@@ -86,9 +172,6 @@ function Results(props) {
     }
   };
 
-  function createDataMC(text, value) {
-    return { text, value };
-  }
 
   function parseJSONMC(projects) {
     console.log('projects', projects)
@@ -101,13 +184,24 @@ function Results(props) {
       } else {
         dict[projects['response_list'][j]['reply']] = 1
       }
-
     }
+    const labels = Object.keys(dict)
+    const values = []
     for (const [key, value] of Object.entries(dict)) {
-      rows.push(createDataMC(key, value))
+      values.push(value)
     }
-
-    return rows;
+    const data = {
+      labels,
+      datasets: [
+        {
+          data: values,
+          label: "Counts",
+          backgroundColor: 'rgba(242, 121, 53, 1)',
+        },
+      ],
+    }
+    console.log("mcrows", data)
+    return data;
   }
 
 
@@ -123,10 +217,10 @@ function Results(props) {
               <InputLabel>Survey</InputLabel>
               <Select
                 label="Survey"
-                onChange={(e) => fetch_and_set(e.target.value)}
+                onChange={(e) => fetch_and_set(e.target.value) && fetch_and_set_line(e.target.value)}
                 value={surveys.find(obj => { return obj.id === selectedSurvey.id })}
               >
-                {surveys.map((survey, index) => {
+                {surveys?.map((survey, index) => {
                   return (
                     <MenuItem key={index} value={survey}>
                       {survey.name}
@@ -162,8 +256,17 @@ function Results(props) {
               </div>}
           </Grid>
           <Grid item xs={8}>
+          <ToggleButtonGroup size="small" {...control}>
+              {children}
+            </ToggleButtonGroup>
           <Grid container spacing={8}>
-            {frq.map((question, index) => {
+            {alignment == "left" && lineData &&
+            <Grid item xs={12}>
+              <Typography variant="h6">Number of Responses Over Time</Typography>
+              <Line options={options} data={createLineGraphData(lineData)}/>
+              </Grid>
+            }
+            {alignment == "right" && frq.map((question, index) => {
               return (
                 <Grid item xs={12}>
                   <Typography variant="h6">Question {index+1}: {question.prompt}</Typography>
@@ -177,14 +280,8 @@ function Results(props) {
                         />
                         </div>}
                     {question.type > 0 &&
-                        <BarChart
-                          ylabel="Quantity"
-                          width={500}
-                          height={500}
-                          margin={margin}
-                          data={parseJSONMC(question)}
-                          style={{ color: "blue" }}
-                        />}
+                        <Bar options={options} data={parseJSONMC(question)} />
+                      }
                 </Grid>);})}
             </Grid>
           </Grid>
