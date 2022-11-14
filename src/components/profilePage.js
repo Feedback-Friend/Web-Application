@@ -44,7 +44,7 @@ export default function NestedGrid(props) {
     e.preventDefault();
     // update database then update variables
     updateDatabase(e).then(() => {
-      retrieveUserInfoFromDB();
+      // retrieveUserInfoFromDB();
     })
   }
 
